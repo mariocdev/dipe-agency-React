@@ -13,12 +13,12 @@ async function request(path) {
   return response.json();
 }
 
-export function getSamples() {
-  return request('wp/v2/dipe-items?status=publish&per_page=24&_embed=wp:featuredmedia');
+export function getProjects(perPage = 24) {
+  return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}`);
 }
 
-export async function getSample(slug) {
-  const items = await request(`wp/v2/dipe-items?status=publish&slug=${encodeURIComponent(slug)}&_embed=wp:featuredmedia`);
+export async function getProject(slug) {
+  const items = await request(`wp/v2/dipe-proyectos?status=publish&slug=${encodeURIComponent(slug)}`);
   return items?.[0] || null;
 }
 
@@ -26,6 +26,11 @@ export function rendered(value = '') {
   return value || '';
 }
 
-export function featuredImage(item) {
-  return item?._embedded?.['wp:featuredmedia']?.[0]?.source_url || null;
+export function projectHomeCardImage(item) {
+  const image = item?.acf?.dipe_project_home_card_image;
+
+  if (!image) return null;
+  if (typeof image === 'string') return { url: image, alt: '' };
+  if (image.url) return { url: image.url, alt: image.alt || '' };
+  return null;
 }

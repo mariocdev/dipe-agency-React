@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { featuredImage, getSample, getSamples, rendered } from './api';
+import { getProject, getProjects, projectHomeCardImage, rendered } from './api';
 
 const config = window.dipeSite || {};
 const basePath = (config.basePath || '/').replace(/\/$/, '');
@@ -18,7 +18,7 @@ function Shell({ children }) {
     <header className="border-bottom bg-white">
       <nav className="navbar navbar-expand container py-3" aria-label="Principal">
         <SiteLink href="/" className="navbar-brand fw-bold">Dipe Agency</SiteLink>
-        <SiteLink href="/muestras/" className="nav-link">Muestras</SiteLink>
+        <SiteLink href="/proyectos/" className="nav-link">Proyectos</SiteLink>
       </nav>
     </header>
     <main>{children}</main>
@@ -35,56 +35,62 @@ function Failure({ error }) {
 
 function Home() {
   return <section className="container py-5">
-    <p className="text-uppercase text-secondary small fw-semibold">Prueba vertical</p>
-    <h1 className="display-5">WordPress gestiona el contenido; React muestra las vistas.</h1>
-    <p className="lead col-lg-8">Esta pantalla es temporal. Los diseños, textos y secciones definitivas se crearán a partir del inventario editorial.</p>
-    <SiteLink href="/muestras/" className="btn btn-dark">Ver muestras de prueba</SiteLink>
+    <p className="text-uppercase text-secondary small fw-semibold">Dipe Agency</p>
+    <h1 className="display-5">Proyectos seleccionados</h1>
+    <p className="lead col-lg-8">Esta sección conecta la home con los proyectos publicados en WordPress. El diseño definitivo llegará con las piezas visuales.</p>
+    <Projects limit={3} compact />
   </section>;
 }
 
-function Samples() {
+function ProjectCard({ item }) {
+  const image = projectHomeCardImage(item);
+  return <article className="col-md-6 col-lg-4" key={item.id}>
+    <div className="card h-100 shadow-sm">
+      {image && <img className="card-img-top sample-image" src={image.url} alt={image.alt} />}
+      <div className="card-body d-flex flex-column">
+        <h2 className="h4" dangerouslySetInnerHTML={{ __html: rendered(item.title?.rendered) }} />
+        <SiteLink href={item.link} className="stretched-link mt-auto">Ver proyecto</SiteLink>
+      </div>
+    </div>
+  </article>;
+}
+
+function Projects({ limit = 24, compact = false }) {
   const [state, setState] = useState({ loading: true, data: [], error: null });
   useEffect(() => {
-    getSamples().then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: [], error }));
-  }, []);
+    getProjects(limit).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: [], error }));
+  }, [limit]);
 
-  if (state.loading) return <section className="container py-5"><Loading /></section>;
-  if (state.error) return <section className="container py-5"><Failure error={state.error} /></section>;
+  if (state.loading) return <Loading />;
+  if (state.error) return <Failure error={state.error} />;
+  if (state.data.length === 0) return <p className="text-secondary">Aún no hay proyectos publicados.</p>;
+  return <div className="row g-4 mt-1">
+    {state.data.map((item) => <ProjectCard item={item} key={item.id} />)}
+    {compact && <div className="col-12"><SiteLink href="/proyectos/" className="btn btn-outline-dark">Ver todos los proyectos</SiteLink></div>}
+  </div>;
+}
+
+function ProjectsPage() {
   return <section className="container py-5">
-    <h1>Muestras</h1>
-    {state.data.length === 0 ? <p className="text-secondary">Aún no hay muestras publicadas.</p> : <div className="row g-4 mt-1">
-      {state.data.map((item) => <article className="col-md-6 col-lg-4" key={item.id}>
-        <div className="card h-100 shadow-sm">
-          {featuredImage(item) && <img className="card-img-top sample-image" src={featuredImage(item)} alt="" />}
-          <div className="card-body d-flex flex-column">
-            <h2 className="h4" dangerouslySetInnerHTML={{ __html: rendered(item.title?.rendered) }} />
-            <div className="text-secondary" dangerouslySetInnerHTML={{ __html: rendered(item.excerpt?.rendered) }} />
-            <SiteLink href={item.link} className="stretched-link mt-auto">Ver detalle</SiteLink>
-          </div>
-        </div>
-      </article>)}
-    </div>}
+    <h1>Proyectos</h1>
+    <Projects />
   </section>;
 }
 
-function SampleDetail({ slug }) {
+function ProjectDetail({ slug }) {
   const [state, setState] = useState({ loading: true, data: null, error: null });
   useEffect(() => {
-    getSample(slug).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: null, error }));
+    getProject(slug).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: null, error }));
   }, [slug]);
   if (state.loading) return <section className="container py-5"><Loading /></section>;
   if (state.error) return <section className="container py-5"><Failure error={state.error} /></section>;
   if (!state.data) return <NotFound />;
   const item = state.data;
-  const client = item.meta?.dipe_item_client;
-  const website = item.meta?.dipe_item_url;
+  const image = projectHomeCardImage(item);
   return <article className="container py-5 col-lg-8">
-    <SiteLink href="/muestras/" className="small">← Todas las muestras</SiteLink>
+    <SiteLink href="/proyectos/" className="small">← Todos los proyectos</SiteLink>
     <h1 className="mt-3" dangerouslySetInnerHTML={{ __html: rendered(item.title?.rendered) }} />
-    {featuredImage(item) && <img className="img-fluid rounded my-4 detail-image" src={featuredImage(item)} alt="" />}
-    {client && <p><strong>Cliente:</strong> {client}</p>}
-    <div className="lead" dangerouslySetInnerHTML={{ __html: rendered(item.excerpt?.rendered) }} />
-    {website && <p><a href={website} rel="noopener noreferrer" target="_blank">Visitar enlace externo</a></p>}
+    {image && <img className="img-fluid rounded my-4 detail-image" src={image.url} alt={image.alt} />}
   </article>;
 }
 
@@ -100,10 +106,10 @@ function NotFound() {
 export function App() {
   const currentPath = window.location.pathname;
   const path = (basePath && currentPath.startsWith(basePath) ? currentPath.slice(basePath.length) : currentPath).replace(/\/+$/, '') || '/';
-  const sampleMatch = path.match(/^\/muestras\/([^/]+)$/);
+  const projectMatch = path.match(/^\/proyectos\/([^/]+)$/);
   let page = <NotFound />;
   if (path === '/') page = <Home />;
-  else if (path === '/muestras') page = <Samples />;
-  else if (sampleMatch) page = <SampleDetail slug={decodeURIComponent(sampleMatch[1])} />;
+  else if (path === '/proyectos') page = <ProjectsPage />;
+  else if (projectMatch) page = <ProjectDetail slug={decodeURIComponent(projectMatch[1])} />;
   return <Shell>{page}</Shell>;
 }

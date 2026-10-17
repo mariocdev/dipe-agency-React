@@ -1,5 +1,10 @@
 # Prueba vertical: Muestras
 
+Estado: validada en el entorno de pruebas el 17-10-2026. La API pública y las
+vistas de listado/detalle funcionaron tras corregir la configuración REST del
+tema. Este CPT se retiró posteriormente y se conserva este documento como
+registro de la validación técnica.
+
 Ejecutar después de instalar WordPress, activar `dipe-core` y compilar/activar el tema.
 
 Antes de la prueba, confirma en **Ajustes > Lectura** que sigue marcada la opción
