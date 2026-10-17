@@ -10,6 +10,30 @@
 - SEO editable desde WordPress más adelante, con un único proveedor y sin metadatos duplicados. El entorno de pruebas está bloqueado para indexación desde `dipe-core`.
 - Revisión: el usuario sube cambios por FTP y comunica el resultado. No hacer pruebas locales; build único cuando cambie React/CSS para obtener assets.
 
+## Continuidad, Git y publicación
+
+### Últimas funcionalidades completadas
+
+- La base de Home y Contacto está implementada en el tema React y `dipe-core`: el formulario Contacto registra solicitudes privadas y usa el flujo de correo configurado desde WordPress.
+- La administración de Solicitudes, los ajustes de Correo Dipe, proyectos por CPT/REST, el tratamiento de imágenes ACF y la sección de reseñas con dos opiniones reales repetidas están presentes en el código. Las confirmaciones de servidor siguen limitadas a las indicadas más abajo.
+
+### Estado actual del desarrollo
+
+- **Verificado al iniciar esta documentación (17 de octubre de 2026):** el árbol local estaba limpio; `main` apuntaba a `7182e1df7126e7f33091f77491e0446730d9ffb0` (`feat: complete home and contact foundation with project handoff`) y seguía a `origin/main` en `https://github.com/mariocdev/dipe-agency-React.git`.
+- La rama `docs-github-workflow` se creó desde ese commit exclusivamente para documentar el flujo de trabajo. Su commit y publicación en GitHub se registrarán al cerrarla; no se asumen hasta que se completen.
+- GitHub es la fuente de verdad. Codex Desktop edita el checkout local; Codex Cloud debe usar ramas independientes y pull requests. No se integra nada en `main` sin autorización expresa.
+
+### Decisiones técnicas importantes
+
+- WordPress resuelve URL y estado HTTP; React proporciona las vistas. `dipe-core` conserva CPT, ACF y REST, y el tema conserva el shell y la configuración pública.
+- Las páginas corporativas son fijas en código; contenido editorial, menús y logos siguen siendo administrables desde WordPress según las reglas ya descritas en este documento.
+- Cada tarea relevante actualiza este contexto con hechos comprobados. El código y su documentación relacionada se versionan juntos en el commit de la tarea cuando corresponda. No se ejecutan operaciones Git destructivas, despliegues FTP automáticos ni push/merge directo a `main`.
+
+### Producción y FTP
+
+- **Última versión confirmada como publicada en producción:** pendiente de identificar. No consta en el repositorio un commit, etiqueta o lista de archivos que pueda vincularse con certeza a la versión activa en el servidor.
+- **Archivos pendientes de subir por FTP:** ninguno generado por esta tarea, que solo modifica documentación. El estado de despliegue de cambios anteriores debe confirmarlo el usuario antes de marcarlo como publicado. Cuando cambie React/CSS, la entrega deberá enumerar también los assets generados por el único `pnpm build` permitido.
+
 ## Lo que existe en código
 
 - `wp-content/themes/dipe-react/`: tema que deja a WordPress resolver la petición, monta React en `#dipe-react-root` y carga `assets/.vite/manifest.json`. `functions.php` registra y prepara menús, logo principal y logo de pie, imprime `window.dipeSite` con datos públicos y emite metadatos SEO básicos. `404.php` fija estado 404. El HTML inicial del cuerpo es principalmente el contenedor de React.
