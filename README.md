@@ -1,6 +1,6 @@
 # Dipe Agency
 
-Base para una web corporativa con WordPress como CMS y React + Bootstrap como interfaz pública.
+Base para una web corporativa con React + Bootstrap como interfaz pública. WordPress gestiona entradas y CPT; Home, Quiénes somos, Contacto, Trabaja con nosotros, navegación y pie se mantienen en código. Los metadatos SEO de todas las URL deberán poder editarse desde WordPress.
 
 ## Estructura
 
@@ -8,6 +8,8 @@ Base para una web corporativa con WordPress como CMS y React + Bootstrap como in
 - `wp-content/plugins/dipe-core/`: modelo de contenido y ajustes que no deben depender del tema.
 - `wp-content/themes/dipe-react/`: tema ligero que sirve las URL de WordPress y carga el build de React.
 - `docs/`: decisiones de contenido y comprobaciones de la prueba vertical.
+
+La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md).
 
 ## Requisitos locales
 
@@ -66,4 +68,4 @@ Antes de publicar: activa HTTPS, realiza una copia de seguridad, comprueba la UR
 
 ## Estado actual
 
-La prueba vertical está preparada en código. Aún no hay instalación de WordPress, diseños ni contenidos definitivos, por lo que la publicación de los dos elementos de ejemplo y la comprobación extremo a extremo quedan documentadas para ejecutarse al disponer de WordPress.
+WordPress está instalado con el tema y `dipe-core` activos en el entorno de pruebas. La prueba vertical está preparada en código; faltan los diseños y contenidos definitivos. Verificar en el WordPress real los puntos de [la prueba vertical](docs/prueba-vertical.md) antes de darla por cerrada.
