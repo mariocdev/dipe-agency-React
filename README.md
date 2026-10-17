@@ -11,20 +11,25 @@ Base para una web corporativa con WordPress como CMS y React + Bootstrap como in
 
 ## Requisitos locales
 
-- PHP 8.2 o superior y WordPress actualizado para comprobar la integración.
-- Node.js 20 LTS o superior para crear el bundle.
+- PHP 8.2 o superior y WordPress actualizado para comprobar la integración. WordPress recomienda PHP 8.3+ si el hosting lo permite.
+- Node.js 20.19+ o 22.12+ (recomendado Node 24) y pnpm 11 para crear el bundle.
 - Una instalación WordPress independiente con enlaces permanentes activados.
 
 ## Desarrollo y compilación
 
 ```powershell
 cd frontend
-npm install
-npm run dev
-npm run build
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm build
 ```
 
-`npm run build` escribe los recursos versionados y su manifiesto directamente en
+`pnpm dev` abre una vista independiente del front. Para ver datos publicados de
+WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
+`WP_DEV_URL` con la URL de una instalación local o de pruebas; Vite enviará
+`/wp-json/` a ese WordPress. No pongas credenciales en ese archivo.
+
+`pnpm build` escribe los recursos versionados y su manifiesto directamente en
 `wp-content/themes/dipe-react/assets/`. Esos recursos se suben por FTP junto con el tema.
 
 ## Instalación en WordPress
@@ -32,10 +37,10 @@ npm run build
 1. Copia `wp-content/plugins/dipe-core` a `wp-content/plugins/` y actívalo.
 2. Copia `wp-content/themes/dipe-react` a `wp-content/themes/` y activa el tema.
 3. En **Ajustes > Enlaces permanentes**, guarda una estructura distinta de “Simple”.
-4. Ejecuta `npm run build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
+4. Ejecuta `pnpm build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
 5. Sigue [la prueba vertical](docs/prueba-vertical.md) antes de añadir páginas definitivas.
 
-No se versionan el núcleo de WordPress, `wp-config.php`, medios, la base de datos ni credenciales. No se requiere Node.js en el hosting.
+No se versionan el núcleo de WordPress, `wp-config.php`, medios, la base de datos, credenciales ni los assets generados. Hay que ejecutar `pnpm build` antes de cada subida del tema. No se requiere Node.js en el hosting.
 
 ## Despliegue por FTP
 

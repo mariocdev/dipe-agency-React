@@ -5,6 +5,7 @@ const config = window.dipeSite || {};
 const basePath = (config.basePath || '/').replace(/\/$/, '');
 
 function sitePath(path = '') {
+  if (/^https?:\/\//i.test(path)) return path;
   return `${basePath}/${path.replace(/^\//, '')}`.replace(/\/{2,}/g, '/');
 }
 

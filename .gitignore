@@ -23,6 +23,7 @@ wp-content/backups/
 
 # Build and editor artifacts
 frontend/dist/
+wp-content/themes/dipe-react/assets/
 *.log
 .DS_Store
 Thumbs.db

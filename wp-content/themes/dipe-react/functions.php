@@ -57,6 +57,16 @@ function dipe_react_enqueue_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'dipe_react_enqueue_assets' );
 
+// Vite emits ES modules, including when the current build has only one JS file.
+function dipe_react_module_script_tag( $tag, $handle, $src ) {
+	if ( 'dipe-react-app' !== $handle ) {
+		return $tag;
+	}
+
+	return '<script type="module" src="' . esc_url( $src ) . '" id="dipe-react-app-js"></script>';
+}
+add_filter( 'script_loader_tag', 'dipe_react_module_script_tag', 10, 3 );
+
 function dipe_react_document_description() {
 	if ( is_singular() && has_excerpt() ) {
 		return wp_strip_all_tags( get_the_excerpt(), true );

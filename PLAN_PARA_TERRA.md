@@ -1,6 +1,10 @@
-# Dipe Agency — encargo inicial para GPT-5.6 Terra
+# Dipe Agency — continuación para GPT-5.6 Terra
 
 Trabaja en esta carpeta. Objetivo: web corporativa con WordPress como CMS y React + Bootstrap como interfaz pública. El contenido se edita en `wp-admin` y aparece en la web al publicar, sin Elementor ni despliegue del front por cada entrada. El usuario instalará WordPress, creará la base de datos y subirá los archivos por FTP. Aún faltan los diseños, imágenes y textos definitivos.
+
+## Punto de reanudación (17-10-2026)
+
+**Continúa desde el estado actual; no reinicies el proyecto.** Git ya está configurado en `main` con remoto `origin`. Ya existen el esqueleto, `dipe-core`, el tema y una prueba vertical en código. Acabamos de actualizar a React/React DOM 19.3.1, Vite 8.3.4, `@vitejs/plugin-react` 6.1.2 y Bootstrap 5.3.8; se añadió `frontend/pnpm-lock.yaml`, desarrollo con pnpm y carga del bundle como módulo en WordPress. `pnpm install --frozen-lockfile` y `pnpm build` pasaron. **Estos últimos cambios siguen sin commit**: inspecciona `git status` y el diff, verifica lo necesario y crea un commit descriptivo antes de seguir. No repitas `git init` ni reviertas la actualización. Los assets de build quedan fuera de Git; recompila antes de cada subida FTP.
 
 ## Decisión técnica inicial
 
@@ -11,15 +15,13 @@ Trabaja en esta carpeta. Objetivo: web corporativa con WordPress como CMS y Reac
 - React + Vite + Bootstrap 5, rutas y plantillas por tipo de contenido. Compartir funciones de consumo REST, normalización de datos y estados de carga/error/404. No exponer credenciales en el navegador.
 - El tema imprimirá título, descripción, canonical y Open Graph según la URL de WordPress. **Antes de declarar resuelto el SEO**, comprobar HTML inicial e indexación de páginas de contenido; el cuerpo renderizado solo por React puede requerir una estrategia adicional. No prometer SSR sin verificar que el hosting lo permita.
 
-## Orden de trabajo
+## Próximos pasos, en orden
 
-1. **Git antes de nada.** Comprobar Git y configurar nombre/correo para este repositorio si faltan; ejecutar `git init`, crear `.gitignore` y hacer un primer commit. Excluir `node_modules`, secretos, `.env`, `wp-config.php`, núcleo de WordPress, medios subidos y base de datos. Trabajar con commits pequeños. Un remoto privado es opcional y requiere que el usuario indique dónde alojarlo; FTP no sustituye a Git.
-2. **Inventario y contrato.** Revisar archivos existentes; cuando lleguen diseños y contenidos, listar páginas, bloques reutilizables, CPT, taxonomías, campos y URL. Registrar decisiones en `docs/modelo-contenido.md`. Mientras falten diseños, no inventar secciones finales: usar una prueba pequeña y sustituible.
-3. **Esqueleto.** Crear `frontend/`, `wp-content/plugins/dipe-core/`, `wp-content/themes/dipe-react/` y `docs/`. Añadir `README.md` con requisitos, comandos y despliegue FTP.
-4. **Prueba vertical mínima.** Implementar en WordPress un CPT de ejemplo con título, extracto, imagen destacada y 1–2 campos; publicar dos elementos de prueba. Crear listado y detalle en React, además de una página 404. Confirmar que alta, edición y despublicación en `wp-admin` cambian el front sin recompilar.
-5. **Integración del tema.** Compilar Vite hacia assets versionados del tema y cargarlos desde PHP usando el manifiesto de build. Mantener las URL gestionadas por WordPress; comprobar entrada directa, recarga, navegación interna, paginación y 404. No depender de una regla SPA que convierta errores reales en HTTP 200.
-6. **Sitio real.** Implementar componentes a partir de los diseños entregados; convertir textos, imágenes, enlaces, orden de secciones y contenido repetible en campos de WordPress según el contrato. Añadir blog, archivos y detalles de CPT necesarios, diseño adaptable y accesibilidad básica.
-7. **Validación y entrega.** Probar API, slugs, imágenes, estados vacíos, móvil, enlaces, SEO inicial y formularios si los hay. Verificar que Varnish no sirva datos obsoletos tras publicar (TTL o purga configurada en el hosting). Entregar carpeta exacta para FTP: plugin, tema y assets compilados; documentar instalación/activación, enlaces permanentes, HTTPS, copias de seguridad y comprobación posterior a subida.
+1. **Cerrar la actualización actual.** Revisar el diff sin pisar trabajo existente; confirmar instalación desde lockfile y build; corregir cualquier incompatibilidad real y hacer commit. Usar versiones estables compatibles y conservar pnpm como gestor del proyecto.
+2. **Terminar la prueba vertical.** Auditar el CPT temporal `dipe_item`, sus campos REST, listado/detalle React, enlaces, rutas, 404 y carga de assets del tema. Arreglar defectos encontrados y dejar instrucciones claras en `docs/prueba-vertical.md`. La prueba está implementada en código, pero **aún no está validada en un WordPress real**.
+3. **Validar cuando haya WordPress.** Con la instalación preparada por el usuario, activar plugin y tema; publicar dos muestras y comprobar alta, edición y despublicación sin recompilar. Verificar URL directa/recarga, HTTP 404, API, HTTPS y caché Varnish. Documentar hallazgos; no declarar completada esta etapa antes de probarla.
+4. **Inventario del sitio real.** Cuando lleguen diseños y contenidos, definir páginas, secciones, componentes, CPT, taxonomías, campos, medios y URL en `docs/modelo-contenido.md`. No inventar la maquetación definitiva mientras falten esos materiales.
+5. **Construcción y entrega.** Implementar plantillas React y campos editables según el inventario; añadir blog y CPT necesarios, accesibilidad, adaptación móvil, metadatos y revisión SEO del HTML inicial. Recompilar y entregar las carpetas exactas de plugin y tema para FTP con guía de instalación y comprobaciones posteriores.
 
 ## Entregas por iteración
 

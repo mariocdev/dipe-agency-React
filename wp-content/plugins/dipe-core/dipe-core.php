@@ -45,7 +45,7 @@ function dipe_core_register_content_types() {
 				),
 			),
 			'sanitize_callback' => 'sanitize_text_field',
-			'auth_callback'     => 'dipe_core_can_edit_meta',
+			'auth_callback'     => 'dipe_core_can_access_item_meta',
 		)
 	);
 
@@ -63,14 +63,20 @@ function dipe_core_register_content_types() {
 				),
 			),
 			'sanitize_callback' => 'esc_url_raw',
-			'auth_callback'     => 'dipe_core_can_edit_meta',
+			'auth_callback'     => 'dipe_core_can_access_item_meta',
 		)
 	);
 }
 add_action( 'init', 'dipe_core_register_content_types' );
 
-function dipe_core_can_edit_meta( $allowed, $meta_key, $post_id ) {
-	return current_user_can( 'edit_post', $post_id );
+function dipe_core_can_access_item_meta( $allowed, $meta_key, $post_id ) {
+	if ( current_user_can( 'edit_post', $post_id ) ) {
+		return true;
+	}
+
+	// El controlador REST exige editar la entrada para escribir. Esta rama sólo
+	// permite leer los campos estructurados de muestras publicadas en el front.
+	return is_post_publicly_viewable( $post_id );
 }
 
 function dipe_core_add_meta_boxes() {
