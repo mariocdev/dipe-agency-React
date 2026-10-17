@@ -11,6 +11,40 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * This project is a non-public environment until an explicit production
+ * transition. Keep every WordPress response out of search results.
+ */
+function dipe_core_prevent_search_indexing( $robots ) {
+	$robots['noindex']      = true;
+	$robots['nofollow']     = true;
+	$robots['noarchive']    = true;
+	$robots['nosnippet']    = true;
+	$robots['noimageindex'] = true;
+
+	return $robots;
+}
+add_filter( 'wp_robots', 'dipe_core_prevent_search_indexing' );
+
+function dipe_core_send_noindex_header() {
+	if ( ! is_admin() ) {
+		header( 'X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex', true );
+	}
+}
+add_action( 'send_headers', 'dipe_core_send_noindex_header' );
+
+function dipe_core_disallow_robots() {
+	return "User-agent: *\nDisallow: /\n";
+}
+add_filter( 'robots_txt', 'dipe_core_disallow_robots' );
+
+function dipe_core_disable_search_visibility() {
+	if ( '0' !== (string) get_option( 'blog_public' ) ) {
+		update_option( 'blog_public', 0 );
+	}
+}
+add_action( 'admin_init', 'dipe_core_disable_search_visibility' );
+
 function dipe_core_register_content_types() {
 	register_post_type(
 		'dipe_item',
@@ -129,6 +163,7 @@ add_action( 'save_post_dipe_item', 'dipe_core_save_details' );
 
 function dipe_core_activate() {
 	dipe_core_register_content_types();
+	update_option( 'blog_public', 0 );
 	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'dipe_core_activate' );

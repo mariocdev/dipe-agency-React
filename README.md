@@ -40,6 +40,17 @@ WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
 4. Ejecuta `pnpm build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
 5. Sigue [la prueba vertical](docs/prueba-vertical.md) antes de añadir páginas definitivas.
 
+### Entorno no indexable
+
+Mientras este proyecto sea de desarrollo, `dipe-core` fuerza la visibilidad de
+WordPress a "disuadir a los motores de búsqueda", añade las directivas
+`noindex`/`nofollow` al HTML y a la cabecera `X-Robots-Tag`, y publica un
+`robots.txt` con `Disallow: /`. Estas directivas evitan indexación normal, pero
+no impiden que un robot visite una URL. Para que el entorno no sea accesible
+desde Internet, protege el subdominio desde el panel de hosting con contraseña
+HTTP o una lista de IP permitidas. Mantén ambas barreras hasta que se decida una
+puesta en producción explícita.
+
 No se versionan el núcleo de WordPress, `wp-config.php`, medios, la base de datos, credenciales ni los assets generados. Hay que ejecutar `pnpm build` antes de cada subida del tema. No se requiere Node.js en el hosting.
 
 ## Despliegue por FTP

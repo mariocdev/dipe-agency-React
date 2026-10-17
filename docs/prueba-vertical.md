@@ -2,6 +2,11 @@
 
 Ejecutar después de instalar WordPress, activar `dipe-core` y compilar/activar el tema.
 
+Antes de la prueba, confirma en **Ajustes > Lectura** que sigue marcada la opción
+para disuadir a los motores de búsqueda. Comprueba también `robots.txt`, el meta
+robots de la página y la cabecera `X-Robots-Tag`; no sustituyen la protección por
+contraseña o lista de IP del hosting en un entorno de pruebas.
+
 1. En **Muestras > Añadir nueva**, crea y publica dos elementos con título, extracto, imagen destacada, cliente y URL externa opcional.
 2. Visita `/muestras/`: deben aparecer ambos elementos, sus imágenes (si existen) y enlaces de detalle.
 3. Abre cada detalle y después recarga directamente la URL: WordPress debe responder 200 y React debe mostrar el mismo elemento.
