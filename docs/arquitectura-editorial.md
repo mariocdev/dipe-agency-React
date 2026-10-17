@@ -1,6 +1,6 @@
 # Dipe Agency — propuesta editorial y de plugins
 
-Estado: propuesta para definir con los diseños. WordPress, `dipe-core` y el tema React ya están instalados en el entorno de pruebas. **El contenido editable en WordPress son entradas y CPT; los metadatos SEO de todas las URL también se editarán allí.** Las páginas corporativas, su texto, imágenes fijas, menú y pie se mantienen en código React/tema y se versionan en Git. El SEO se deja preparado, sin convertirlo ahora en la prioridad de maquetación.
+Estado: propuesta para definir con los diseños. WordPress, `dipe-core` y el tema React ya están instalados en el entorno de pruebas. **El contenido editable en WordPress son entradas y CPT; los metadatos SEO de todas las URL también se editarán allí.** Las páginas corporativas, su texto e imágenes fijas se mantienen en código React/tema y se versionan en Git. La estructura de cabecera y pie sigue en código, con la excepción posterior de [logo y menús editables desde WordPress](maquetacion-cabecera-footer.md). El SEO se deja preparado, sin convertirlo ahora en la prioridad de maquetación.
 
 ## Plugins
 
@@ -27,7 +27,7 @@ No instalar todavía plugins de CPT, redirecciones, caché o copias de seguridad
 | `/trabaja-con-nosotros/` | Página WordPress solo como ancla de URL/SEO | Diseño y textos en código React; backend de candidatura en WordPress. Crear CPT `dipe_oferta` solo cuando haya vacantes publicables. |
 | `/blog/` y entrada | `post` nativo | Categorías, extracto, imagen destacada, contenido Gutenberg y plantilla React de archivo/detalle. |
 
-Crear una página WordPress para cada ruta corporativa fija **solo como ancla de permalink y SEO**; deshabilitar su editor de contenido y no leer su cuerpo desde React. Así el diseño/texto sigue exclusivamente en código y la ficha SEO puede actualizarse desde `wp-admin` con el proveedor que elijamos. Las taxonomías personalizadas se añaden cuando haya una necesidad real de filtros. Las relaciones ACF usarán IDs de entradas, no títulos copiados. Menú, pie y textos introductorios de los archivos se mantienen en código. El contenido de las tarjetas y detalles proviene de posts/CPT.
+Crear una página WordPress para cada ruta corporativa fija **solo como ancla de permalink y SEO**; deshabilitar su editor de contenido y no leer su cuerpo desde React. Así el diseño/texto sigue exclusivamente en código y la ficha SEO puede actualizarse desde `wp-admin` con el proveedor que elijamos. Las taxonomías personalizadas se añaden cuando haya una necesidad real de filtros. Las relaciones ACF usarán IDs de entradas, no títulos copiados. La estructura del menú, pie y los textos introductorios de los archivos se mantienen en código; los enlaces del menú y del pie, y el logo, se administran en WordPress. El contenido de las tarjetas y detalles proviene de posts/CPT.
 
 ## Reglas de ACF y maquetación
 
@@ -46,7 +46,7 @@ Crear una página WordPress para cada ruta corporativa fija **solo como ancla de
 
 ## Siguiente iteración
 
-Entregar diseños de Home, un archivo y un detalle para fijar componentes. Implementar primero **Home en código** y **un servicio completo** (admin → ACF/REST → React), dejando la página ancla y el punto de integración SEO previstos. Revisar ambos patrones y reutilizarlos para el resto.
+Implementar primero [la cabecera](maquetacion-cabecera-footer.md), revisar el resultado y hacer el pie en la iteración siguiente; sus diseños ya se han entregado. Centralizar colores, fuentes y medidas compartidas en `frontend/src/tokens.css`. Después, entregar diseños de Home, un archivo y un detalle para fijar componentes; implementar **Home en código** y **un servicio completo** (admin → ACF/REST → React), dejando la página ancla y el punto de integración SEO previstos. Revisar ambos patrones y reutilizarlos para el resto.
 
 ## Referencias
 

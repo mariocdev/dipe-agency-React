@@ -1,6 +1,6 @@
 # Dipe Agency
 
-Base para una web corporativa con React + Bootstrap como interfaz pública. WordPress gestiona entradas y CPT; Home, Quiénes somos, Contacto, Trabaja con nosotros, navegación y pie se mantienen en código. Los metadatos SEO de todas las URL deberán poder editarse desde WordPress.
+Base para una web corporativa con React + Bootstrap como interfaz pública. WordPress gestiona entradas y CPT; Home, Quiénes somos, Contacto y Trabaja con nosotros se mantienen en código. La estructura de navegación y pie se implementa en React, con menús y logo editables desde WordPress. Los metadatos SEO de todas las URL deberán poder editarse desde WordPress.
 
 ## Estructura
 
@@ -9,7 +9,7 @@ Base para una web corporativa con React + Bootstrap como interfaz pública. Word
 - `wp-content/themes/dipe-react/`: tema ligero que sirve las URL de WordPress y carga el build de React.
 - `docs/`: decisiones de contenido y comprobaciones de la prueba vertical.
 
-La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md).
+La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md). La siguiente tarea es [la cabecera; el pie viene después](docs/maquetacion-cabecera-footer.md). Los valores visuales compartidos están en `frontend/src/tokens.css`.
 
 ## Requisitos locales
 
@@ -41,6 +41,15 @@ WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
 3. En **Ajustes > Enlaces permanentes**, guarda una estructura distinta de “Simple”.
 4. Ejecuta `pnpm build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
 5. Sigue [la prueba vertical](docs/prueba-vertical.md) antes de añadir páginas definitivas.
+
+### Administración de la cabecera
+
+En **Apariencia → Menús**, edita las ubicaciones “Cabecera: menú superior” y
+“Cabecera: menú principal”; arrastra un elemento ligeramente a la derecha para
+crear un submenú. La clase CSS `menu-cta` convierte un elemento del menú
+principal en el botón naranja. Cambia el logo en **Apariencia → Personalizar →
+Identidad del sitio** y el favicon/Site Icon en **Ajustes → Generales** (la ruta
+puede variar según la versión de WordPress).
 
 ### Entorno no indexable
 
