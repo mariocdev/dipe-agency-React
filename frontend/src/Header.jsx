@@ -34,7 +34,7 @@ function PrimaryItem({ item, openItem, setOpenItem }) {
         aria-label={`Abrir submenú de ${item.title}`}
         onClick={() => setOpenItem(isOpen ? null : item.id)}
       >
-        <span aria-hidden="true">⌄</span>
+        <span aria-hidden="true" />
       </button>}
     </div>
     {hasChildren && <ul className="dipe-header__submenu" id={submenuId}>

@@ -1,17 +1,17 @@
-# Encargo para Terra: cabecera ahora, pie después
+# Encargo de cabecera y pie globales
 
-Implementa esta iteración sobre el estado actual de `main`: **solo la cabecera global** según [su captura](referencias/cabecera.png). El [pie](referencias/footer.png) será la iteración inmediatamente siguiente; sus requisitos quedan aquí preparados, pero **no lo maquetes ni crees sus menús todavía**. Las marcas azules de las capturas son artefactos de selección del diseño; no forman parte de la interfaz. No maquetes todavía las páginas interiores.
+La cabecera global ya se ha implementado según [su captura](referencias/cabecera.png), y el pie según [su referencia](referencias/footer.png). Gordita ya se carga desde los archivos OTF aportados por el usuario, como explica la [guía visual](guia-visual.md). Las marcas azules de las capturas son artefactos de selección del diseño; no forman parte de la interfaz. No maquetes todavía las páginas interiores.
 
 ## Tokens visuales compartidos
 
-Los valores confirmados están guardados en `frontend/src/tokens.css`, ya importado por `frontend/src/main.jsx` después de Bootstrap. **Usa esas variables en la cabecera y después en el pie y las demás páginas; no repitas los hexadecimales ni la pila tipográfica en cada componente.** Incluye naranja `#FF8600`, tinta `#1D1D1D`, negro `#020202`, blanco, Gordita con fallback, ancho interior del 80 % y sombra de cabecera. Los tamaños/pesos específicos de menú van en sus reglas de componente; incorpora nuevos valores globales al archivo de tokens solo cuando sean recurrentes o estén confirmados. No fijas como token medidas deducidas únicamente de la captura.
+Los valores confirmados están guardados en `frontend/src/tokens.css`, ya importado por `frontend/src/main.jsx` después de Bootstrap. **Usa esas variables en la cabecera y después en el pie y las demás páginas; no repitas los hexadecimales ni la pila tipográfica en cada componente.** Incluye la [paleta y escala tipográfica](guia-visual.md), el negro específico de la cabecera `#020202`, el ancho interior del 80 % y su sombra. Añade nuevos valores globales cuando sean recurrentes o estén confirmados. No fijes como token medidas deducidas únicamente de la captura.
 
 ## Alcance y fuente de datos
 
 - La estructura, los estilos y el comportamiento responsive viven en React/CSS. Las páginas corporativas continúan maquetadas por código.
 - **Excepción editorial acordada:** los enlaces de la cabecera son menús nativos editables desde WordPress; el logo se cambia desde la identidad del sitio. En la siguiente iteración, se aplicará el mismo patrón a los enlaces del pie. No usar Elementor, ACF ni otro maquetador para estos elementos.
 - El favicon se gestiona con el **Site Icon nativo de WordPress**; no crear un campo ACF duplicado. Comprobar que `wp_head()` sigue presente en el tema.
-- No hay archivos del logo ni de la fuente Gordita en el repositorio. Preparar una sustitución de texto accesible mientras no exista logo configurado; no inventar un logotipo ni descargar una fuente sin licencia. Dejar `font-family: Gordita, ...` con una alternativa de sistema, y documentar cómo añadir los archivos `.woff2` cuando se entreguen.
+- El logo visible en el servidor está gestionado desde WordPress. Los archivos Gordita OTF aportados por el usuario se cargan mediante `fonts.css`; comprobar la [licencia web y el futuro kit WOFF2](guia-visual.md) antes de producción.
 - Los enlaces iniciales de navegación deben tener `href="#"`, según la indicación actual. Conserva las URL que el editor cambie más adelante en WordPress.
 
 ## Cabecera
@@ -23,7 +23,7 @@ Dos bandas de ancho completo. El contenido interior ocupa el **80 % del ancho di
 3. Los tres primeros elementos principales tienen submenú. Texto de submenú blanco, Gordita, 14 px, peso 400; panel oscuro con contraste suficiente, separación y estados hover/focus visibles. Hijos iniciales: para Desarrollo Web, los cuatro servicios de desarrollo enumerados en el pie; para Transformación Digital, los tres servicios digitales; para Marketing Online, los cuatro servicios de marketing. Todos sus enlaces empiezan con `#`.
 4. En móvil, el menú principal se abre con control tipo hamburguesa, con `aria-expanded` y nombre accesible. Los submenús deben abrirse por clic/teclado, además de hover en escritorio. Mantener banda superior visible y permitir que sus enlaces se ajusten en líneas si hace falta. Respetar el orden de tabulación y Escape para cerrar el menú/submenú.
 
-## Próxima iteración: pie (no implementar aún)
+## Pie global implementado
 
 Fondo carbón oscuro próximo a `#1D1D1D`, a confirmar cuando haya archivo de diseño original. Interior centrado del 80 % en escritorio, con adaptación móvil. Texto blanco; viñetas de enlaces naranja `#FF8600`. Usar Gordita y pesos visualmente equivalentes a la captura; **no inventar tamaños exactos que no se han facilitado**.
 
@@ -35,7 +35,7 @@ Fondo carbón oscuro próximo a `#1D1D1D`, a confirmar cuando haya archivo de di
   4. `Sobre dipe`: `Agencia de desarrollo web`; `Blog`; `Contacto`.
 - **Franja inferior:** línea divisoria fina; izquierda `© {año actual} Todos los derechos reservados.`; derecha enlaces `Aviso legal | Política de privacidad | Política de cookies`. El año de la captura (`2025`) era el del diseño, así que generarlo dinámicamente. En móvil, apilar bloques y evitar scroll horizontal.
 
-Al abordar esta iteración, crear sus cinco ubicaciones de menú de WordPress y poner inicialmente `#` en los enlaces del pie. El teléfono y el email pueden aparecer como texto. Reutilizar el logo y los tokens de la cabecera; si se confirma un color distinto para el fondo, añadirlo como token en vez de dejar un hexadecimal disperso.
+El tema registra las cinco ubicaciones de menú de WordPress (`footer_web`, `footer_digital`, `footer_marketing`, `footer_about` y `footer_legal`) y crea sus menús de ejemplo con `#` solo si aún no existen. Teléfono, correo y dirección forman parte del componente global. El logo del pie es independiente: se configura en «Apariencia → Personalizar → Identidad del sitio», debajo del logo del sitio. El fondo se expresa mediante el token semántico `--dipe-color-footer`.
 
 ## Integración WordPress ↔ React para la cabecera
 

@@ -17,8 +17,11 @@ de inicio” automáticamente.
 | Título | WordPress | Sí | Título de la tarjeta y del detalle |
 | Imagen de tarjeta de inicio | ACF (`dipe_project_home_card_image`) | Sí | Imagen de la tarjeta en la Home, archivo y detalle temporal |
 
-La imagen se devuelve como objeto ACF y está expuesta en la REST API. React la
-consume desde `acf.dipe_project_home_card_image.url`.
+La imagen está expuesta en la REST API. ACF devuelve por defecto el formato
+ligero, que para imágenes puede ser solo el ID aunque el campo esté configurado
+para devolver un array. React consulta los proyectos con `acf_format=standard`
+para recibir `acf.dipe_project_home_card_image.url`. Si esa estructura falta,
+utiliza el campo público `dipe_project_card_image` del plugin cuando tenga URL.
 
 ## Comprobación
 

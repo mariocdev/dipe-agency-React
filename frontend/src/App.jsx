@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { getProject, getProjects, projectHomeCardImage, rendered } from './api';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { siteConfig, sitePath } from './site';
+
+const Home = lazy(() => import('./Home').then((module) => ({ default: module.Home })));
+const BlogArchive = lazy(() => import('./BlogPages').then((module) => ({ default: module.BlogArchive })));
+const BlogPost = lazy(() => import('./BlogPages').then((module) => ({ default: module.BlogPost })));
 
 function SiteLink({ href, children, className }) {
   return <a className={className} href={sitePath(href)}>{children}</a>;
@@ -11,6 +16,7 @@ function Shell({ children }) {
   return <>
     <Header />
     <main>{children}</main>
+    <Footer />
   </>;
 }
 
@@ -20,15 +26,6 @@ function Loading() {
 
 function Failure({ error }) {
   return <div className="alert alert-danger" role="alert">No se ha podido cargar el contenido. {error.message}</div>;
-}
-
-function Home() {
-  return <section className="container py-5">
-    <p className="text-uppercase text-secondary small fw-semibold">Dipe Agency</p>
-    <h1 className="display-5">Proyectos seleccionados</h1>
-    <p className="lead col-lg-8">Esta sección conecta la home con los proyectos publicados en WordPress. El diseño definitivo llegará con las piezas visuales.</p>
-    <Projects limit={3} compact />
-  </section>;
 }
 
 function ProjectCard({ item }) {
@@ -97,9 +94,14 @@ export function App() {
   const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
   const path = (basePath && currentPath.startsWith(basePath) ? currentPath.slice(basePath.length) : currentPath).replace(/\/+$/, '') || '/';
   const projectMatch = path.match(/^\/proyectos\/([^/]+)$/);
+  const postMatch = path.match(/^\/blog\/([^/]+)$/);
+  const categoryMatch = path.match(/^\/categoria\/(.+)$/);
   let page = <NotFound />;
   if (path === '/') page = <Home />;
   else if (path === '/proyectos') page = <ProjectsPage />;
   else if (projectMatch) page = <ProjectDetail slug={decodeURIComponent(projectMatch[1])} />;
-  return <Shell>{page}</Shell>;
+  else if (path === '/blog') page = <BlogArchive />;
+  else if (postMatch) page = <BlogPost slug={decodeURIComponent(postMatch[1])} />;
+  else if (categoryMatch) page = <BlogArchive categorySlug={decodeURIComponent(categoryMatch[1].split('/').at(-1))} />;
+  return <Shell><Suspense fallback={<Loading />}>{page}</Suspense></Shell>;
 }

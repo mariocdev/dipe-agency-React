@@ -9,7 +9,11 @@ Base para una web corporativa con React + Bootstrap como interfaz pública. Word
 - `wp-content/themes/dipe-react/`: tema ligero que sirve las URL de WordPress y carga el build de React.
 - `docs/`: decisiones de contenido y comprobaciones de la prueba vertical.
 
-La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md). La siguiente tarea es [la cabecera; el pie viene después](docs/maquetacion-cabecera-footer.md). Los valores visuales compartidos están en `frontend/src/tokens.css`.
+La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md). La cabecera y el pie están implementados según [su especificación](docs/maquetacion-cabecera-footer.md). Los valores visuales compartidos están en `frontend/src/tokens.css` y se explican en la [guía visual](docs/guia-visual.md). Para retomar el trabajo, empezar por [el plan actualizado](PLAN_PARA_TERRA.md) y [las directrices](AGENTS.md).
+
+Las entradas usan `/blog/{slug}/`, las categorías `/categoria/{slug}/` y el archivo `/blog/`; los detalles de configuración y entrega están en [rutas del blog](docs/blog-rutas.md).
+
+**Revisión acordada:** el usuario sube por FTP y comprueba los cambios en el servidor. Los agentes no hacen comprobaciones locales ni pruebas visuales por iniciativa propia. `pnpm build` se usa una vez cuando cambia el front para generar los assets de entrega; no es una revisión funcional. Las listas de comprobación de documentos antiguos son referencias para la revisión posterior del usuario.
 
 ## Requisitos locales
 
@@ -33,6 +37,9 @@ WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
 
 `pnpm build` escribe los recursos versionados y su manifiesto directamente en
 `wp-content/themes/dipe-react/assets/`. Esos recursos se suben por FTP junto con el tema.
+El build incluye también las tres fuentes Gordita OTF usadas ahora por la
+cabecera. Consulta la [guía visual](docs/guia-visual.md) antes de sustituirlas
+por WOFF2 o publicar fuera del entorno de pruebas; el ZIP original no se sube por FTP.
 
 ## Instalación en WordPress
 
@@ -40,7 +47,7 @@ WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
 2. Copia `wp-content/themes/dipe-react` a `wp-content/themes/` y activa el tema.
 3. En **Ajustes > Enlaces permanentes**, guarda una estructura distinta de “Simple”.
 4. Ejecuta `pnpm build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
-5. Sigue [la prueba vertical](docs/prueba-vertical.md) antes de añadir páginas definitivas.
+5. Sube los archivos necesarios por FTP y comunica al agente los resultados de la revisión en el servidor; [la prueba vertical anterior](docs/prueba-vertical.md) documenta el CPT de ensayo ya retirado.
 
 ### Administración de la cabecera
 
@@ -77,4 +84,4 @@ Antes de publicar: activa HTTPS, realiza una copia de seguridad, comprueba la UR
 
 ## Estado actual
 
-WordPress está instalado con el tema y `dipe-core` activos en el entorno de pruebas. La prueba vertical está preparada en código; faltan los diseños y contenidos definitivos. Verificar en el WordPress real los puntos de [la prueba vertical](docs/prueba-vertical.md) antes de darla por cerrada.
+WordPress está instalado con el tema y `dipe-core` activos en el entorno de pruebas. La prueba vertical antigua de `dipe_item` se validó y ese CPT se retiró; el flujo de `dipe_proyecto` sigue pendiente de verificación completa en el servidor. Cabecera, pie y varias secciones de Home están montados; quedan páginas y contenidos definitivos. Ver [plan](PLAN_PARA_TERRA.md).

@@ -2,9 +2,20 @@
   /* Identidad visual compartida: cabecera ahora, pie y páginas después. */
   --dipe-color-orange: #ff8600;
   --dipe-color-ink: #1d1d1d;
+  --dipe-color-surface: #f6f6f6;
   --dipe-color-black: #020202;
-  --dipe-color-white: #fff;
+  --dipe-color-white: #ffffff;
+  --dipe-color-footer: var(--dipe-color-ink);
   --dipe-font-primary: 'Gordita', Arial, sans-serif;
+  --dipe-font-weight-regular: 400;
+  --dipe-font-weight-medium: 500;
+  --dipe-font-weight-bold: 700;
+  --dipe-font-size-h1: 45px;
+  --dipe-font-size-h2: 38px;
+  --dipe-font-size-h3: 20px;
+  --dipe-font-size-body: 18px;
+  --dipe-font-size-small: 14px;
+  --dipe-font-size-alternative: 24px;
   --dipe-content-width: 80%;
   --dipe-header-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
 }

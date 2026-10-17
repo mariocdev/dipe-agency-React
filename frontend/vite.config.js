@@ -6,6 +6,9 @@ export default defineConfig(({ mode }) => {
   const wpDevUrl = loadEnv(mode, import.meta.dirname, 'WP_').WP_DEV_URL;
 
   return {
+    // El CSS se sirve desde el tema de WordPress, no desde la raíz del dominio.
+    // Las URLs relativas conservan juntos cada bundle y sus fuentes versionadas.
+    base: './',
     plugins: [react()],
     server: wpDevUrl ? {
       proxy: {
