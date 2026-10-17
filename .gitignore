@@ -1,0 +1,30 @@
+# Dependencies and local environment
+node_modules/
+.env
+.env.*
+!.env.example
+
+# WordPress local configuration and generated content
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backups/
+*.sql
+*.sqlite
+
+# WordPress core (only our custom plugin and theme are versioned)
+/wp-admin/
+/wp-includes/
+/wp-*.php
+/index.php
+/license.txt
+/readme.html
+
+# Build and editor artifacts
+frontend/dist/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
