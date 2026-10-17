@@ -1,0 +1,53 @@
+# Dipe Agency
+
+Base para una web corporativa con WordPress como CMS y React + Bootstrap como interfaz pública.
+
+## Estructura
+
+- `frontend/`: código React y configuración de Vite. Se compila localmente.
+- `wp-content/plugins/dipe-core/`: modelo de contenido y ajustes que no deben depender del tema.
+- `wp-content/themes/dipe-react/`: tema ligero que sirve las URL de WordPress y carga el build de React.
+- `docs/`: decisiones de contenido y comprobaciones de la prueba vertical.
+
+## Requisitos locales
+
+- PHP 8.2 o superior y WordPress actualizado para comprobar la integración.
+- Node.js 20 LTS o superior para crear el bundle.
+- Una instalación WordPress independiente con enlaces permanentes activados.
+
+## Desarrollo y compilación
+
+```powershell
+cd frontend
+npm install
+npm run dev
+npm run build
+```
+
+`npm run build` escribe los recursos versionados y su manifiesto directamente en
+`wp-content/themes/dipe-react/assets/`. Esos recursos se suben por FTP junto con el tema.
+
+## Instalación en WordPress
+
+1. Copia `wp-content/plugins/dipe-core` a `wp-content/plugins/` y actívalo.
+2. Copia `wp-content/themes/dipe-react` a `wp-content/themes/` y activa el tema.
+3. En **Ajustes > Enlaces permanentes**, guarda una estructura distinta de “Simple”.
+4. Ejecuta `npm run build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
+5. Sigue [la prueba vertical](docs/prueba-vertical.md) antes de añadir páginas definitivas.
+
+No se versionan el núcleo de WordPress, `wp-config.php`, medios, la base de datos ni credenciales. No se requiere Node.js en el hosting.
+
+## Despliegue por FTP
+
+Sube únicamente las dos carpetas personalizadas y los assets generados:
+
+```text
+wp-content/plugins/dipe-core/
+wp-content/themes/dipe-react/
+```
+
+Antes de publicar: activa HTTPS, realiza una copia de seguridad, comprueba la URL canónica, regenera enlaces permanentes y prueba una publicación/despublicación. Con Varnish activo, configura un TTL corto o una purga al publicar para no servir contenido antiguo.
+
+## Estado actual
+
+La prueba vertical está preparada en código. Aún no hay instalación de WordPress, diseños ni contenidos definitivos, por lo que la publicación de los dos elementos de ejemplo y la comprobación extremo a extremo quedan documentadas para ejecutarse al disponer de WordPress.
