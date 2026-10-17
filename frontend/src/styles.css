@@ -1,3 +1,291 @@
-body { background: #fff; color: #1d1d1f; }
+body {
+  background: var(--dipe-color-white);
+  color: var(--dipe-color-ink);
+  font-family: var(--dipe-font-primary);
+}
+
+.dipe-header {
+  position: relative;
+  z-index: 100;
+  font-family: var(--dipe-font-primary);
+}
+
+.dipe-header__inner {
+  width: var(--dipe-content-width);
+  margin-inline: auto;
+}
+
+.dipe-header__utility-bar {
+  padding-block: 15px;
+  background: var(--dipe-color-orange);
+}
+
+.dipe-header__utility-list,
+.dipe-header__primary-list,
+.dipe-header__submenu {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dipe-header__utility-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0;
+}
+
+.dipe-header__utility-list li {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dipe-header__utility-list li:not(:last-child)::after {
+  padding-inline: 0.45rem;
+  color: var(--dipe-color-ink);
+  content: '|';
+}
+
+.dipe-header__utility-list .dipe-header__link {
+  color: var(--dipe-color-ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration: none;
+}
+
+.dipe-header__main-bar {
+  background: var(--dipe-color-black);
+  box-shadow: var(--dipe-header-shadow);
+}
+
+.dipe-header__main-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+}
+
+.dipe-header__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  color: var(--dipe-color-white);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.dipe-header__brand img {
+  display: block;
+  width: auto;
+  max-width: 12rem;
+  max-height: 2.25rem;
+}
+
+.dipe-header__primary-list {
+  display: flex;
+  align-items: center;
+  gap: 1.35rem;
+}
+
+.dipe-header__primary-item {
+  position: relative;
+}
+
+.dipe-header__item-row {
+  display: flex;
+  align-items: center;
+}
+
+.dipe-header__link,
+.dipe-header__submenu-toggle,
+.dipe-header__menu-toggle {
+  font: inherit;
+}
+
+.dipe-header__primary-list > .dipe-header__primary-item .dipe-header__link {
+  color: var(--dipe-color-white);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: normal;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dipe-header__submenu-toggle {
+  padding: 0.15rem 0 0.15rem 0.35rem;
+  border: 0;
+  color: var(--dipe-color-white);
+  background: transparent;
+  cursor: pointer;
+}
+
+.dipe-header__submenu-toggle span {
+  display: block;
+  transition: transform 160ms ease;
+}
+
+.dipe-header__primary-item.is-open .dipe-header__submenu-toggle span {
+  transform: rotate(180deg);
+}
+
+.dipe-header__primary-list > .dipe-header__primary-item .dipe-header__link.menu-cta {
+  display: inline-block;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.2rem;
+  color: var(--dipe-color-ink);
+  background: var(--dipe-color-orange);
+}
+
+.dipe-header__submenu {
+  position: absolute;
+  top: calc(100% + 1rem);
+  left: -0.75rem;
+  display: none;
+  min-width: 17rem;
+  padding-block: 0.5rem;
+  border: 1px solid var(--dipe-color-ink);
+  background: var(--dipe-color-black);
+  box-shadow: var(--dipe-header-shadow);
+}
+
+.dipe-header__primary-item:hover > .dipe-header__submenu,
+.dipe-header__primary-item:focus-within > .dipe-header__submenu,
+.dipe-header__primary-item.is-open > .dipe-header__submenu {
+  display: block;
+}
+
+.dipe-header__submenu .dipe-header__link {
+  display: block;
+  padding: 0.65rem 1rem;
+  color: var(--dipe-color-white);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.dipe-header__link:hover,
+.dipe-header__link:focus-visible,
+.dipe-header__submenu-toggle:hover,
+.dipe-header__submenu-toggle:focus-visible,
+.dipe-header__menu-toggle:hover,
+.dipe-header__menu-toggle:focus-visible {
+  outline: 2px solid var(--dipe-color-orange);
+  outline-offset: 3px;
+}
+
+.dipe-header__submenu .dipe-header__link:hover,
+.dipe-header__submenu .dipe-header__link:focus-visible {
+  color: var(--dipe-color-ink);
+  background: var(--dipe-color-orange);
+}
+
+.dipe-header__menu-toggle {
+  display: none;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--dipe-color-white);
+  border-radius: 0.2rem;
+  color: var(--dipe-color-white);
+  background: transparent;
+  cursor: pointer;
+}
+
 .sample-image { aspect-ratio: 16 / 9; object-fit: cover; }
 .detail-image { width: 100%; max-height: 32rem; object-fit: cover; }
+
+@media (max-width: 1100px) {
+  .dipe-header__primary-list {
+    gap: 0.8rem;
+  }
+
+  .dipe-header__primary-list > .dipe-header__primary-item .dipe-header__link {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 860px) {
+  .dipe-header__inner {
+    width: min(92%, 72rem);
+  }
+
+  .dipe-header__utility-list {
+    justify-content: flex-end;
+  }
+
+  .dipe-header__main-inner {
+    min-height: 64px;
+  }
+
+  .dipe-header__menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+
+  .dipe-header__primary-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    padding: 1rem;
+    background: var(--dipe-color-black);
+    box-shadow: var(--dipe-header-shadow);
+  }
+
+  .dipe-header__primary-nav.is-open {
+    display: block;
+  }
+
+  .dipe-header__primary-list {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .dipe-header__primary-item {
+    border-bottom: 1px solid var(--dipe-color-ink);
+  }
+
+  .dipe-header__item-row {
+    justify-content: space-between;
+  }
+
+  .dipe-header__primary-list > .dipe-header__primary-item .dipe-header__link {
+    display: block;
+    flex: 1;
+    padding-block: 0.8rem;
+  }
+
+  .dipe-header__submenu {
+    position: static;
+    min-width: 0;
+    margin-bottom: 0.5rem;
+    border-inline: 0;
+    box-shadow: none;
+  }
+
+  .dipe-header__primary-item:hover > .dipe-header__submenu {
+    display: none;
+  }
+
+  .dipe-header__primary-item:focus-within > .dipe-header__submenu,
+  .dipe-header__primary-item.is-open > .dipe-header__submenu {
+    display: block;
+  }
+}
+
+@media (max-width: 420px) {
+  .dipe-header__utility-list {
+    justify-content: flex-start;
+  }
+
+  .dipe-header__utility-list .dipe-header__link {
+    font-size: 13px;
+  }
+}

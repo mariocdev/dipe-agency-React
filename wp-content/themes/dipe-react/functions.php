@@ -1,12 +1,197 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+const DIPE_REACT_THEME_VERSION = '0.3.0';
+
 function dipe_react_setup() {
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'custom-logo', array( 'flex-height' => true, 'flex-width' => true ) );
 	add_theme_support( 'html5', array( 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' ) );
+	register_nav_menus(
+		array(
+			'utility' => __( 'Cabecera: menú superior', 'dipe-react' ),
+			'primary' => __( 'Cabecera: menú principal', 'dipe-react' ),
+		)
+	);
 }
 add_action( 'after_setup_theme', 'dipe_react_setup' );
+
+function dipe_react_navigation_definitions() {
+	return array(
+		'utility' => array(
+			'name'  => 'Dipe — cabecera superior',
+			'items' => array(
+				array( 'title' => 'Agencia Desarrollo Web' ),
+				array( 'title' => 'Proyectos Web' ),
+				array( 'title' => 'Blog' ),
+			),
+		),
+		'primary' => array(
+			'name'  => 'Dipe — cabecera principal',
+			'items' => array(
+				array(
+					'title'    => 'Desarrollo Web',
+					'children' => array(
+						array( 'title' => 'Desarrollo web con WordPress' ),
+						array( 'title' => 'Desarrollo web con PrestaShop' ),
+						array( 'title' => 'Desarrollo de aplicaciones web (custom)' ),
+						array( 'title' => 'Apps móviles (iOS · Android · PWA)' ),
+					),
+				),
+				array(
+					'title'    => 'Transformación Digital',
+					'children' => array(
+						array( 'title' => 'Odoo' ),
+						array( 'title' => 'Integraciones y automatizaciones' ),
+						array( 'title' => 'Consultoría tecnológica' ),
+					),
+				),
+				array(
+					'title'    => 'Marketing Online',
+					'children' => array(
+						array( 'title' => 'SEO: estrategia, técnica y contenidos' ),
+						array( 'title' => 'SEM: Google Ads & Social Ads' ),
+						array( 'title' => 'Gestión de redes sociales para empresas' ),
+						array( 'title' => 'Inbound Marketing & automatización' ),
+					),
+				),
+				array( 'title' => 'Contacto' ),
+				array( 'title' => '¿Hablamos?', 'classes' => array( 'menu-cta' ) ),
+			),
+		),
+	);
+}
+
+function dipe_react_add_navigation_item( $menu_id, $item, $parent_id = 0 ) {
+	$item_id = wp_update_nav_menu_item(
+		$menu_id,
+		0,
+		array(
+			'menu-item-title'     => $item['title'],
+			'menu-item-url'       => '#',
+			'menu-item-status'    => 'publish',
+			'menu-item-parent-id' => $parent_id,
+			'menu-item-classes'   => $item['classes'] ?? array(),
+		)
+	);
+
+	if ( is_wp_error( $item_id ) || empty( $item['children'] ) ) {
+		return;
+	}
+
+	foreach ( $item['children'] as $child ) {
+		dipe_react_add_navigation_item( $menu_id, $child, $item_id );
+	}
+}
+
+function dipe_react_seed_navigation() {
+	if ( DIPE_REACT_THEME_VERSION === get_option( 'dipe_react_navigation_version' ) ) {
+		return;
+	}
+
+	$locations   = get_nav_menu_locations();
+	$definitions = dipe_react_navigation_definitions();
+
+	foreach ( $definitions as $location => $definition ) {
+		$menu    = wp_get_nav_menu_object( $definition['name'] );
+		$created = false;
+
+		if ( ! $menu ) {
+			$menu_id = wp_create_nav_menu( $definition['name'] );
+			if ( is_wp_error( $menu_id ) ) {
+				continue;
+			}
+			$menu    = wp_get_nav_menu_object( $menu_id );
+			$created = true;
+		}
+
+		if ( $created ) {
+			foreach ( $definition['items'] as $item ) {
+				dipe_react_add_navigation_item( $menu->term_id, $item );
+			}
+		}
+
+		if ( empty( $locations[ $location ] ) ) {
+			$locations[ $location ] = $menu->term_id;
+		}
+	}
+
+	set_theme_mod( 'nav_menu_locations', $locations );
+	update_option( 'dipe_react_navigation_version', DIPE_REACT_THEME_VERSION );
+}
+add_action( 'admin_init', 'dipe_react_seed_navigation' );
+add_action( 'after_switch_theme', 'dipe_react_seed_navigation' );
+
+function dipe_react_safe_navigation_url( $url ) {
+	$url = trim( (string) $url );
+	if ( '#' === $url ) {
+		return '#';
+	}
+
+	$scheme  = wp_parse_url( $url, PHP_URL_SCHEME );
+	$allowed = array( 'http', 'https', 'mailto', 'tel' );
+	if ( $scheme && ! in_array( strtolower( $scheme ), $allowed, true ) ) {
+		return '#';
+	}
+
+	return esc_url_raw( $url, $allowed );
+}
+
+function dipe_react_menu_tree( $location ) {
+	$locations = get_nav_menu_locations();
+	$menu_id   = $locations[ $location ] ?? 0;
+	if ( ! $menu_id ) {
+		return array();
+	}
+
+	$items = wp_get_nav_menu_items( $menu_id );
+	if ( ! is_array( $items ) ) {
+		return array();
+	}
+
+	$nodes = array();
+	foreach ( $items as $item ) {
+		$nodes[ $item->ID ] = array(
+			'id'       => (int) $item->ID,
+			'title'    => wp_strip_all_tags( $item->title, true ),
+			'url'      => dipe_react_safe_navigation_url( $item->url ),
+			'target'   => '_blank' === $item->target ? '_blank' : '',
+			'classes'  => array_values( array_filter( array_map( 'sanitize_html_class', (array) $item->classes ) ) ),
+			'children' => array(),
+		);
+	}
+
+	$tree = array();
+	foreach ( $items as $item ) {
+		$node_id   = (int) $item->ID;
+		$parent_id = (int) $item->menu_item_parent;
+		if ( $parent_id && isset( $nodes[ $parent_id ] ) ) {
+			$nodes[ $parent_id ]['children'][] = $nodes[ $node_id ];
+		} else {
+			$tree[] = $nodes[ $node_id ];
+		}
+	}
+
+	return $tree;
+}
+
+function dipe_react_logo_data() {
+	$logo_id = (int) get_theme_mod( 'custom_logo' );
+	$alt     = get_bloginfo( 'name', 'display' );
+	$url     = '';
+
+	if ( $logo_id ) {
+		$url        = wp_get_attachment_image_url( $logo_id, 'full' ) ?: '';
+		$stored_alt = get_post_meta( $logo_id, '_wp_attachment_image_alt', true );
+		$alt        = $stored_alt ? $stored_alt : $alt;
+	}
+
+	return array(
+		'url' => esc_url_raw( $url ),
+		'alt' => wp_strip_all_tags( $alt, true ),
+	);
+}
 
 function dipe_react_manifest() {
 	static $manifest = null;
@@ -53,9 +238,14 @@ function dipe_react_print_client_config() {
 
 	echo '<script id="dipe-react-config">window.dipeSite = ' . wp_json_encode(
 		array(
-			'apiRoot'  => esc_url_raw( rest_url() ),
-			'homeUrl'  => esc_url_raw( home_url( '/' ) ),
-			'basePath' => wp_parse_url( home_url( '/' ), PHP_URL_PATH ) ?: '/',
+			'apiRoot'    => esc_url_raw( rest_url() ),
+			'homeUrl'    => esc_url_raw( home_url( '/' ) ),
+			'basePath'   => wp_parse_url( home_url( '/' ), PHP_URL_PATH ) ?: '/',
+			'logo'       => dipe_react_logo_data(),
+			'navigation' => array(
+				'utility' => dipe_react_menu_tree( 'utility' ),
+				'primary' => dipe_react_menu_tree( 'primary' ),
+			),
 	)
 	) . ';</script>' . "\n";
 }

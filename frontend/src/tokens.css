@@ -1,0 +1,10 @@
+:root {
+  /* Identidad visual compartida: cabecera ahora, pie y páginas después. */
+  --dipe-color-orange: #ff8600;
+  --dipe-color-ink: #1d1d1d;
+  --dipe-color-black: #020202;
+  --dipe-color-white: #fff;
+  --dipe-font-primary: 'Gordita', Arial, sans-serif;
+  --dipe-content-width: 80%;
+  --dipe-header-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
+}

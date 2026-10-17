@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getProject, getProjects, projectHomeCardImage, rendered } from './api';
-
-const config = window.dipeSite || {};
-const basePath = (config.basePath || '/').replace(/\/$/, '');
-
-function sitePath(path = '') {
-  if (/^https?:\/\//i.test(path)) return path;
-  return `${basePath}/${path.replace(/^\//, '')}`.replace(/\/{2,}/g, '/');
-}
+import { Header } from './Header';
+import { siteConfig, sitePath } from './site';
 
 function SiteLink({ href, children, className }) {
   return <a className={className} href={sitePath(href)}>{children}</a>;
@@ -15,12 +9,7 @@ function SiteLink({ href, children, className }) {
 
 function Shell({ children }) {
   return <>
-    <header className="border-bottom bg-white">
-      <nav className="navbar navbar-expand container py-3" aria-label="Principal">
-        <SiteLink href="/" className="navbar-brand fw-bold">Dipe Agency</SiteLink>
-        <SiteLink href="/proyectos/" className="nav-link">Proyectos</SiteLink>
-      </nav>
-    </header>
+    <Header />
     <main>{children}</main>
   </>;
 }
@@ -105,6 +94,7 @@ function NotFound() {
 
 export function App() {
   const currentPath = window.location.pathname;
+  const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
   const path = (basePath && currentPath.startsWith(basePath) ? currentPath.slice(basePath.length) : currentPath).replace(/\/+$/, '') || '/';
   const projectMatch = path.match(/^\/proyectos\/([^/]+)$/);
   let page = <NotFound />;
