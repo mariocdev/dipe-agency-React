@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.9
+ * Version: 0.4.10
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.9';
+const DIPE_CORE_VERSION = '0.4.10';
 const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';

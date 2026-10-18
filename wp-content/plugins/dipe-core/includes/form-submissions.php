@@ -23,7 +23,9 @@ add_action( 'init', 'dipe_core_register_submission_type' );
 
 function dipe_core_submission_form_labels() {
 	return array(
-		'contacto'             => 'Contacto',
+		'contacto'             => 'Contacto internas',
+		'contacto-general'     => 'Contacto',
+		'contacto-servicios'   => 'Contacto Servicios',
 		'presupuesto'          => 'Presupuesto',
 		'trabaja-con-nosotros' => 'Trabaja con nosotros',
 	);
@@ -39,12 +41,13 @@ function dipe_core_submission_status_labels() {
 }
 
 /**
- * Called by a future, validated form handler. Never pass an unvalidated REST body
+ * Called by a validated form handler. Never pass an unvalidated REST body
  * directly to this function. A saved submission survives a mail transport failure.
  */
-function dipe_core_record_submission( $form_type, $fields ) {
-	$form_type = sanitize_key( $form_type );
-	$labels    = dipe_core_submission_form_labels();
+function dipe_core_record_submission( $form_type, $fields, $source_url = '' ) {
+	$form_type  = sanitize_key( $form_type );
+	$source_url = dipe_core_submission_source_url( $source_url );
+	$labels     = dipe_core_submission_form_labels();
 	if ( ! isset( $labels[ $form_type ] ) || ! is_array( $fields ) ) {
 		return new WP_Error( 'dipe_invalid_submission', 'Tipo de solicitud o campos no válidos.' );
 	}
@@ -77,6 +80,7 @@ function dipe_core_record_submission( $form_type, $fields ) {
 				'_dipe_form_type'   => $form_type,
 				'_dipe_mail_status' => 'pending',
 				'_dipe_form_email'  => $email,
+				'_dipe_source_url'  => $source_url,
 			),
 		),
 		true
@@ -99,10 +103,32 @@ function dipe_core_contact_request_value( $params, $key ) {
 function dipe_core_contact_origin_label( $params ) {
 	$origins = array(
 		'home'      => 'Home',
-		'proyectos' => 'Archivo de proyectos',
+		'proyectos' => 'Proyectos',
 	);
 	$origin  = sanitize_key( dipe_core_contact_request_value( $params, 'origen' ) );
-	return $origins[ $origin ] ?? $origins['home'];
+	return $origins[ $origin ] ?? 'No indicado';
+}
+
+/** Keep only a URL on this site, without query parameters or fragments. */
+function dipe_core_submission_source_url( $url ) {
+	$url   = trim( (string) $url );
+	$parts = wp_parse_url( $url );
+	$site  = wp_parse_url( home_url( '/' ) );
+	if ( ! is_array( $parts ) || ! is_array( $site )
+		|| ! in_array( strtolower( $parts['scheme'] ?? '' ), array( 'http', 'https' ), true )
+		|| strtolower( $parts['host'] ?? '' ) !== strtolower( $site['host'] ?? '' )
+		|| isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
+		return '';
+	}
+
+	$port      = (int) ( $parts['port'] ?? ( 'https' === strtolower( $parts['scheme'] ) ? 443 : 80 ) );
+	$site_port = (int) ( $site['port'] ?? ( 'https' === strtolower( $site['scheme'] ?? '' ) ? 443 : 80 ) );
+	if ( $port !== $site_port ) {
+		return '';
+	}
+
+	$path = $parts['path'] ?? '/';
+	return esc_url_raw( strtolower( $parts['scheme'] ) . '://' . $parts['host'] . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' ) . $path );
 }
 
 function dipe_core_contact_rate_limit_key() {
@@ -131,11 +157,15 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 		return new WP_REST_Response( array( 'message' => 'Gracias. Hemos recibido tu mensaje.' ), 201 );
 	}
 
-	$nombre    = sanitize_text_field( dipe_core_contact_request_value( $params, 'nombre' ) );
-	$email     = sanitize_email( dipe_core_contact_request_value( $params, 'email' ) );
-	$telefono  = sanitize_text_field( dipe_core_contact_request_value( $params, 'telefono' ) );
-	$mensaje   = sanitize_textarea_field( dipe_core_contact_request_value( $params, 'mensaje' ) );
-	$origen    = dipe_core_contact_origin_label( $params );
+	$nombre     = sanitize_text_field( dipe_core_contact_request_value( $params, 'nombre' ) );
+	$email      = sanitize_email( dipe_core_contact_request_value( $params, 'email' ) );
+	$telefono   = sanitize_text_field( dipe_core_contact_request_value( $params, 'telefono' ) );
+	$mensaje    = sanitize_textarea_field( dipe_core_contact_request_value( $params, 'mensaje' ) );
+	$origen     = dipe_core_contact_origin_label( $params );
+	$source_url = dipe_core_submission_source_url( dipe_core_contact_request_value( $params, 'url_origen' ) );
+	if ( ! $source_url ) {
+		$source_url = dipe_core_submission_source_url( $request->get_header( 'referer' ) );
+	}
 	$privacidad = filter_var( $params['privacidad'] ?? false, FILTER_VALIDATE_BOOLEAN );
 	$errors    = array();
 	if ( strlen( $nombre ) < 2 || strlen( $nombre ) > 160 ) {
@@ -171,7 +201,8 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 			'mensaje'    => $mensaje,
 			'origen'     => $origen,
 			'privacidad' => 'aceptada',
-		)
+		),
+		$source_url
 	);
 	if ( is_wp_error( $submission ) ) {
 		return new WP_Error( 'dipe_contact_unavailable', 'No se ha podido enviar el mensaje. Inténtalo de nuevo.', array( 'status' => 500 ) );
@@ -180,9 +211,9 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	set_transient( $rate_key, (int) get_transient( $rate_key ) + 1, 15 * MINUTE_IN_SECONDS );
 	$recipients = dipe_core_mail_contact_recipients();
 	$sent_count = 0;
-	$message    = "Nueva solicitud de contacto\n\nPágina de origen: {$origen}\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
+	$message    = "Nueva solicitud de Contacto internas\n\nSección: {$origen}\nURL de origen: " . ( $source_url ?: 'No disponible' ) . "\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
 	foreach ( $recipients as $recipient ) {
-		if ( dipe_core_mail_send( 'team', $recipient, 'Nueva solicitud de contacto · ' . $nombre, $message, array( 'Reply-To: ' . $email ) ) ) {
+		if ( dipe_core_mail_send( 'team', $recipient, 'Nueva solicitud de Contacto internas · ' . $nombre, $message, array( 'Reply-To: ' . $email ) ) ) {
 			$sent_count++;
 		}
 	}
@@ -201,6 +232,14 @@ function dipe_core_submission_admin_url( $args = array() ) {
 	return add_query_arg( array_merge( array( 'page' => 'dipe-solicitudes' ), $args ), admin_url( 'admin.php' ) );
 }
 
+function dipe_core_submission_filter_date( $value ) {
+	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+		return '';
+	}
+	list( $year, $month, $day ) = array_map( 'intval', explode( '-', $value ) );
+	return checkdate( $month, $day, $year ) ? $value : '';
+}
+
 function dipe_core_submission_admin_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para ver las solicitudes.', 'dipe-core' ) );
@@ -215,12 +254,12 @@ function dipe_core_submission_admin_page() {
 	$status_labels = dipe_core_submission_status_labels();
 	$form          = isset( $_GET['form_type'] ) ? sanitize_key( wp_unslash( $_GET['form_type'] ) ) : '';
 	$status        = isset( $_GET['mail_status'] ) ? sanitize_key( wp_unslash( $_GET['mail_status'] ) ) : '';
-	$month         = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : '';
+	$date_from     = isset( $_GET['date_from'] ) ? dipe_core_submission_filter_date( sanitize_text_field( wp_unslash( $_GET['date_from'] ) ) ) : '';
+	$date_to       = isset( $_GET['date_to'] ) ? dipe_core_submission_filter_date( sanitize_text_field( wp_unslash( $_GET['date_to'] ) ) ) : '';
 	$search        = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 	$page          = isset( $_GET['paged'] ) ? max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) : 1;
 	$form          = isset( $form_labels[ $form ] ) ? $form : '';
 	$status        = isset( $status_labels[ $status ] ) ? $status : '';
-	$month         = preg_match( '/^\d{4}-(0[1-9]|1[0-2])$/', $month ) ? $month : '';
 	$query_args    = array(
 		'post_type'      => 'dipe_solicitud',
 		'post_status'    => 'private',
@@ -240,11 +279,16 @@ function dipe_core_submission_admin_page() {
 	if ( $meta_query ) {
 		$query_args['meta_query'] = $meta_query;
 	}
-	if ( $month ) {
-		$query_args['date_query'] = array( array( 'year' => (int) substr( $month, 0, 4 ), 'month' => (int) substr( $month, 5, 2 ) ) );
+	if ( $date_from ) {
+		list( $year, $month, $day ) = array_map( 'intval', explode( '-', $date_from ) );
+		$query_args['date_query'][] = array( 'after' => array( 'year' => $year, 'month' => $month, 'day' => $day ), 'inclusive' => true );
+	}
+	if ( $date_to ) {
+		list( $year, $month, $day ) = array_map( 'intval', explode( '-', $date_to ) );
+		$query_args['date_query'][] = array( 'before' => array( 'year' => $year, 'month' => $month, 'day' => $day ), 'inclusive' => true );
 	}
 	$entries = new WP_Query( $query_args );
-	$filters = array_filter( array( 'form_type' => $form, 'mail_status' => $status, 'month' => $month, 's' => $search ) );
+	$filters = array_filter( array( 'form_type' => $form, 'mail_status' => $status, 'date_from' => $date_from, 'date_to' => $date_to, 's' => $search ) );
 	?>
 	<div class="wrap">
 		<h1>Solicitudes</h1>
@@ -255,7 +299,8 @@ function dipe_core_submission_admin_page() {
 			<select id="dipe-filter-form" name="form_type"><option value="">Todos los formularios</option><?php foreach ( $form_labels as $key => $label ) : ?><option value="<?php echo esc_attr( $key ); ?>" <?php selected( $form, $key ); ?>><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select>
 			<label class="screen-reader-text" for="dipe-filter-status">Estado del correo</label>
 			<select id="dipe-filter-status" name="mail_status"><option value="">Todos los estados</option><?php foreach ( $status_labels as $key => $label ) : ?><option value="<?php echo esc_attr( $key ); ?>" <?php selected( $status, $key ); ?>><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select>
-			<label for="dipe-filter-month">Mes</label> <input id="dipe-filter-month" type="month" name="month" value="<?php echo esc_attr( $month ); ?>">
+			<label for="dipe-filter-from">Desde</label> <input id="dipe-filter-from" type="date" name="date_from" value="<?php echo esc_attr( $date_from ); ?>">
+			<label for="dipe-filter-to">Hasta</label> <input id="dipe-filter-to" type="date" name="date_to" value="<?php echo esc_attr( $date_to ); ?>">
 			<label class="screen-reader-text" for="dipe-filter-search">Buscar solicitudes</label>
 			<input id="dipe-filter-search" type="search" name="s" placeholder="Nombre, correo o texto" value="<?php echo esc_attr( $search ); ?>">
 			<?php submit_button( 'Filtrar', 'secondary', 'submit', false ); ?>
@@ -263,19 +308,23 @@ function dipe_core_submission_admin_page() {
 		</form>
 		<p><?php echo esc_html( number_format_i18n( $entries->found_posts ) ); ?> solicitudes</p>
 		<table class="wp-list-table widefat fixed striped">
-			<thead><tr><th scope="col">Fecha</th><th scope="col">Formulario</th><th scope="col">Solicitud</th><th scope="col">Correo</th><th scope="col">Estado del aviso</th></tr></thead>
+			<thead><tr><th scope="col">Fecha</th><th scope="col">Formulario</th><th scope="col">Solicitud</th><th scope="col">Origen</th><th scope="col">Correo</th><th scope="col">Estado del aviso</th></tr></thead>
 			<tbody>
 			<?php if ( ! $entries->have_posts() ) : ?>
-				<tr><td colspan="5">No hay solicitudes para estos filtros.</td></tr>
+				<tr><td colspan="6">No hay solicitudes para estos filtros.</td></tr>
 			<?php else : foreach ( $entries->posts as $entry ) :
 				$type = get_post_meta( $entry->ID, '_dipe_form_type', true );
 				$mail = get_post_meta( $entry->ID, '_dipe_mail_status', true );
 				$email = get_post_meta( $entry->ID, '_dipe_form_email', true );
+				$source_url = get_post_meta( $entry->ID, '_dipe_source_url', true );
+				$fields = json_decode( $entry->post_content, true );
+				$origin = is_array( $fields ) && isset( $fields['origen'] ) && is_scalar( $fields['origen'] ) ? (string) $fields['origen'] : '';
 				?>
 				<tr>
 					<td><?php echo esc_html( get_the_date( 'd/m/Y H:i', $entry ) ); ?></td>
 					<td><?php echo esc_html( $form_labels[ $type ] ?? $type ); ?></td>
 					<td><a href="<?php echo esc_url( dipe_core_submission_admin_url( array( 'entry' => $entry->ID ) ) ); ?>"><?php echo esc_html( get_the_title( $entry ) ); ?></a></td>
+					<td><?php echo esc_html( $origin ?: '—' ); ?><?php if ( $source_url ) : ?><br><a style="overflow-wrap: anywhere;" href="<?php echo esc_url( $source_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $source_url ); ?></a><?php endif; ?></td>
 					<td><?php echo esc_html( $email ); ?></td>
 					<td><?php echo esc_html( $status_labels[ $mail ] ?? $status_labels['pending'] ); ?></td>
 				</tr>
@@ -302,12 +351,14 @@ function dipe_core_submission_admin_detail( $id ) {
 	$status_labels = dipe_core_submission_status_labels();
 	$type          = get_post_meta( $id, '_dipe_form_type', true );
 	$status        = get_post_meta( $id, '_dipe_mail_status', true );
+	$source_url    = get_post_meta( $id, '_dipe_source_url', true );
 	$fields        = json_decode( $entry->post_content, true );
 	?>
 	<div class="wrap">
 		<a href="<?php echo esc_url( dipe_core_submission_admin_url() ); ?>">← Volver a solicitudes</a>
 		<h1><?php echo esc_html( get_the_title( $entry ) ); ?></h1>
 		<p><strong>Formulario:</strong> <?php echo esc_html( $form_labels[ $type ] ?? $type ); ?> · <strong>Fecha:</strong> <?php echo esc_html( get_the_date( 'd/m/Y H:i', $entry ) ); ?> · <strong>Estado del aviso:</strong> <?php echo esc_html( $status_labels[ $status ] ?? $status_labels['pending'] ); ?></p>
+		<p><strong>URL de origen:</strong> <?php if ( $source_url ) : ?><a href="<?php echo esc_url( $source_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $source_url ); ?></a><?php else : ?>No disponible<?php endif; ?></p>
 		<table class="widefat striped"><tbody>
 		<?php if ( is_array( $fields ) ) : foreach ( $fields as $key => $value ) : ?>
 			<tr><th scope="row" style="width: 220px;"><?php echo esc_html( ucwords( str_replace( '_', ' ', $key ) ) ); ?></th><td><?php echo nl2br( esc_html( is_scalar( $value ) ? (string) $value : '' ) ); ?></td></tr>

@@ -33,6 +33,7 @@ export function ContactSection({ source = 'home', title = '¿Hablamos?', intro =
         privacidad: values.get('privacidad') === 'accepted',
         company: values.get('company'),
         origen: source,
+        url_origen: `${window.location.origin}${window.location.pathname}`,
       });
       form.reset();
       setSubmission({
