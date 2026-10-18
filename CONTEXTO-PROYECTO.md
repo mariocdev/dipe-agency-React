@@ -16,7 +16,7 @@
 
 - La base de Home y Contacto está implementada en el tema React y `dipe-core`: el formulario Contacto registra solicitudes privadas y usa el flujo de correo configurado desde WordPress. El usuario confirmó un envío recibido en Gmail, aunque llegó a spam; esto no confirma la entregabilidad general.
 - La administración de Solicitudes, los ajustes de Correo Dipe, proyectos por CPT/REST, el tratamiento de imágenes ACF y la sección de reseñas con dos opiniones reales repetidas están presentes en el código. Las confirmaciones de servidor siguen limitadas a las indicadas más abajo.
-- El indicador genérico «Cargando contenido» de `App.jsx` se sustituyó por `Loading.jsx` y `Loading.css`: tres barras naranjas y una línea de progreso indeterminada animadas con GSAP cuando hay movimiento permitido. GSAP se carga de forma diferida, la animación se limpia al desmontar el componente y el indicador queda estático si se prefiere movimiento reducido. Se aplica a la carga inicial de vistas y a la carga de proyectos. Pendiente de revisión visual del usuario en el servidor.
+- Tras la primera propuesta de un indicador intermedio, el usuario precisó que quería una **entrada a pantalla completa** que se muestre solo la primera vez en cada pestaña. `IntroAnimation.jsx` y su CSS cubren la web durante una secuencia GSAP de barras naranjas simétricas y terminan con el logo configurado en WordPress en el centro antes de revelar la página. `sessionStorage` evita repetirla al navegar o recargar en esa pestaña; con movimiento reducido se omite. Home y Blog se importan con la aplicación para eliminar la espera de sus antiguos chunks al cambiar de página. Las consultas REST editoriales siguen siendo asíncronas y pueden mostrar sus estados de carga si la red tarda. Pendiente de revisión visual del usuario en el servidor.
 
 ### Estado actual del desarrollo
 
@@ -33,7 +33,7 @@
 ### Producción y FTP
 
 - **Última versión confirmada como publicada en producción:** pendiente de identificar. No consta en el repositorio un commit, etiqueta o lista de archivos que pueda vincularse con certeza a la versión activa en el servidor.
-- **Archivos pendientes de subir por FTP:** tras la compilación de la iteración del loader, sustituir el directorio `wp-content/themes/dipe-react/assets/` completo en el servidor, incluido `assets/.vite/manifest.json` y el nuevo chunk de GSAP. No hay cambios PHP para esta iteración. El usuario confirmará si el loader se ve correctamente antes de anotarlo como publicado.
+- **Archivos pendientes de subir por FTP:** tras la compilación de esta entrada animada, sustituir el directorio `wp-content/themes/dipe-react/assets/` completo en el servidor, incluido `assets/.vite/manifest.json` y el chunk de GSAP. No hay cambios PHP. El usuario confirmará el resultado antes de anotarlo como publicado.
 
 ## Lo que existe en código
 

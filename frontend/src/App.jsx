@@ -1,13 +1,21 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getProject, getProjects, projectHomeCardImage, rendered } from './api';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { Loading } from './Loading';
+import { Home } from './Home';
+import { BlogArchive, BlogPost } from './BlogPages';
+import { IntroAnimation } from './IntroAnimation';
 import { siteConfig, sitePath } from './site';
 
-const Home = lazy(() => import('./Home').then((module) => ({ default: module.Home })));
-const BlogArchive = lazy(() => import('./BlogPages').then((module) => ({ default: module.BlogArchive })));
-const BlogPost = lazy(() => import('./BlogPages').then((module) => ({ default: module.BlogPost })));
+const introSessionKey = 'dipe-intro-shown-v1';
+
+function shouldShowIntro() {
+  try {
+    return window.sessionStorage.getItem(introSessionKey) !== '1';
+  } catch {
+    return true;
+  }
+}
 
 function SiteLink({ href, children, className }) {
   return <a className={className} href={sitePath(href)}>{children}</a>;
@@ -44,7 +52,7 @@ function Projects({ limit = 24, compact = false }) {
     getProjects(limit).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: [], error }));
   }, [limit]);
 
-  if (state.loading) return <Loading compact />;
+  if (state.loading) return <p className="text-secondary" role="status">Cargando proyectos…</p>;
   if (state.error) return <Failure error={state.error} />;
   if (state.data.length === 0) return <p className="text-secondary">Aún no hay proyectos publicados.</p>;
   return <div className="row g-4 mt-1">
@@ -65,7 +73,7 @@ function ProjectDetail({ slug }) {
   useEffect(() => {
     getProject(slug).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: null, error }));
   }, [slug]);
-  if (state.loading) return <section className="container py-5"><Loading compact /></section>;
+  if (state.loading) return <section className="container py-5"><p className="text-secondary" role="status">Cargando proyecto…</p></section>;
   if (state.error) return <section className="container py-5"><Failure error={state.error} /></section>;
   if (!state.data) return <NotFound />;
   const item = state.data;
@@ -87,6 +95,11 @@ function NotFound() {
 }
 
 export function App() {
+  const [showIntro, setShowIntro] = useState(shouldShowIntro);
+  const finishIntro = useCallback(() => {
+    try { window.sessionStorage.setItem(introSessionKey, '1'); } catch { /* La navegación continúa si el almacenamiento está desactivado. */ }
+    setShowIntro(false);
+  }, []);
   const currentPath = window.location.pathname;
   const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
   const path = (basePath && currentPath.startsWith(basePath) ? currentPath.slice(basePath.length) : currentPath).replace(/\/+$/, '') || '/';
@@ -100,5 +113,10 @@ export function App() {
   else if (path === '/blog') page = <BlogArchive />;
   else if (postMatch) page = <BlogPost slug={decodeURIComponent(postMatch[1])} />;
   else if (categoryMatch) page = <BlogArchive categorySlug={decodeURIComponent(categoryMatch[1].split('/').at(-1))} />;
-  return <Shell><Suspense fallback={<Loading />}>{page}</Suspense></Shell>;
+  return <>
+    <div inert={showIntro ? true : undefined} aria-busy={showIntro}>
+      <Shell>{page}</Shell>
+    </div>
+    {showIntro && <IntroAnimation onComplete={finishIntro} />}
+  </>;
 }
