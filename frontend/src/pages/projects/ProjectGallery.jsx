@@ -67,9 +67,9 @@ function GalleryLightbox({ media, activeIndex, onClose, onMove }) {
 export function ProjectGallery({ media }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [visibleItems, setVisibleItems] = useState(3);
+  const [slideStep, setSlideStep] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const rootRef = useRef(null);
-  const viewportRef = useRef(null);
   const trackRef = useRef(null);
   const autoCompletedRef = useRef(false);
   const lastScrollRef = useRef(0);
@@ -89,13 +89,20 @@ export function ProjectGallery({ media }) {
   }, [maxSlide]);
 
   useEffect(() => {
-    const viewport = viewportRef.current;
     const item = trackRef.current?.firstElementChild;
-    if (!viewport || !item) return;
+    const track = trackRef.current;
+    if (!track || !item) return undefined;
 
-    const gap = Number.parseFloat(window.getComputedStyle(trackRef.current).gap) || 0;
-    viewport.scrollTo({ left: activeSlide * (item.getBoundingClientRect().width + gap), behavior: 'smooth' });
-  }, [activeSlide, visibleItems]);
+    function measureStep() {
+      const gap = Number.parseFloat(window.getComputedStyle(track).gap) || 0;
+      setSlideStep(item.getBoundingClientRect().width + gap);
+    }
+
+    measureStep();
+    const observer = new ResizeObserver(measureStep);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [visibleItems, media.length]);
 
   useEffect(() => {
     if (maxSlide < 1) return undefined;
@@ -134,22 +141,12 @@ export function ProjectGallery({ media }) {
     setExpandedIndex((current) => (current + direction + media.length) % media.length);
   }
 
-  function syncSlideFromScroll() {
-    const viewport = viewportRef.current;
-    const item = trackRef.current?.firstElementChild;
-    if (!viewport || !item) return;
-
-    const gap = Number.parseFloat(window.getComputedStyle(trackRef.current).gap) || 0;
-    const next = Math.round(viewport.scrollLeft / (item.getBoundingClientRect().width + gap));
-    setActiveSlide(Math.min(Math.max(next, 0), maxSlide));
-  }
-
   return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title" ref={rootRef}>
     <h2 id="project-gallery-title">Galería del proyecto</h2>
     <div className="dipe-project-gallery__carousel" aria-roledescription="carrusel" aria-label="Galería del proyecto">
       {maxSlide > 0 && <button className="dipe-project-gallery__nav dipe-project-gallery__nav--previous" type="button" onClick={() => moveSlide(-1)} disabled={activeSlide === 0} aria-label="Diapositiva anterior"><ArrowIcon previous /></button>}
-      <div className="dipe-project-gallery__viewport" ref={viewportRef} onScroll={syncSlideFromScroll}>
-        <div className="dipe-project-gallery__track" ref={trackRef}>
+      <div className="dipe-project-gallery__viewport">
+        <div className="dipe-project-gallery__track" ref={trackRef} style={{ transform: `translate3d(-${activeSlide * slideStep}px, 0, 0)` }}>
           {media.map((entry, index) => <GalleryMedia media={entry} key={entry.id} onExpand={() => setExpandedIndex(index)} />)}
         </div>
       </div>

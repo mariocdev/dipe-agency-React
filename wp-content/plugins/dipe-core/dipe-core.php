@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.2
+ * Version: 0.4.9
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,9 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.2';
-// Admin and SMTP releases do not change public rewrite rules.
-const DIPE_CORE_REWRITE_VERSION = '0.4.0';
+const DIPE_CORE_VERSION = '0.4.9';
+const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';
 require_once __DIR__ . '/includes/form-submissions.php';
@@ -142,7 +141,7 @@ function dipe_core_register_content_types() {
 			'rewrite'      => array( 'slug' => 'proyectos', 'with_front' => false ),
 			'show_in_rest' => true,
 			'rest_base'    => 'dipe-proyectos',
-			'supports'     => array( 'title', 'custom-fields' ),
+			'supports'     => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
 			'menu_icon'    => 'dashicons-portfolio',
 			'show_in_menu' => true,
 		)
@@ -153,7 +152,7 @@ function dipe_core_register_content_types() {
 		array( 'dipe_proyecto' ),
 		array(
 			'labels' => array(
-				'name'          => __( 'Etiquetas de proyecto', 'dipe-core' ),
+				'name'          => __( 'Etiquetas de proyectos', 'dipe-core' ),
 				'singular_name' => __( 'Etiqueta de proyecto', 'dipe-core' ),
 				'add_new_item'  => __( 'Añadir etiqueta de proyecto', 'dipe-core' ),
 				'edit_item'     => __( 'Editar etiqueta de proyecto', 'dipe-core' ),
@@ -164,7 +163,27 @@ function dipe_core_register_content_types() {
 			'show_admin_column' => true,
 			'show_in_rest'      => true,
 			'rest_base'         => 'dipe-project-tags',
-			'rewrite'           => array( 'slug' => 'etiqueta-proyecto', 'with_front' => false ),
+			'rewrite'           => false,
+		)
+	);
+
+	register_taxonomy(
+		'dipe_project_category',
+		array( 'dipe_proyecto' ),
+		array(
+			'labels' => array(
+				'name'          => __( 'Categorías de proyectos', 'dipe-core' ),
+				'singular_name' => __( 'Categoría de proyecto', 'dipe-core' ),
+				'add_new_item'  => __( 'Añadir categoría de proyecto', 'dipe-core' ),
+				'edit_item'     => __( 'Editar categoría de proyecto', 'dipe-core' ),
+			),
+			'public'            => true,
+			'hierarchical'      => true,
+			'show_ui'           => true,
+			'show_admin_column' => true,
+			'show_in_rest'      => true,
+			'rest_base'         => 'dipe-project-categories',
+			'rewrite'           => array( 'slug' => 'proyectos/categoria', 'with_front' => false ),
 		)
 	);
 }
@@ -178,8 +197,85 @@ function dipe_core_seed_project_terms() {
 			array( 'slug' => 'destacados' )
 		);
 	}
+
+	foreach (
+		array(
+			'wordpress'  => __( 'WordPress', 'dipe-core' ),
+			'prestashop' => __( 'PrestaShop', 'dipe-core' ),
+		) as $slug => $name
+	) {
+		if ( ! term_exists( $slug, 'dipe_project_category' ) ) {
+			wp_insert_term( $name, 'dipe_project_category', array( 'slug' => $slug ) );
+		}
+	}
 }
 add_action( 'init', 'dipe_core_seed_project_terms', 20 );
+
+/**
+ * Moves categories created before tags and categories were split. The old terms
+ * are removed only after their project relationships have been copied.
+ */
+function dipe_core_migrate_legacy_project_categories() {
+	if ( '1' === get_option( 'dipe_core_project_taxonomy_split' ) ) {
+		return;
+	}
+
+	$legacy_terms = get_terms(
+		array(
+			'taxonomy'   => 'dipe_project_tag',
+			'hide_empty' => false,
+		)
+	);
+	if ( is_wp_error( $legacy_terms ) ) {
+		return;
+	}
+
+	$complete = true;
+	foreach ( $legacy_terms as $legacy_term ) {
+		if ( 'destacados' === $legacy_term->slug ) {
+			continue;
+		}
+
+		$category = term_exists( $legacy_term->slug, 'dipe_project_category' );
+		if ( ! $category ) {
+			$category = wp_insert_term(
+				$legacy_term->name,
+				'dipe_project_category',
+				array(
+					'slug'        => $legacy_term->slug,
+					'description' => $legacy_term->description,
+				)
+			);
+		}
+		if ( is_wp_error( $category ) || ! $category ) {
+			$complete = false;
+			continue;
+		}
+
+		$category_id = is_array( $category ) ? (int) $category['term_id'] : (int) $category;
+		$project_ids = get_objects_in_term( $legacy_term->term_id, 'dipe_project_tag' );
+		if ( is_wp_error( $project_ids ) ) {
+			$complete = false;
+			continue;
+		}
+
+		foreach ( $project_ids as $project_id ) {
+			$assigned = wp_set_object_terms( $project_id, $category_id, 'dipe_project_category', true );
+			if ( is_wp_error( $assigned ) || ! wp_remove_object_terms( $project_id, $legacy_term->term_id, 'dipe_project_tag' ) ) {
+				$complete = false;
+			}
+		}
+
+		if ( $complete && ! wp_delete_term( $legacy_term->term_id, 'dipe_project_tag' ) ) {
+			$complete = false;
+		}
+	}
+
+	if ( $complete ) {
+		update_option( 'dipe_core_project_taxonomy_split', '1' );
+	}
+}
+add_action( 'init', 'dipe_core_migrate_legacy_project_categories', 30 );
 
 function dipe_core_maybe_flush_rewrite_rules() {
 	if ( DIPE_CORE_REWRITE_VERSION === get_option( 'dipe_core_rewrite_version' ) ) {
@@ -211,6 +307,102 @@ function dipe_core_register_project_fields() {
 					'return_format' => 'array',
 					'preview_size'  => 'medium',
 					'library'       => 'all',
+				),
+			),
+			'location'              => array(
+				array(
+					array(
+						'param'    => 'post_type',
+						'operator' => '==',
+						'value'    => 'dipe_proyecto',
+					),
+				),
+			),
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'top',
+			'instruction_placement' => 'label',
+			'show_in_rest'          => 1,
+		)
+	);
+
+	acf_add_local_field_group(
+		array(
+			'key'                   => 'group_dipe_project_detail',
+			'title'                 => __( 'Detalle del proyecto', 'dipe-core' ),
+			'fields'                => array(
+				array(
+					'key'           => 'field_dipe_project_banner_image',
+					'label'         => __( 'Imagen de banner principal', 'dipe-core' ),
+					'name'          => 'dipe_project_banner_image',
+					'type'          => 'image',
+					'instructions'  => __( 'Imagen principal del banner de la página de este proyecto.', 'dipe-core' ),
+					'required'      => 0,
+					'return_format' => 'array',
+					'preview_size'  => 'medium',
+					'library'       => 'all',
+				),
+				array(
+					'key'            => 'field_dipe_project_development_date',
+					'label'          => __( 'Fecha de desarrollo', 'dipe-core' ),
+					'name'           => 'dipe_project_development_date',
+					'type'           => 'date_picker',
+					'instructions'   => __( 'Fecha en la que se desarrolló el proyecto; no es la fecha de publicación.', 'dipe-core' ),
+					'required'       => 0,
+					'display_format' => 'd/m/Y',
+					'return_format'  => 'Y-m-d',
+					'first_day'      => 1,
+				),
+				array(
+					'key'          => 'field_dipe_project_youtube_url',
+					'label'        => __( 'Vídeo de YouTube', 'dipe-core' ),
+					'name'         => 'dipe_project_youtube_url',
+					'type'         => 'url',
+					'instructions' => __( 'Pega la URL pública del vídeo de YouTube. Este vídeo se mostrará antes de la galería.', 'dipe-core' ),
+					'required'     => 0,
+				),
+				array(
+					'key'          => 'field_dipe_project_live_url',
+					'label'        => __( 'Página web lanzada', 'dipe-core' ),
+					'name'         => 'dipe_project_live_url',
+					'type'         => 'url',
+					'instructions' => __( 'Pega la URL pública de la página web ya lanzada.', 'dipe-core' ),
+					'required'     => 0,
+				),
+				array(
+					'key'          => 'field_dipe_project_gallery',
+					'label'        => __( 'Galería multimedia', 'dipe-core' ),
+					'name'         => 'dipe_project_gallery',
+					'type'         => 'repeater',
+					'instructions' => __( 'Añade y ordena las imágenes, GIF o vídeos que se mostrarán en la galería del proyecto.', 'dipe-core' ),
+					'required'     => 0,
+					'layout'       => 'block',
+					'button_label' => __( 'Añadir archivo multimedia', 'dipe-core' ),
+					'sub_fields'   => array(
+						array(
+							'key'           => 'field_dipe_project_gallery_media',
+							'label'         => __( 'Archivo multimedia', 'dipe-core' ),
+							'name'          => 'media',
+							'type'          => 'file',
+							'instructions'  => __( 'Sube una imagen, GIF o vídeo.', 'dipe-core' ),
+							'required'      => 1,
+							'return_format' => 'array',
+							'library'       => 'all',
+							'mime_types'    => 'jpg,jpeg,png,gif,webp,avif,mp4,webm',
+						),
+					),
+				),
+				array(
+					'key'          => 'field_dipe_project_featured_projects',
+					'label'        => __( 'Proyectos destacados', 'dipe-core' ),
+					'name'         => 'dipe_project_featured_projects',
+					'type'         => 'relationship',
+					'instructions' => __( 'Selecciona y ordena los proyectos que se mostrarán al final de este proyecto. Déjalo vacío para no mostrar esta sección.', 'dipe-core' ),
+					'required'     => 0,
+					'post_type'    => array( 'dipe_proyecto' ),
+					'filters'      => array( 'search' ),
+					'elements'     => array( 'featured_image' ),
+					'return_format' => 'object',
 				),
 			),
 			'location'              => array(

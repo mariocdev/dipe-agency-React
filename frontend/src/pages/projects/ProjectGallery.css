@@ -18,21 +18,15 @@
 }
 
 .dipe-project-gallery__viewport {
-  padding-block: 12px;
-  margin-block: -12px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  scroll-behavior: smooth;
-}
-
-.dipe-project-gallery__viewport::-webkit-scrollbar {
-  display: none;
+  padding-top: 14px;
+  overflow: hidden;
 }
 
 .dipe-project-gallery__track {
   display: flex;
   gap: 20px;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .dipe-project-gallery__media {
@@ -47,7 +41,6 @@
   border: 1px solid rgb(29 29 29 / 9%);
   border-radius: 18px;
   background: transparent;
-  box-shadow: 0 14px 35px rgb(29 29 29 / 12%);
   cursor: zoom-in;
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
@@ -88,10 +81,10 @@
   width: 3.5rem;
   height: 3.5rem;
   padding: 0;
-  border: 1px solid rgb(29 29 29 / 14%);
+  border: 0;
   border-radius: 50%;
   background: transparent;
-  box-shadow: 0 8px 20px rgb(29 29 29 / 12%);
+  box-shadow: none;
   place-items: center;
 }
 
