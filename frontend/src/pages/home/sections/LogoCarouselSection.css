@@ -1,0 +1,65 @@
+.dipe-logo-carousel {
+  width: 100%;
+  padding-block: 75px;
+  background: var(--dipe-color-white);
+}
+
+.dipe-logo-carousel__inner {
+  width: var(--dipe-content-width);
+  margin-inline: auto;
+}
+
+.dipe-logo-carousel__viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+}
+
+.dipe-logo-carousel__track {
+  display: flex;
+  width: max-content;
+  animation: dipe-logo-carousel-scroll var(--logo-scroll-duration) linear infinite;
+  will-change: transform;
+}
+
+.dipe-logo-carousel__logo {
+  display: grid;
+  flex: 0 0 auto;
+  height: 120px;
+  padding-inline: 1.5rem;
+  place-items: center;
+}
+
+.dipe-logo-carousel__logo img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: 100px;
+  object-fit: contain;
+}
+
+@keyframes dipe-logo-carousel-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 860px) {
+  .dipe-logo-carousel {
+    padding-block: 5rem;
+  }
+
+  .dipe-logo-carousel__inner {
+    width: var(--dipe-content-width);
+  }
+
+  .dipe-logo-carousel__logo {
+    height: 80px;
+    padding-inline: 0.75rem;
+  }
+
+  .dipe-logo-carousel__logo img {
+    max-height: 68px;
+  }
+}

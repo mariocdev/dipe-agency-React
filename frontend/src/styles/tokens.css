@@ -1,0 +1,36 @@
+:root {
+  /* Identidad visual compartida: cabecera ahora, pie y páginas después. */
+  --dipe-color-orange: #ff8600;
+  --dipe-color-ink: #1d1d1d;
+  --dipe-color-surface: #f6f6f6;
+  --dipe-color-black: #020202;
+  --dipe-color-white: #ffffff;
+  --dipe-color-footer: var(--dipe-color-ink);
+  --dipe-font-primary: 'Gordita', Arial, sans-serif;
+  --dipe-font-weight-regular: 400;
+  --dipe-font-weight-medium: 500;
+  --dipe-font-weight-bold: 700;
+  --dipe-font-scale: 1;
+  --dipe-font-size-h1: calc(45px * var(--dipe-font-scale));
+  --dipe-font-size-h2: calc(38px * var(--dipe-font-scale));
+  --dipe-font-size-h3: calc(20px * var(--dipe-font-scale));
+  --dipe-font-size-body: calc(18px * var(--dipe-font-scale));
+  --dipe-font-size-small: calc(14px * var(--dipe-font-scale));
+  --dipe-font-size-alternative: calc(24px * var(--dipe-font-scale));
+  --dipe-content-width: 80%;
+  --dipe-header-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
+}
+
+@media (max-width: 1640px) {
+  :root {
+    --dipe-content-width: 85%;
+    --dipe-font-scale: 0.92;
+  }
+}
+
+@media (max-width: 1500px) {
+  :root {
+    --dipe-content-width: 90%;
+    --dipe-font-scale: 0.84;
+  }
+}

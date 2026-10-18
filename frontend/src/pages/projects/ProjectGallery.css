@@ -1,0 +1,284 @@
+.dipe-project-gallery h2 {
+  margin: 0;
+  color: var(--dipe-color-ink);
+  font-family: var(--dipe-font-primary);
+  font-size: calc(38px * var(--dipe-font-scale));
+  font-style: normal;
+  font-weight: var(--dipe-font-weight-bold);
+  line-height: calc(50px * var(--dipe-font-scale));
+  text-align: center;
+}
+
+.dipe-project-gallery__carousel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  margin-top: 50px;
+}
+
+.dipe-project-gallery__viewport {
+  padding-block: 12px;
+  margin-block: -12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+.dipe-project-gallery__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.dipe-project-gallery__track {
+  display: flex;
+  gap: 20px;
+}
+
+.dipe-project-gallery__media {
+  position: relative;
+  display: block;
+  flex: 0 0 calc((100% - 40px) / 3);
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgb(29 29 29 / 9%);
+  border-radius: 18px;
+  background: transparent;
+  box-shadow: 0 14px 35px rgb(29 29 29 / 12%);
+  cursor: zoom-in;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.dipe-project-gallery__media img,
+.dipe-project-gallery__media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dipe-project-gallery__media:not(.dipe-project-gallery__expanded-media):hover,
+.dipe-project-gallery__media:not(.dipe-project-gallery__expanded-media):focus-visible {
+  box-shadow: 0 0 10.7px 0 var(--dipe-color-orange);
+  transform: translateY(-8px);
+}
+
+.dipe-project-gallery__media:focus-visible,
+.dipe-project-gallery__nav:focus-visible,
+.dipe-project-gallery__lightbox button:focus-visible {
+  outline: 2px solid var(--dipe-color-orange);
+  outline-offset: 4px;
+}
+
+.dipe-project-gallery__nav,
+.dipe-project-gallery__lightbox-nav,
+.dipe-project-gallery__close {
+  border: 0;
+  color: var(--dipe-color-ink);
+  background: transparent;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+.dipe-project-gallery__nav {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border: 1px solid rgb(29 29 29 / 14%);
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 8px 20px rgb(29 29 29 / 12%);
+  place-items: center;
+}
+
+.dipe-project-gallery__nav svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.3;
+}
+
+.dipe-project-gallery__nav svg.is-previous {
+  transform: rotate(180deg);
+}
+
+.dipe-project-gallery__nav:not(:disabled):hover,
+.dipe-project-gallery__nav:not(:disabled):focus-visible {
+  box-shadow: 0 0 10.7px 0 var(--dipe-color-orange);
+}
+
+.dipe-project-gallery__nav:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.dipe-project-gallery__pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 28px;
+}
+
+.dipe-project-gallery__pagination button {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(29 29 29 / 25%);
+  cursor: pointer;
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.dipe-project-gallery__pagination button.is-active {
+  width: 2rem;
+  border-radius: 99px;
+  background: var(--dipe-color-orange);
+}
+
+.dipe-project-gallery__lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-columns: auto minmax(0, min(82vw, 72rem)) auto;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 1.5rem 1.5rem;
+  background: rgb(2 2 2 / 92%);
+}
+
+.dipe-project-gallery__expanded-media {
+  max-height: calc(100vh - 5.5rem);
+  aspect-ratio: auto;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.dipe-project-gallery__expanded-media img,
+.dipe-project-gallery__expanded-media video {
+  max-height: calc(100vh - 5.5rem);
+  object-fit: contain;
+  transition: transform 220ms ease;
+}
+
+.dipe-project-gallery__expanded-media.is-zoomed img {
+  cursor: zoom-out;
+  transform: scale(1.8);
+}
+
+.dipe-project-gallery__lightbox-nav,
+.dipe-project-gallery__close {
+  color: var(--dipe-color-white);
+}
+
+.dipe-project-gallery__zoom {
+  position: absolute;
+  right: 5.5rem;
+  bottom: 1.5rem;
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 32%);
+  border-radius: 50%;
+  color: var(--dipe-color-white);
+  background: rgb(2 2 2 / 48%);
+  cursor: pointer;
+  place-items: center;
+}
+
+.dipe-project-gallery__zoom svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.dipe-project-gallery__lightbox-nav {
+  padding: 0.5rem;
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.dipe-project-gallery__close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 3rem;
+  line-height: 1;
+}
+
+@media (max-width: 860px) {
+  .dipe-project-gallery__carousel {
+    gap: 15px;
+  }
+
+  .dipe-project-gallery__media {
+    flex-basis: calc((100% - 20px) / 2);
+  }
+
+}
+
+@media (max-width: 560px) {
+  .dipe-project-gallery__carousel {
+    grid-template-columns: 1fr;
+  }
+
+  .dipe-project-gallery__media {
+    flex-basis: 100%;
+  }
+
+  .dipe-project-gallery__nav {
+    display: none;
+  }
+
+  .dipe-project-gallery__lightbox {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .dipe-project-gallery__lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .dipe-project-gallery__lightbox-nav--previous {
+    left: 0.25rem;
+  }
+
+  .dipe-project-gallery__lightbox-nav--next {
+    right: 0.25rem;
+  }
+
+  .dipe-project-gallery__zoom {
+    right: 1rem;
+    bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dipe-project-gallery__track,
+  .dipe-project-gallery__media,
+  .dipe-project-gallery__expanded-media img,
+  .dipe-project-gallery__pagination button {
+    transition: none;
+  }
+}
