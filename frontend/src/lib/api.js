@@ -1,8 +1,22 @@
-const config = window.dipeSite || {};
+const config = typeof window !== 'undefined' ? (window.dipeSite || {}) : {};
 const apiRoot = config.apiRoot || '/wp-json/';
 
 function endpoint(path) {
-  return new URL(path.replace(/^\//, ''), apiRoot).toString();
+  const cleanPath = path.replace(/^\/+/, '');
+  const base = /^https?:\/\//i.test(apiRoot)
+    ? apiRoot
+    : (typeof window !== 'undefined' && window.location?.origin ? `${window.location.origin}${apiRoot.startsWith('/') ? '' : '/'}${apiRoot}` : apiRoot);
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+
+  if (typeof window === 'undefined') {
+    return `${normalizedBase}${cleanPath}`.replace(/\/\/{2,}/g, '/');
+  }
+
+  try {
+    return new URL(cleanPath, normalizedBase).toString();
+  } catch {
+    return `${normalizedBase}${cleanPath}`.replace(/\/\/{2,}/g, '/');
+  }
 }
 
 async function request(path) {
@@ -150,8 +164,15 @@ export function rendered(value = '') {
 }
 
 export function plainText(value = '') {
+  const raw = String(value ?? '');
+  if (!raw) return '';
+
+  if (typeof document === 'undefined') {
+    return raw.replace(/<[^>]*>/g, '').trim();
+  }
+
   const template = document.createElement('template');
-  template.innerHTML = value;
+  template.innerHTML = raw;
   return template.content.textContent?.trim() || '';
 }
 

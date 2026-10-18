@@ -1,4 +1,4 @@
-export const siteConfig = window.dipeSite || {};
+export const siteConfig = typeof window !== 'undefined' ? (window.dipeSite || {}) : {};
 const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
 
 export function sitePath(path = '') {

@@ -3,7 +3,9 @@ import { siteConfig } from '../../lib/site';
 const uploadsPath = 'wp-content/uploads/2026/10/';
 
 export function homeMedia(filename) {
-  const baseUrl = siteConfig.homeUrl || window.location.origin;
+  const baseUrl = siteConfig.homeUrl || (typeof window !== 'undefined' && window.location?.origin ? window.location.origin : '');
+  const target = `${uploadsPath}${filename}`;
 
-  return new URL(`${uploadsPath}${filename}`, baseUrl).toString();
+  if (!baseUrl) return `/${target.replace(/^\/+/, '')}`;
+  return new URL(target, baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`).toString();
 }
