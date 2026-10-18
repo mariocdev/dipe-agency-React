@@ -29,11 +29,24 @@
   cursor: grab;
   transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
+  user-select: none;
+  touch-action: pan-y;
 }
 
 .dipe-project-gallery__track.is-dragging {
   cursor: grabbing;
   transition: none;
+}
+
+.dipe-project-gallery__track.is-dragging .dipe-project-gallery__media {
+  cursor: grabbing;
+  transform: none;
+}
+
+.dipe-project-gallery__track img,
+.dipe-project-gallery__track video {
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 .dipe-project-gallery__media {
@@ -48,7 +61,7 @@
   border: 1px solid rgb(29 29 29 / 9%);
   border-radius: 18px;
   background: transparent;
-  cursor: zoom-in;
+  cursor: grab;
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
@@ -157,6 +170,8 @@
 }
 
 .dipe-project-gallery__expanded-media {
+  display: grid;
+  place-items: center;
   max-height: calc(100vh - 5.5rem);
   aspect-ratio: auto;
   overflow: hidden;
@@ -174,9 +189,31 @@
   transition: transform 220ms ease;
 }
 
-.dipe-project-gallery__expanded-media.is-zoomed img {
+.dipe-project-gallery__image-zoom {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  touch-action: manipulation;
+}
+
+.dipe-project-gallery__image-zoom.is-zoomed {
   cursor: zoom-out;
-  transform: scale(1.8);
+  touch-action: none;
+}
+
+.dipe-project-gallery__image-zoom img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 5.5rem);
+  pointer-events: none;
+  transition: none;
 }
 
 .dipe-project-gallery__lightbox-nav,
@@ -184,10 +221,10 @@
   color: var(--dipe-color-white);
 }
 
-.dipe-project-gallery__zoom {
+.dipe-project-gallery__zoom-hint {
   position: absolute;
-  right: 5.5rem;
-  bottom: 1.5rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
   display: grid;
   width: 3.25rem;
   height: 3.25rem;
@@ -196,11 +233,11 @@
   border-radius: 50%;
   color: var(--dipe-color-white);
   background: rgb(2 2 2 / 48%);
-  cursor: pointer;
+  pointer-events: none;
   place-items: center;
 }
 
-.dipe-project-gallery__zoom svg {
+.dipe-project-gallery__zoom-hint svg {
   width: 1.45rem;
   height: 1.45rem;
   fill: none;
@@ -268,10 +305,6 @@
     right: 0.25rem;
   }
 
-  .dipe-project-gallery__zoom {
-    right: 1rem;
-    bottom: 1rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

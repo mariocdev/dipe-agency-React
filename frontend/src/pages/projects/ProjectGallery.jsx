@@ -5,21 +5,61 @@ function isVideo(media) {
   return media.mimeType.startsWith('video/') || /\.(mp4|webm|mov)(?:\?|$)/i.test(media.url);
 }
 
-function GalleryMedia({ media, expanded, zoomed = false, onExpand, className = '' }) {
+function ZoomableImage({ media }) {
+  const imageRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const [zoomed, setZoomed] = useState(false);
+  const [point, setPoint] = useState({ x: 50, y: 50 });
+
+  function measureZoom() {
+    const image = imageRef.current;
+    if (!image?.offsetWidth || !image.offsetHeight) return;
+    // Never enlarge beyond the original image's pixel dimensions.
+    setScale(Math.max(1, Math.min(4, image.naturalWidth / image.offsetWidth, image.naturalHeight / image.offsetHeight)));
+  }
+
+  useEffect(() => {
+    measureZoom();
+    const observer = new ResizeObserver(measureZoom);
+    observer.observe(imageRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  function followPointer(event) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    setPoint({
+      x: Math.min(100, Math.max(0, (event.clientX - bounds.left) / bounds.width * 100)),
+      y: Math.min(100, Math.max(0, (event.clientY - bounds.top) / bounds.height * 100)),
+    });
+  }
+
+  return <button type="button" className={`dipe-project-gallery__image-zoom${zoomed && scale > 1 ? ' is-zoomed' : ''}`}
+    aria-label={zoomed ? 'Reducir imagen' : 'Acercar imagen; mueve el puntero para explorar'} aria-pressed={zoomed && scale > 1}
+    onPointerEnter={(event) => { if (event.pointerType === 'mouse') { followPointer(event); setZoomed(true); } }}
+    onPointerMove={followPointer} onPointerLeave={() => setZoomed(false)} onBlur={() => setZoomed(false)}
+    onClick={(event) => { if (event.detail === 0) setPoint({ x: 50, y: 50 }); else followPointer(event); setZoomed((current) => !current); }}>
+    <img ref={imageRef} src={media.url} alt={media.alt} draggable={false} onLoad={measureZoom}
+      style={{ transform: `scale(${zoomed ? scale : 1})`, transformOrigin: `${point.x}% ${point.y}%` }} />
+    {scale > 1 && <span className="dipe-project-gallery__zoom-hint" aria-hidden="true"><MagnifierIcon /></span>}
+  </button>;
+}
+
+function GalleryMedia({ media, expanded, onExpand, className = '' }) {
   const video = isVideo(media);
 
   if (expanded) {
-    return <div className={`dipe-project-gallery__media ${zoomed ? 'is-zoomed' : ''} ${className}`.trim()}>
+    return <div className={`dipe-project-gallery__media ${className}`.trim()}>
       {video
         ? <video src={media.url} controls playsInline aria-label={media.alt || 'Vídeo de la galería'} />
-        : <img src={media.url} alt={media.alt} />}
+        : <ZoomableImage key={media.id} media={media} />}
     </div>;
   }
 
   return <button className={`dipe-project-gallery__media ${className}`.trim()} type="button" onClick={onExpand} aria-label={`Ampliar ${media.alt || 'elemento de la galería'}`}>
     {video
       ? <video src={media.url} muted playsInline preload="metadata" aria-label={media.alt || 'Vídeo de la galería'} />
-      : <img src={media.url} alt={media.alt} />}
+      : <img src={media.url} alt={media.alt} draggable={false} />}
+    {!video && <span className="dipe-project-gallery__zoom-hint" aria-hidden="true"><MagnifierIcon /></span>}
   </button>;
 }
 
@@ -40,27 +80,42 @@ function ArrowIcon({ previous = false }) {
 function GalleryLightbox({ media, activeIndex, onClose, onMove }) {
   const active = media[activeIndex];
   const canMove = media.length > 1;
-  const canZoom = !isVideo(active);
-  const [zoomed, setZoomed] = useState(false);
+  const dialogRef = useRef(null);
 
-  useEffect(() => setZoomed(false), [activeIndex]);
+  useEffect(() => {
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialogRef.current?.querySelector('button')?.focus();
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, []);
 
   useEffect(() => {
     function onKeyDown(event) {
+      if (['Escape', 'ArrowLeft', 'ArrowRight'].includes(event.key)) event.preventDefault();
       if (event.key === 'Escape') onClose();
       if (event.key === 'ArrowLeft') onMove(-1);
       if (event.key === 'ArrowRight') onMove(1);
+      if (event.key === 'Tab') {
+        const buttons = dialogRef.current.querySelectorAll('button');
+        const first = buttons[0];
+        const last = buttons[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose, onMove]);
 
-  return <div className="dipe-project-gallery__lightbox" role="dialog" aria-modal="true" aria-label="Vista ampliada de la galería">
+  return <div ref={dialogRef} className="dipe-project-gallery__lightbox" role="dialog" aria-modal="true" aria-label="Vista ampliada de la galería">
     <button className="dipe-project-gallery__close" type="button" onClick={onClose} aria-label="Cerrar vista ampliada">×</button>
     {canMove && <button className="dipe-project-gallery__lightbox-nav dipe-project-gallery__lightbox-nav--previous" type="button" onClick={() => onMove(-1)} aria-label="Elemento anterior">‹</button>}
-    <GalleryMedia media={active} expanded zoomed={zoomed} className="dipe-project-gallery__expanded-media" />
+    <GalleryMedia media={active} expanded className="dipe-project-gallery__expanded-media" />
     {canMove && <button className="dipe-project-gallery__lightbox-nav dipe-project-gallery__lightbox-nav--next" type="button" onClick={() => onMove(1)} aria-label="Elemento siguiente">›</button>}
-    {canZoom && <button className="dipe-project-gallery__zoom" type="button" onClick={() => setZoomed((current) => !current)} aria-pressed={zoomed} aria-label={zoomed ? 'Reducir imagen' : 'Ampliar imagen'}><MagnifierIcon /></button>}
   </div>;
 }
 
@@ -71,7 +126,7 @@ export function ProjectGallery({ media }) {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
-  const rootRef = useRef(null);
+  const viewportRef = useRef(null);
   const trackRef = useRef(null);
   const autoCompletedRef = useRef(false);
   const lastScrollRef = useRef(0);
@@ -112,9 +167,10 @@ export function ProjectGallery({ media }) {
     if (maxSlide < 1) return undefined;
 
     function handleWheel(event) {
-      if (autoCompletedRef.current || event.deltaY <= 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const bounds = rootRef.current?.getBoundingClientRect();
-      const isCarouselInUse = bounds && bounds.top <= window.innerHeight * 0.65 && bounds.bottom >= window.innerHeight * 0.25;
+      if (expandedIndex !== null || dragStateRef.current || activeSlide >= maxSlide || autoCompletedRef.current || event.ctrlKey || !event.cancelable || event.deltaY <= 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const bounds = viewportRef.current?.getBoundingClientRect();
+      const tolerance = Math.min(80, window.innerHeight * 0.1);
+      const isCarouselInUse = bounds && Math.abs(bounds.top + bounds.height / 2 - window.innerHeight / 2) <= tolerance;
       if (!isCarouselInUse) return;
 
       const now = Date.now();
@@ -133,7 +189,7 @@ export function ProjectGallery({ media }) {
 
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [maxSlide]);
+  }, [activeSlide, maxSlide, expandedIndex]);
 
   if (media.length === 0) return null;
 
@@ -146,10 +202,11 @@ export function ProjectGallery({ media }) {
   }
 
   function startDrag(event) {
-    if (event.button !== 0) return;
-    dragStateRef.current = { pointerId: event.pointerId, startX: event.clientX, offset: 0 };
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setIsDragging(true);
+    if (event.button !== 0 || !event.isPrimary || maxSlide < 1) return;
+    suppressClickRef.current = false;
+    dragStateRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, offset: 0, started: false };
+    // Keep simple clicks on their button, even when the pointer leaves it.
+    (event.target.closest('button') || event.currentTarget).setPointerCapture(event.pointerId);
   }
 
   function dragCarousel(event) {
@@ -157,11 +214,22 @@ export function ProjectGallery({ media }) {
     if (!dragState || dragState.pointerId !== event.pointerId) return;
 
     const rawOffset = event.clientX - dragState.startX;
+    if (!dragState.started) {
+      const verticalOffset = Math.abs(event.clientY - dragState.startY);
+      if (verticalOffset > 6 && verticalOffset > Math.abs(rawOffset)) {
+        dragStateRef.current = null;
+        return;
+      }
+      if (Math.abs(rawOffset) <= 6) return;
+      dragState.started = true;
+      suppressClickRef.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setIsDragging(true);
+    }
     const atFirstSlide = activeSlide === 0 && rawOffset > 0;
     const atLastSlide = activeSlide === maxSlide && rawOffset < 0;
     const offset = (atFirstSlide || atLastSlide) ? rawOffset * 0.18 : rawOffset;
     dragState.offset = offset;
-    if (Math.abs(rawOffset) > 6) suppressClickRef.current = true;
     setDragOffset(offset);
   }
 
@@ -169,15 +237,20 @@ export function ProjectGallery({ media }) {
     const dragState = dragStateRef.current;
     if (!dragState || dragState.pointerId !== event.pointerId) return;
 
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     dragStateRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     setIsDragging(false);
     setDragOffset(0);
 
-    if (slideStep > 0 && Math.abs(dragState.offset) >= slideStep * 0.16) moveSlide(dragState.offset < 0 ? 1 : -1);
+    if (dragState.started && slideStep > 0 && Math.abs(dragState.offset) >= Math.min(48, slideStep * 0.12)) {
+      const steps = Math.max(1, Math.round(Math.abs(dragState.offset) / slideStep));
+      moveSlide(dragState.offset < 0 ? steps : -steps);
+    }
   }
 
   function cancelDrag(event) {
+    // Transferring capture from a media button to the track is not cancellation.
+    if (event.type === 'lostpointercapture' && event.target !== event.currentTarget) return;
     const dragState = dragStateRef.current;
     if (!dragState || dragState.pointerId !== event.pointerId) return;
     dragStateRef.current = null;
@@ -192,12 +265,12 @@ export function ProjectGallery({ media }) {
     suppressClickRef.current = false;
   }
 
-  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title" ref={rootRef}>
+  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title">
     <h2 id="project-gallery-title">Galería del proyecto</h2>
     <div className="dipe-project-gallery__carousel" aria-roledescription="carrusel" aria-label="Galería del proyecto">
       {maxSlide > 0 && <button className="dipe-project-gallery__nav dipe-project-gallery__nav--previous" type="button" onClick={() => moveSlide(-1)} disabled={activeSlide === 0} aria-label="Diapositiva anterior"><ArrowIcon previous /></button>}
-      <div className="dipe-project-gallery__viewport">
-        <div className={`dipe-project-gallery__track${isDragging ? ' is-dragging' : ''}`} ref={trackRef} onPointerDown={startDrag} onPointerMove={dragCarousel} onPointerUp={endDrag} onPointerCancel={cancelDrag} onClickCapture={blockClickAfterDrag} style={{ transform: `translate3d(-${activeSlide * slideStep - dragOffset}px, 0, 0)` }}>
+      <div className="dipe-project-gallery__viewport" ref={viewportRef}>
+        <div className={`dipe-project-gallery__track${isDragging ? ' is-dragging' : ''}`} ref={trackRef} onPointerDown={startDrag} onPointerMove={dragCarousel} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag} onDragStart={(event) => event.preventDefault()} onClickCapture={blockClickAfterDrag} style={{ transform: `translate3d(-${activeSlide * slideStep - dragOffset}px, 0, 0)` }}>
           {media.map((entry, index) => <GalleryMedia media={entry} key={entry.id} onExpand={() => setExpandedIndex(index)} />)}
         </div>
       </div>
