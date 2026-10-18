@@ -96,6 +96,15 @@ function dipe_core_contact_request_value( $params, $key ) {
 	return isset( $params[ $key ] ) && is_scalar( $params[ $key ] ) ? (string) $params[ $key ] : '';
 }
 
+function dipe_core_contact_origin_label( $params ) {
+	$origins = array(
+		'home'      => 'Home',
+		'proyectos' => 'Archivo de proyectos',
+	);
+	$origin  = sanitize_key( dipe_core_contact_request_value( $params, 'origen' ) );
+	return $origins[ $origin ] ?? $origins['home'];
+}
+
 function dipe_core_contact_rate_limit_key() {
 	$address = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	return 'dipe_contact_rate_' . hash( 'sha256', $address ?: 'unknown' );
@@ -126,6 +135,7 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	$email     = sanitize_email( dipe_core_contact_request_value( $params, 'email' ) );
 	$telefono  = sanitize_text_field( dipe_core_contact_request_value( $params, 'telefono' ) );
 	$mensaje   = sanitize_textarea_field( dipe_core_contact_request_value( $params, 'mensaje' ) );
+	$origen    = dipe_core_contact_origin_label( $params );
 	$privacidad = filter_var( $params['privacidad'] ?? false, FILTER_VALIDATE_BOOLEAN );
 	$errors    = array();
 	if ( strlen( $nombre ) < 2 || strlen( $nombre ) > 160 ) {
@@ -159,6 +169,7 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 			'email'      => $email,
 			'telefono'   => $telefono,
 			'mensaje'    => $mensaje,
+			'origen'     => $origen,
 			'privacidad' => 'aceptada',
 		)
 	);
@@ -169,7 +180,7 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	set_transient( $rate_key, (int) get_transient( $rate_key ) + 1, 15 * MINUTE_IN_SECONDS );
 	$recipients = dipe_core_mail_contact_recipients();
 	$sent_count = 0;
-	$message    = "Nueva solicitud de contacto\n\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
+	$message    = "Nueva solicitud de contacto\n\nPágina de origen: {$origen}\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
 	foreach ( $recipients as $recipient ) {
 		if ( dipe_core_mail_send( 'team', $recipient, 'Nueva solicitud de contacto · ' . $nombre, $message, array( 'Reply-To: ' . $email ) ) ) {
 			$sent_count++;
