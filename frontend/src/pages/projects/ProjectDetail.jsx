@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getProject, plainText, projectBannerImage, projectGalleryMedia } from '../../lib/api';
 import { ProjectGallery } from './ProjectGallery';
 import { RelatedProjects } from './RelatedProjects';
+import { ProjectsContact } from './ProjectsContact';
 import './ProjectDetail.css';
 
 function formatDevelopmentDate(value) {
@@ -124,5 +125,6 @@ export function ProjectDetail({ slug, onNotFound }) {
       <ProjectGallery media={gallery} />
       <RelatedProjects project={item} />
     </div>
+    <ProjectsContact intro={<p>Cuéntanos el caso de uso y te devolvemos un plan claro para tu <strong>App:</strong> blueprint, tiempos y presupuesto. Menos clics inútiles, más negocio en el bolsillo.</p>} />
   </article>;
 }

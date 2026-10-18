@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ContactSection } from '../../components/contact/ContactSection';
 import { getProjectArchive, getProjectCategory, plainText } from '../../lib/api';
 import { sitePath } from '../../lib/site';
 import { homeMedia } from '../home/homeMedia';
-import { LogoCarouselSection } from '../home/sections/LogoCarouselSection';
 import { ProjectCard } from './ProjectCard';
+import { ProjectsContact } from './ProjectsContact';
 import './ProjectsArchive.css';
 
 const archiveDescription = 'Una muestra de cómo alineamos diseño, desarrollo web y marketing para lograr resultados.';
@@ -116,18 +115,7 @@ export function ProjectsArchive() {
       <Projects categoryId={categoryId} page={page} onTotalPages={setTotalPages} />
       <ProjectPagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
-    <div className="dipe-projects-archive__contact">
-      <ContactSection
-        source="proyectos"
-        title="¿Empezamos?"
-        intro={<p>Cuéntanos tu reto. Como Agencia Desarrollo Web, te proponemos un plan con fases, tiempos y presupuesto claro para crecer con seguridad.</p>}
-        hideDetails
-      />
-    </div>
-    <div className="dipe-home__background-bridge dipe-projects-archive__background-bridge" aria-hidden="true">
-      <img src={homeMedia('Hablamos.png')} alt="" />
-    </div>
-    <LogoCarouselSection />
+    <ProjectsContact />
   </>;
 }
 

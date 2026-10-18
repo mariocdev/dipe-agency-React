@@ -1,0 +1,48 @@
+.dipe-projects-contact {
+  position: relative;
+  z-index: 1;
+  background: var(--dipe-color-surface);
+  isolation: isolate;
+}
+
+.dipe-projects-contact .dipe-contact {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.dipe-projects-contact .dipe-contact__inner {
+  position: relative;
+  z-index: 2;
+}
+
+.dipe-projects-contact__background-bridge {
+  position: relative;
+  z-index: 3;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  margin-bottom: -120px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.dipe-projects-contact__background-bridge img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  display: block;
+  width: auto;
+  max-width: none;
+  height: auto;
+  transform: scaleX(-1) translateY(20%);
+  transform-origin: bottom center;
+}
+
+@media (max-width: 560px) {
+  .dipe-projects-contact__background-bridge {
+    height: 70px;
+    margin-bottom: -70px;
+  }
+}

@@ -53,6 +53,17 @@ nativa de WordPress, categoría enlazada y título h3. El grid muestra tres
 columnas en escritorio, dos hasta 860 px y una hasta 560 px. No requiere
 cambios del plugin ni campos nuevos. Pendiente de revisión en el servidor.
 
+## Cierre del detalle
+
+Después de «Más proyectos destacados» aparece el mismo bloque de contacto,
+imagen flotante y logos que en el archivo, compartido en `ProjectsContact`.
+Mantiene el título «¿Empezamos?» y utiliza este texto en el detalle:
+
+> Cuéntanos el caso de uso y te devolvemos un plan claro para tu **App:** blueprint, tiempos y presupuesto. Menos clics inútiles, más negocio en el bolsillo.
+
+Reutiliza el formulario y el origen `proyectos` existentes, sin cambios PHP.
+El archivo conserva su texto anterior. Pendiente de revisión en el servidor.
+
 ## Archivo de proyectos
 
 `/proyectos/` muestra los 12 proyectos publicados más recientes por página. Las
