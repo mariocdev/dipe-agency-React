@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import chevronIcon from './assets/icons/chevron-down-solid-full.svg';
 import { homeMedia } from './homeMedia';
 import './FaqSection.css';
-
-const faqCloseDuration = 560;
 
 const faqs = [
   {
@@ -53,31 +51,27 @@ const faqSchema = {
 
 export function FaqSection() {
   const [openFaqId, setOpenFaqId] = useState(null);
-  const [closingFaqIds, setClosingFaqIds] = useState([]);
+  const answerRefs = useRef({});
+
+  useLayoutEffect(() => {
+    for (const faq of faqs) {
+      const answer = answerRefs.current[faq.id];
+      if (!answer) continue;
+      answer.style.height = openFaqId === faq.id ? `${answer.firstElementChild.scrollHeight}px` : '0px';
+    }
+  }, [openFaqId]);
 
   useEffect(() => {
-    if (closingFaqIds.length === 0) return undefined;
+    if (!openFaqId) return undefined;
+    const updateHeight = () => {
+      const answer = answerRefs.current[openFaqId];
+      if (answer) answer.style.height = `${answer.firstElementChild.scrollHeight}px`;
+    };
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, [openFaqId]);
 
-    const closingTimers = closingFaqIds.map((faqId) => window.setTimeout(() => {
-      setClosingFaqIds((currentClosingFaqIds) => currentClosingFaqIds.filter((currentFaqId) => currentFaqId !== faqId));
-    }, faqCloseDuration));
-
-    return () => closingTimers.forEach((timer) => window.clearTimeout(timer));
-  }, [closingFaqIds]);
-
-  const toggleFaq = (faqId) => {
-    if (openFaqId === faqId) {
-      setOpenFaqId(null);
-      setClosingFaqIds((currentClosingFaqIds) => currentClosingFaqIds.includes(faqId) ? currentClosingFaqIds : [...currentClosingFaqIds, faqId]);
-      return;
-    }
-
-    if (openFaqId) {
-      setClosingFaqIds((currentClosingFaqIds) => currentClosingFaqIds.includes(openFaqId) ? currentClosingFaqIds : [...currentClosingFaqIds, openFaqId]);
-    }
-    setClosingFaqIds((currentClosingFaqIds) => currentClosingFaqIds.filter((currentFaqId) => currentFaqId !== faqId));
-    setOpenFaqId(faqId);
-  };
+  const toggleFaq = (faqId) => setOpenFaqId((currentFaqId) => currentFaqId === faqId ? null : faqId);
 
   const handleFaqKeyDown = (event, faqId) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -97,7 +91,7 @@ export function FaqSection() {
         {faqs.map((faq) => <div
           aria-controls={`faq-answer-${faq.id}`}
           aria-expanded={openFaqId === faq.id}
-          className={`dipe-faqs__item${openFaqId === faq.id ? ' is-open' : ''}${closingFaqIds.includes(faq.id) ? ' is-closing' : ''}`}
+          className={`dipe-faqs__item${openFaqId === faq.id ? ' is-open' : ''}`}
           key={faq.id}
           onClick={(event) => {
             event.preventDefault();
@@ -111,7 +105,7 @@ export function FaqSection() {
             <h3>{faq.question}</h3>
             <img src={chevronIcon} alt="" aria-hidden="true" />
           </div>
-          <div className="dipe-faqs__answer" id={`faq-answer-${faq.id}`} aria-hidden={openFaqId !== faq.id} role="region">
+          <div className="dipe-faqs__answer" id={`faq-answer-${faq.id}`} aria-hidden={openFaqId !== faq.id} role="region" ref={(node) => { answerRefs.current[faq.id] = node; }}>
             <div className="dipe-faqs__answer-inner">
               <p>{faq.answer}</p>
             </div>
