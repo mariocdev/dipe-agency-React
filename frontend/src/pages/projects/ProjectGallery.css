@@ -20,13 +20,20 @@
 .dipe-project-gallery__viewport {
   padding-top: 14px;
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .dipe-project-gallery__track {
   display: flex;
   gap: 20px;
+  cursor: grab;
   transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
+}
+
+.dipe-project-gallery__track.is-dragging {
+  cursor: grabbing;
+  transition: none;
 }
 
 .dipe-project-gallery__media {
@@ -69,7 +76,7 @@
 .dipe-project-gallery__nav,
 .dipe-project-gallery__lightbox-nav,
 .dipe-project-gallery__close {
-  border: 0;
+  border: 1px solid rgb(29 29 29 / 30%);
   color: var(--dipe-color-ink);
   background: transparent;
   font-family: Arial, sans-serif;
@@ -84,7 +91,7 @@
   border: 0;
   border-radius: 50%;
   background: transparent;
-  box-shadow: none;
+  box-shadow: 0 3px 10px rgb(29 29 29 / 8%);
   place-items: center;
 }
 

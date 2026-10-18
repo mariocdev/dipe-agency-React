@@ -31,8 +31,8 @@ AVIF, MP4 o WebM. Los campos nuevos se exponen por REST mediante ACF. La
 cabecera del detalle ya consume la imagen de banner, fecha, URL publicada y
 jerarquía de categorías. Su primer bloque muestra el contenido HTML nativo y
 el vídeo de YouTube. La galería multimedia se presenta como carrusel de tres
-elementos altos con avance unitario mediante rueda al bajar o flechas, permite
-ampliarlos y navegar entre ellos; los vídeos y GIF se
+elementos altos con avance unitario mediante rueda al bajar, flechas o arrastre
+horizontal, permite ampliarlos y navegar entre ellos; los vídeos y GIF se
 mantienen como archivos del ACF. El visor conserva el archivo original y
 permite ampliar imágenes y GIF mediante una lupa. Los destacados se maquetarán
 después.
