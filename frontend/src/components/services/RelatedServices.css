@@ -1,0 +1,71 @@
+.dipe-related-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 30px;
+  min-width: 0;
+  font-family: var(--dipe-font-primary);
+}
+
+.dipe-related-services__card {
+  min-width: 0;
+  padding-block: 25px;
+  border-radius: 5px;
+  background: var(--dipe-color-ink);
+  color: var(--dipe-color-white);
+  text-align: center;
+}
+
+.dipe-related-services__card h2 {
+  margin: 0 20px 25px;
+  color: inherit;
+  font-size: calc(32px * var(--dipe-font-scale));
+  font-weight: var(--dipe-font-weight-bold);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.dipe-related-services__image {
+  display: block;
+  aspect-ratio: 2.2;
+  background: rgb(255 255 255 / 8%);
+  overflow: hidden;
+}
+
+.dipe-related-services__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dipe-related-services__link {
+  display: inline-flex;
+  max-width: calc(100% - 40px);
+  justify-content: center;
+  margin-top: 25px;
+  padding: 12px 54px;
+  border-radius: 100px;
+  background: var(--dipe-color-orange);
+  color: var(--dipe-color-ink);
+  font-size: var(--dipe-font-size-body);
+  line-height: 1.4;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.dipe-related-services__link:hover,
+.dipe-related-services__link:focus-visible {
+  color: var(--dipe-color-ink);
+  box-shadow: 0 0 10.7px 0 var(--dipe-color-orange);
+}
+
+.dipe-related-services a:focus-visible {
+  outline: 2px solid var(--dipe-color-orange);
+  outline-offset: 4px;
+}
+
+@media (max-width: 560px) {
+  .dipe-related-services__link {
+    padding-inline: 32px;
+  }
+}

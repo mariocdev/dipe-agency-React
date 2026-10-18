@@ -31,6 +31,12 @@ export function getProjects(perPage = 24) {
   return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&acf_format=standard`);
 }
 
+export async function getTeamMembers() {
+  const members = await request('dipe/v1/equipo');
+  if (!Array.isArray(members)) throw new Error('No se ha podido cargar el equipo.');
+  return members;
+}
+
 export function getProjectsByCategory(categoryId, perPage = 24) {
   return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&dipe-project-categories=${encodeURIComponent(categoryId)}&acf_format=standard`);
 }
@@ -64,11 +70,13 @@ async function getProjectCategoryById(id) {
 	return request(`wp/v2/dipe-project-categories/${encodeURIComponent(id)}`);
 }
 
-export function getPosts(perPage = 3) {
-  return request(`wp/v2/posts?status=publish&per_page=${perPage}&orderby=date&order=desc&_embed`);
+export function getPosts(perPage = 3, excludeId = null) {
+  const params = new URLSearchParams({ status: 'publish', per_page: String(perPage), orderby: 'date', order: 'desc', _embed: '1' });
+  if (excludeId) params.set('exclude', String(excludeId));
+  return request(`wp/v2/posts?${params}`);
 }
 
-export async function getPostArchive({ page = 1, categoryId = null, perPage = 12 } = {}) {
+export async function getPostArchive({ page = 1, categoryId = null, perPage = 12, search = '', after = '', before = '', signal } = {}) {
   const params = new URLSearchParams({
     status: 'publish',
     page: String(page),
@@ -78,8 +86,11 @@ export async function getPostArchive({ page = 1, categoryId = null, perPage = 12
     _embed: '1',
   });
   if (categoryId) params.set('categories', String(categoryId));
+  if (search) params.set('search', search);
+  if (after) params.set('after', after);
+  if (before) params.set('before', before);
 
-  const response = await fetch(endpoint(`wp/v2/posts?${params}`), { headers: { Accept: 'application/json' } });
+  const response = await fetch(endpoint(`wp/v2/posts?${params}`), { headers: { Accept: 'application/json' }, signal });
   if (!response.ok) throw new Error(`La API respondió ${response.status}.`);
   return {
     posts: await response.json(),
@@ -88,13 +99,39 @@ export async function getPostArchive({ page = 1, categoryId = null, perPage = 12
 }
 
 export async function getPost(slug) {
-  const posts = await request(`wp/v2/posts?status=publish&slug=${encodeURIComponent(slug)}&_embed`);
+  const posts = await request(`wp/v2/posts?status=publish&slug=${encodeURIComponent(slug)}&_embed=1&acf_format=standard`);
   return posts?.[0] || null;
+}
+
+export function getPostNavigation(id) {
+  return request(`dipe/v1/posts/${encodeURIComponent(id)}/navigation`);
 }
 
 export async function getCategory(slug) {
   const categories = await request(`wp/v2/categories?slug=${encodeURIComponent(slug)}&per_page=1`);
   return categories?.[0] || null;
+}
+
+export async function getPostCategories() {
+  const categories = [];
+  let totalPages = 1;
+
+  for (let page = 1; page <= totalPages; page += 1) {
+    const params = new URLSearchParams({
+      per_page: '100',
+      page: String(page),
+      hide_empty: 'true',
+      orderby: 'name',
+      order: 'asc',
+      _fields: 'id,name,slug,link',
+    });
+    const response = await fetch(endpoint(`wp/v2/categories?${params}`), { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`La API respondió ${response.status}.`);
+    categories.push(...await response.json());
+    totalPages = Number(response.headers.get('X-WP-TotalPages')) || 1;
+  }
+
+  return categories;
 }
 
 export async function getFeaturedProjects(perPage = 6) {
@@ -139,8 +176,11 @@ export async function getRelatedProjects(project) {
   return (await Promise.all(batches)).flatMap((items) => items || []);
 }
 
-export async function submitContactForm(fields) {
-  const response = await fetch(endpoint('dipe/v1/forms/contacto'), {
+export async function submitContactForm(fields, formType = 'contacto') {
+  if (!['contacto', 'contacto-servicios'].includes(formType)) {
+    throw new Error('Formulario no disponible.');
+  }
+  const response = await fetch(endpoint(`dipe/v1/forms/${formType}`), {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -271,6 +311,13 @@ async function getProjectCategoryHierarchy(item) {
 export function postCardImage(item) {
   const image = item?._embedded?.['wp:featuredmedia']?.[0];
   return normalizeProjectImage(image && { url: image.source_url, alt: image.alt_text });
+}
+
+export function postBannerMedia(item) {
+  const media = item?.acf?.dipe_post_banner_media;
+  const image = normalizeProjectImage(media) || postCardImage(item);
+  if (!image) return null;
+  return { ...image, mimeType: media?.mime_type || media?.mime || '' };
 }
 
 export function postPrimaryCategory(item) {

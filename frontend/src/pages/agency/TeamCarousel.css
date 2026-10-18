@@ -1,0 +1,189 @@
+.dipe-team {
+  padding-block: 30px 100px;
+}
+
+.dipe-team__heading {
+  margin-bottom: 45px;
+  text-align: center;
+}
+
+.dipe-team .dipe-team__heading p {
+  margin-top: 25px;
+}
+
+.dipe-team__viewport {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 60px) / 4);
+  align-items: stretch;
+  gap: 20px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-block: 5px 20px;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-mask-image: var(--dipe-team-mask, none);
+  mask-image: var(--dipe-team-mask, none);
+}
+
+.dipe-team__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.dipe-team__viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.dipe-team__viewport.is-dragging,
+.dipe-team__viewport.is-settling {
+  scroll-snap-type: none;
+}
+
+.dipe-team__card {
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+  background: var(--dipe-color-surface);
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.dipe-team__photo {
+  aspect-ratio: 1 / 1;
+  background: #e7e7e7;
+  overflow: hidden;
+}
+
+.dipe-team__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 450ms cubic-bezier(0.2, 0.65, 0.3, 1);
+  -webkit-user-drag: none;
+}
+
+.dipe-team__caption {
+  padding: 20px;
+}
+
+.dipe-team__caption p.dipe-team__role,
+.dipe-team__caption blockquote {
+  margin: 12px 0 0;
+  font-size: var(--dipe-font-size-small);
+  line-height: 1.5;
+}
+
+.dipe-team__caption blockquote {
+  white-space: pre-line;
+}
+
+.dipe-team__controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.dipe-team__controls button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--dipe-color-ink);
+  border-radius: 50%;
+  background: var(--dipe-color-white);
+  cursor: pointer;
+  transition: background-color 200ms ease, border-color 200ms ease, transform 200ms ease, opacity 200ms ease;
+}
+
+.dipe-team__controls button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.dipe-team__controls button:not(:disabled):hover {
+  background: var(--dipe-color-orange);
+  border-color: var(--dipe-color-orange);
+  transform: translateY(-2px);
+}
+
+.dipe-team__controls button:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+.dipe-team__progress {
+  width: clamp(100px, 18vw, 240px);
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #e7e7e7;
+}
+
+.dipe-team__progress > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--dipe-color-orange);
+  transform: scaleX(var(--dipe-team-progress, 0));
+  transform-origin: left;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .dipe-team__viewport:not(.is-dragging) .dipe-team__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgb(0 0 0 / 8%);
+  }
+
+  .dipe-team__viewport:not(.is-dragging) .dipe-team__card:hover .dipe-team__photo img {
+    transform: scale(1.035);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dipe-team__card,
+  .dipe-team__photo img,
+  .dipe-team__controls button {
+    transition: none;
+  }
+
+  .dipe-team__viewport .dipe-team__card:hover,
+  .dipe-team__viewport .dipe-team__card:hover .dipe-team__photo img {
+    transform: none;
+  }
+}
+
+.dipe-team__controls img {
+  width: 18px;
+  height: 18px;
+}
+
+.dipe-team__previous img { transform: rotate(-90deg); }
+.dipe-team__next img { transform: rotate(90deg); }
+
+.dipe-team__viewport:focus-visible,
+.dipe-team__controls button:focus-visible {
+  outline: 2px solid var(--dipe-color-orange);
+  outline-offset: 4px;
+}
+
+.dipe-team__message {
+  padding-block: 50px;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .dipe-team__viewport { grid-auto-columns: calc((100% - 40px) / 3); }
+}
+
+@media (max-width: 860px) {
+  .dipe-team { padding-bottom: 65px; }
+  .dipe-team__viewport { grid-auto-columns: calc((100% - 20px) / 2); }
+}
+
+@media (max-width: 560px) {
+  .dipe-team__viewport { grid-auto-columns: 100%; }
+}

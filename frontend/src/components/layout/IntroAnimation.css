@@ -8,11 +8,17 @@
   height: 100dvh;
   place-items: center;
   overflow: hidden;
-  background: radial-gradient(circle at center, #303030 0%, var(--dipe-color-ink) 65%);
   color: var(--dipe-color-white);
 }
 
+.dipe-intro__backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #303030 0%, var(--dipe-color-ink) 65%);
+}
+
 .dipe-intro__composition {
+  position: relative;
   display: flex;
   max-width: 92vw;
   align-items: center;

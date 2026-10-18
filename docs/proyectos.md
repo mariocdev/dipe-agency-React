@@ -1,5 +1,7 @@
 # Proyectos: configuración inicial
 
+**Base aprobada (18-10-2026):** el usuario confirma como «PERFECTO» el estado actual de todos los archivos locales y autoriza consolidarlo en `main`. La ficha mantiene el centrado vertical/CSS anterior y toma el servicio enlazado de las nuevas etiquetas compartidas. Esta aprobación prevalece sobre las notas históricas de revisión pendientes; no cambiar estilos en tareas solo de lógica. Referencia Git vigente en `CONTEXTO-PROYECTO.md` y `PLAN_PARA_TERRA.md`.
+
 El CPT `dipe_proyecto` es el primer contenido real y se muestra tanto en la
 Home como en `/proyectos/`. Su registro y sus campos viven en `dipe-core` para
 que todos los entornos reciban la misma configuración al actualizar el plugin.
@@ -40,6 +42,10 @@ el ratón; la lupa es el cursor, sin iconos superpuestos. El zoom se adapta a
 las proporciones y resolución de cada imagen, sin forzar un ancho común ni
 superar las dimensiones originales. Las partes que exceden el visor se
 recorren con el ratón.
+## Servicios relacionados compartidos con el blog (18-10-2026)
+
+Nueva taxonomía no jerárquica **Servicios relacionados** (`dipe_related_service`), asignable tanto a proyectos como a entradas. Cada término configura una página de servicio nativa y una imagen opcional; no sustituye las categorías de proyectos ni la etiqueta «Destacados». Por petición del usuario, el metadato **Servicio**, junto a **Fecha**, toma ahora `dipe_related_services` y enlaza cada etiqueta al permalink de su página publicada. Con varias etiquetas muestra **Servicios** y separadores «·». Ya no deriva este valor de las categorías raíz ni repite servicios en la caja de categorías/enlace externo. Sin término/destino publicado se omite el metadato; hay que asignar la nueva etiqueta al proyecto, sin migraciones automáticas desde categorías. El usuario aclara que este cambio debía ser solo de lógica: se restauran el centrado vertical original de los metadatos (`align-items: center`, sin `flex-wrap`) y el hover anterior. No alterar estilos por una tarea de lógica. No se añaden tarjetas del sidebar del blog al diseño de Proyectos. El HTML del proyecto usa `EditorialContent.jsx/.css`, compartiendo valores tipográficos con la entrada sin cambiar columnas ni padding de este detalle. Configuración y FTP inicial del plugin 0.4.11 en `docs/entradas.md`; este último ajuste solo requiere assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales; revisión en servidor pendiente.
+
 ## Más proyectos destacados
 
 El detalle termina con el h2 «Más proyectos destacados». En el campo ACF

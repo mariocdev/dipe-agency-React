@@ -9,7 +9,7 @@ const defaultIntro = <>
   <p>Cuéntanos tu objetivo y te devolvemos un plan claro (fases, tiempos y presupuesto). Somos tu Agencia de desarrollo web para crecer con cabeza… y un poco de chispa.</p>
 </>;
 
-export function ContactSection({ source = 'home', title = '¿Hablamos?', intro = defaultIntro, hideDetails = false }) {
+export function ContactSection({ source = 'home', formType = 'contacto', title = '¿Hablamos?', intro = defaultIntro, hideDetails = false }) {
   const [submission, setSubmission] = useState(initialSubmissionState);
 
   const handleSubmit = async (event) => {
@@ -34,7 +34,7 @@ export function ContactSection({ source = 'home', title = '¿Hablamos?', intro =
         company: values.get('company'),
         origen: source,
         url_origen: `${window.location.origin}${window.location.pathname}`,
-      });
+      }, formType);
       form.reset();
       setSubmission({
         status: 'success',

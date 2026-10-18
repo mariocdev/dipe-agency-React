@@ -43,7 +43,25 @@ h3,
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--dipe-color-black);
   font-family: var(--dipe-font-primary);
+}
+
+body.admin-bar .dipe-header {
+  top: var(--wp-admin--admin-bar--height, 32px);
+}
+
+@media (max-width: 782px) {
+  body.admin-bar .dipe-header {
+    top: var(--wp-admin--admin-bar--height, 46px);
+  }
+}
+
+/* En móvil la barra de WordPress se desplaza con la página. */
+@media (max-width: 600px) {
+  body.admin-bar .dipe-header {
+    top: 0;
+  }
 }
 
 .dipe-header__inner {

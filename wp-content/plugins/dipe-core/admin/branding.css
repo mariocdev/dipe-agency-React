@@ -1,0 +1,339 @@
+/* Native admin styles, independent of the React build.
+ * Brand values mirror frontend/src/styles/tokens.css; keep them aligned. */
+.dipe-admin,
+.dipe-login {
+  --dipe-orange: #ff8600;
+  --dipe-ink: #1d1d1d;
+  --dipe-surface: #f6f6f6;
+  --dipe-white: #fff;
+  --dipe-link: #a64b00;
+  --dipe-focus: #a64b00;
+  --wp-admin-theme-color: #a64b00;
+  --wp-admin-theme-color-darker-10: #883d00;
+  --wp-admin-theme-color-darker-20: #6c3100;
+}
+
+body.dipe-admin {
+  background: var(--dipe-surface);
+}
+
+.dipe-admin #adminmenuback,
+.dipe-admin #adminmenuwrap,
+.dipe-admin #adminmenu,
+.dipe-admin #wpadminbar {
+  background: var(--dipe-ink);
+}
+
+.dipe-admin #adminmenu .wp-submenu,
+.dipe-admin #wpadminbar .ab-sub-wrapper {
+  background: #292929;
+}
+
+.dipe-admin #adminmenu a,
+.dipe-admin #adminmenu .wp-submenu a,
+.dipe-admin #collapse-button {
+  color: #e6e6e6;
+}
+
+.dipe-admin #adminmenu div.wp-menu-image::before {
+  color: #bdbdbd;
+}
+
+.dipe-admin #adminmenu li.menu-top:hover,
+.dipe-admin #adminmenu li.opensub > a.menu-top,
+.dipe-admin #adminmenu li > a:focus {
+  background: #303030;
+  color: var(--dipe-orange);
+}
+
+.dipe-admin #adminmenu li:hover div.wp-menu-image::before,
+.dipe-admin #adminmenu li a:focus div.wp-menu-image::before,
+.dipe-admin #collapse-button:hover {
+  color: var(--dipe-orange);
+}
+
+.dipe-admin #adminmenu li.current a.menu-top,
+.dipe-admin #adminmenu li.wp-has-current-submenu > a.wp-has-current-submenu,
+.dipe-admin #adminmenu li.current div.wp-menu-image::before,
+.dipe-admin #adminmenu li.wp-has-current-submenu div.wp-menu-image::before {
+  background: var(--dipe-orange);
+  color: var(--dipe-ink);
+}
+
+.dipe-admin #adminmenu .wp-submenu a:hover,
+.dipe-admin #adminmenu .wp-submenu a:focus,
+.dipe-admin #adminmenu .wp-submenu li.current a,
+.dipe-admin #wpadminbar:not(.mobile) .ab-top-menu > li:hover > .ab-item,
+.dipe-admin #wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:focus,
+.dipe-admin #wpadminbar .ab-top-menu > li.hover > .ab-item,
+.dipe-admin #wpadminbar .ab-submenu .ab-item:hover,
+.dipe-admin #wpadminbar .ab-submenu .ab-item:focus {
+  color: var(--dipe-orange);
+}
+
+.dipe-admin #wpadminbar .ab-top-menu > li:hover > .ab-item,
+.dipe-admin #wpadminbar .ab-top-menu > li.hover > .ab-item {
+  background: #303030;
+}
+
+.dipe-admin #adminmenu .awaiting-mod,
+.dipe-admin #adminmenu .update-plugins {
+  background: var(--dipe-orange);
+  color: var(--dipe-ink);
+}
+
+.dipe-admin.wp-core-ui .button-primary,
+.dipe-login.wp-core-ui .button-primary {
+  background: var(--dipe-orange);
+  border-color: var(--dipe-orange);
+  color: var(--dipe-ink);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+.dipe-admin.wp-core-ui .button-primary:hover,
+.dipe-admin.wp-core-ui .button-primary:focus,
+.dipe-admin.wp-core-ui .button-primary:active,
+.dipe-login.wp-core-ui .button-primary:hover,
+.dipe-login.wp-core-ui .button-primary:focus {
+  background: #ef7c00;
+  border-color: #ef7c00;
+  color: var(--dipe-ink);
+}
+
+.dipe-admin.wp-core-ui .button-primary:disabled,
+.dipe-admin.wp-core-ui .button-primary[disabled] {
+  background: #e8e8e8 !important;
+  border-color: #d5d5d5 !important;
+  color: #666 !important;
+}
+
+.dipe-admin:not(.block-editor-page) .wp-list-table .row-title,
+.dipe-admin:not(.block-editor-page) .subsubsub a,
+.dipe-admin:not(.block-editor-page) .postbox .inside a:not(.button),
+.dipe-admin:not(.block-editor-page) .wrap > p a:not(.button) {
+  color: var(--dipe-link);
+}
+
+.dipe-admin.wp-core-ui .button-secondary,
+.dipe-admin:not(.block-editor-page) .page-title-action {
+  border-color: var(--dipe-link);
+  color: var(--dipe-link);
+}
+
+.dipe-admin:not(.block-editor-page) .wrap > h1 {
+  font-weight: 650;
+}
+
+.dipe-admin:not(.block-editor-page) .postbox,
+.dipe-admin:not(.block-editor-page) .widefat {
+  border-color: #dedede;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 3%);
+}
+
+.dipe-admin .postbox-header {
+  border-bottom-color: #e8e8e8;
+}
+
+.dipe-admin-welcome {
+  box-sizing: border-box;
+  margin: 20px 20px 24px 0;
+  padding: clamp(24px, 4vw, 48px);
+  border: 1px solid #353535;
+  border-radius: 16px;
+  background: radial-gradient(ellipse at top right, #553317 0, transparent 65%), var(--dipe-ink);
+  color: var(--dipe-white);
+}
+
+.dipe-admin-welcome__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.dipe-admin-welcome__brand img {
+  display: block;
+  width: 180px;
+  height: 64px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.dipe-admin-wordmark {
+  color: var(--dipe-orange);
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.dipe-admin-wordmark span {
+  color: var(--dipe-white);
+}
+
+.dipe-admin-eyebrow {
+  color: var(--dipe-orange);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.dipe-admin-welcome h2 {
+  margin: 0 0 12px;
+  color: var(--dipe-white);
+  font-size: clamp(26px, 3vw, 38px);
+  line-height: 1.2;
+  letter-spacing: -1px;
+}
+
+.dipe-admin-welcome p {
+  margin: 0;
+  color: #d6d6d6;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.dipe-admin-shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.dipe-admin-shortcuts a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 11px 18px;
+  border: 1px solid #626262;
+  border-radius: 7px;
+  color: var(--dipe-white);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dipe-admin-shortcuts a:hover {
+  border-color: var(--dipe-orange);
+  color: var(--dipe-orange);
+}
+
+.dipe-admin-shortcuts a.dipe-admin-shortcuts__primary {
+  background: var(--dipe-orange);
+  border-color: var(--dipe-orange);
+  color: var(--dipe-ink);
+}
+
+.dipe-admin-shortcuts a:focus-visible {
+  outline: 2px solid var(--dipe-orange);
+  outline-offset: 4px;
+  box-shadow: none;
+}
+
+body.dipe-login {
+  min-height: 100vh;
+  background: radial-gradient(ellipse at top right, #553317 0, transparent 60%), var(--dipe-ink);
+}
+
+.dipe-login #login {
+  box-sizing: border-box;
+  width: min(100%, 420px);
+  padding: clamp(32px, 8vh, 90px) 20px 32px;
+}
+
+.dipe-login #login h1 a {
+  width: 100%;
+  height: auto;
+  margin: 0 auto 30px;
+  background-image: none;
+  color: var(--dipe-orange);
+  font-size: 34px;
+  font-weight: 750;
+  line-height: 1.3;
+  text-indent: 0;
+  text-decoration: none;
+}
+
+.dipe-login.dipe-login-has-logo #login h1 a {
+  height: 80px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+.dipe-login #login form {
+  margin-top: 0;
+  padding: 30px 26px;
+  border: 1px solid #e4e4e4;
+  border-top: 4px solid var(--dipe-orange);
+  border-radius: 12px;
+  background: var(--dipe-white);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 20%);
+}
+
+.dipe-login #login form .input {
+  border-color: #999;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.dipe-login #login form .input:focus,
+.dipe-login input[type="checkbox"]:focus,
+.dipe-login .button:focus {
+  border-color: var(--dipe-focus);
+  box-shadow: 0 0 0 2px var(--dipe-focus);
+}
+
+.dipe-login .wp-pwd .button {
+  color: var(--dipe-link);
+}
+
+.dipe-login #login input[type="submit"] {
+  border-radius: 6px;
+  padding-inline: 20px;
+}
+
+.dipe-login #nav a,
+.dipe-login #backtoblog a,
+.dipe-login .privacy-policy-page-link a {
+  color: #ddd;
+}
+
+.dipe-login #nav a:hover,
+.dipe-login #backtoblog a:hover,
+.dipe-login .privacy-policy-page-link a:hover {
+  color: var(--dipe-orange);
+}
+
+.dipe-login #login .message,
+.dipe-login #login .notice,
+.dipe-login #login_error {
+  border-radius: 6px;
+}
+
+.dipe-login #login .message {
+  border-left-color: var(--dipe-orange);
+}
+
+.dipe-login .language-switcher {
+  padding: 0 20px 28px;
+  color: var(--dipe-white);
+}
+
+@media (max-width: 782px) {
+  .dipe-admin-welcome {
+    margin-right: 10px;
+    padding: 24px;
+  }
+
+  .dipe-admin-welcome__brand {
+    margin-bottom: 24px;
+  }
+}

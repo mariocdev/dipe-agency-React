@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.10
+ * Version: 0.4.11
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,11 +11,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.10';
+const DIPE_CORE_VERSION = '0.4.11';
 const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';
 require_once __DIR__ . '/includes/form-submissions.php';
+require_once __DIR__ . '/includes/admin-branding.php';
+require_once __DIR__ . '/includes/team.php';
+require_once __DIR__ . '/includes/related-services.php';
+require_once __DIR__ . '/includes/blog.php';
 
 /**
  * Set the site's editorial URLs once. Do not override later admin changes.
@@ -466,7 +470,7 @@ function dipe_core_acf_required_notice() {
 		return;
 	}
 
-	echo '<div class="notice notice-warning"><p>' . esc_html__( 'Dipe Core necesita ACF Pro activo para mostrar los campos de Proyectos.', 'dipe-core' ) . '</p></div>';
+	echo '<div class="notice notice-warning"><p>' . esc_html__( 'Dipe Core necesita ACF Pro activo para mostrar los campos de Proyectos, Entradas, Servicios relacionados y Equipo DIPE.', 'dipe-core' ) . '</p></div>';
 }
 add_action( 'admin_notices', 'dipe_core_acf_required_notice' );
 

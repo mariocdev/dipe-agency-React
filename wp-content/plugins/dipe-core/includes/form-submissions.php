@@ -104,6 +104,8 @@ function dipe_core_contact_origin_label( $params ) {
 	$origins = array(
 		'home'      => 'Home',
 		'proyectos' => 'Proyectos',
+		'desarrollo-web' => 'Desarrollo web',
+		'agencia' => 'Agencia / Quiénes somos',
 	);
 	$origin  = sanitize_key( dipe_core_contact_request_value( $params, 'origen' ) );
 	return $origins[ $origin ] ?? 'No indicado';
@@ -137,19 +139,24 @@ function dipe_core_contact_rate_limit_key() {
 }
 
 function dipe_core_register_contact_form_route() {
-	register_rest_route(
-		'dipe/v1',
-		'/forms/contacto',
-		array(
-			'methods'             => WP_REST_Server::CREATABLE,
-			'callback'            => 'dipe_core_submit_contact_form',
-			'permission_callback' => '__return_true',
-		)
-	);
+	foreach ( array( 'contacto', 'contacto-servicios' ) as $form_type ) {
+		register_rest_route(
+			'dipe/v1',
+			'/forms/' . $form_type,
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => 'dipe_core_submit_contact_form',
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
 }
 add_action( 'rest_api_init', 'dipe_core_register_contact_form_route' );
 
 function dipe_core_submit_contact_form( WP_REST_Request $request ) {
+	// El tipo lo determina la ruta registrada, nunca un campo del visitante.
+	$form_type  = '/dipe/v1/forms/contacto-servicios' === untrailingslashit( $request->get_route() ) ? 'contacto-servicios' : 'contacto';
+	$form_label = dipe_core_submission_form_labels()[ $form_type ];
 	$params  = $request->get_json_params();
 	$params  = is_array( $params ) ? $params : $request->get_params();
 	$company = trim( dipe_core_contact_request_value( $params, 'company' ) );
@@ -193,7 +200,7 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	}
 
 	$submission = dipe_core_record_submission(
-		'contacto',
+		$form_type,
 		array(
 			'nombre'     => $nombre,
 			'email'      => $email,
@@ -209,11 +216,14 @@ function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	}
 
 	set_transient( $rate_key, (int) get_transient( $rate_key ) + 1, 15 * MINUTE_IN_SECONDS );
-	$recipients = dipe_core_mail_contact_recipients();
+	$settings   = dipe_core_mail_settings();
+	$recipients = 'contacto-servicios' === $form_type
+		? dipe_core_mail_contact_recipients( $settings['services_recipients'] )
+		: dipe_core_mail_contact_recipients();
 	$sent_count = 0;
-	$message    = "Nueva solicitud de Contacto internas\n\nSección: {$origen}\nURL de origen: " . ( $source_url ?: 'No disponible' ) . "\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
+	$message    = "Nueva solicitud de {$form_label}\n\nSección: {$origen}\nURL de origen: " . ( $source_url ?: 'No disponible' ) . "\nNombre: {$nombre}\nEmail: {$email}\nTeléfono: {$telefono}\n\nMensaje:\n{$mensaje}\n\nPolítica de privacidad: aceptada";
 	foreach ( $recipients as $recipient ) {
-		if ( dipe_core_mail_send( 'team', $recipient, 'Nueva solicitud de Contacto internas · ' . $nombre, $message, array( 'Reply-To: ' . $email ) ) ) {
+		if ( dipe_core_mail_send( 'team', $recipient, 'Nueva solicitud de ' . $form_label . ' · ' . $nombre, $message, array( 'Reply-To: ' . $email ) ) ) {
 			$sent_count++;
 		}
 	}

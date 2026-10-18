@@ -1,0 +1,27 @@
+#menu-posts-dipe_equipo .wp-menu-image img {
+  width: 20px;
+  height: 20px;
+  padding: 7px 0 0;
+  object-fit: contain;
+  opacity: 1;
+}
+
+.dipe-team-order__list { max-width: 850px; }
+.dipe-team-order__person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  background: #fff;
+}
+.dipe-team-order__drag { padding: 6px; cursor: grab; }
+.dipe-team-order__position { min-width: 25px; font-weight: 700; }
+.dipe-team-order__name { flex: 1; font-weight: 600; }
+.dipe-team-order__status { color: #50575e; }
+.dipe-team-order__placeholder { min-height: 52px; border: 1px dashed #ff8600; background: #fff5e8; }
+@media (max-width: 600px) {
+  .dipe-team-order__person { flex-wrap: wrap; gap: 8px; }
+  .dipe-team-order__status { flex-basis: 100%; }
+}

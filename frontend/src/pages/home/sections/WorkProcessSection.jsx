@@ -8,12 +8,18 @@ function WorkProcessCard({ step }) {
   </article>;
 }
 
-export function WorkProcessSection({ imageSrc, title, steps }) {
+export function WorkProcessSection({ imageSrc, videoSrc, title, steps }) {
   const gridRef = useEqualizedBlockSize('.dipe-equalize-title');
 
   return <section className="dipe-work-process">
     <div className="dipe-work-process__visual">
-      <img src={imageSrc} alt="" />
+      {videoSrc
+        ? <video autoPlay loop muted playsInline preload="metadata" poster={imageSrc} aria-hidden="true">
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+        : imageSrc
+          ? <img src={imageSrc} alt="" />
+          : <span className="dipe-work-process__placeholder" aria-hidden="true">Imagen o vídeo pendiente</span>}
     </div>
     <div className="dipe-work-process__panel">
       <div className="dipe-work-process__content">

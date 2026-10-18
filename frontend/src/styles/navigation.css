@@ -1,0 +1,26 @@
+/* Mantener la navegación de WordPress y suavizar el cambio entre documentos. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  /* El contenedor negro queda de fondo mientras se anima la barra interior. */
+  .dipe-header__main-bar {
+    view-transition-name: dipe-header;
+  }
+
+  ::view-transition-group(dipe-header) {
+    background: var(--dipe-color-black);
+  }
+
+  /* La barra negra acompaña la reaparición de la franja naranja al llegar arriba. */
+  ::view-transition-group(root),
+  ::view-transition-group(dipe-header),
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(dipe-header),
+  ::view-transition-new(dipe-header) {
+    animation-duration: 280ms;
+    animation-timing-function: ease-in-out;
+  }
+}

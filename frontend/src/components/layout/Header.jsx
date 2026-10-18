@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { siteConfig, sitePath } from '../../lib/site';
 
 function MenuLink({ item, hasChildren }) {
@@ -46,11 +46,35 @@ function PrimaryItem({ item, openItem, setOpenItem }) {
 }
 
 export function Header() {
+  const headerRef = useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openItem, setOpenItem] = useState(null);
   const utility = siteConfig.navigation?.utility || [];
   const primary = siteConfig.navigation?.primary || [];
   const logo = siteConfig.logo || {};
+
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!header) return undefined;
+
+    const root = document.documentElement;
+    const updateAnchorOffset = () => {
+      const top = Math.max(0, parseFloat(window.getComputedStyle(header).top) || 0);
+      const offset = Math.ceil(header.getBoundingClientRect().height + top);
+      root.style.setProperty('--dipe-anchor-header-offset', `${offset}px`);
+    };
+
+    updateAnchorOffset();
+    const observer = 'ResizeObserver' in window ? new ResizeObserver(updateAnchorOffset) : null;
+    observer?.observe(header);
+    window.addEventListener('resize', updateAnchorOffset);
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', updateAnchorOffset);
+      root.style.removeProperty('--dipe-anchor-header-offset');
+    };
+  }, []);
 
   useEffect(() => {
     const closeOnEscape = (event) => {
@@ -71,7 +95,7 @@ export function Header() {
         </ul>
       </nav>
     </div>
-    <header className="dipe-header">
+    <header className="dipe-header" ref={headerRef}>
       <div className="dipe-header__main-bar">
         <div className="dipe-header__inner dipe-header__main-inner">
           <a className="dipe-header__brand" href={sitePath('/')} aria-label="Ir al inicio">

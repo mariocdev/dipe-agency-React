@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 
-export function useEqualizedBlockSize(selector) {
+export function useEqualizedBlockSize(selector, contentKey) {
   const containerRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -31,7 +31,7 @@ export function useEqualizedBlockSize(selector) {
       observer?.disconnect();
       window.removeEventListener('resize', equalize);
     };
-  }, [selector]);
+  }, [selector, contentKey]);
 
   return containerRef;
 }

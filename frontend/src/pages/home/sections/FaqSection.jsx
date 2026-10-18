@@ -3,7 +3,7 @@ import chevronIcon from '../../../assets/icons/chevron-down-solid-full.svg';
 import { homeMedia } from '../homeMedia';
 import './FaqSection.css';
 
-const faqs = [
+export const homeFaqs = [
   {
     id: 'webs-rapidas-o-bonitas',
     question: '¿Hacéis webs rápidas o “bonitas”?',
@@ -36,10 +36,11 @@ const faqs = [
   },
 ];
 
-const faqSchema = {
+function createFaqSchema(items) {
+  return {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: faqs.map(({ question, answerText }) => ({
+  mainEntity: items.map(({ question, answerText }) => ({
     '@type': 'Question',
     name: question,
     acceptedAnswer: {
@@ -47,19 +48,20 @@ const faqSchema = {
       text: answerText,
     },
   })),
-};
+  };
+}
 
-export function FaqSection() {
+export function FaqSection({ items = homeFaqs, title = 'FAQs sobre nuestra Agencia de desarrollo web' }) {
   const [openFaqId, setOpenFaqId] = useState(null);
   const answerRefs = useRef({});
 
   useLayoutEffect(() => {
-    for (const faq of faqs) {
+    for (const faq of items) {
       const answer = answerRefs.current[faq.id];
       if (!answer) continue;
       answer.style.height = openFaqId === faq.id ? `${answer.firstElementChild.scrollHeight}px` : '0px';
     }
-  }, [openFaqId]);
+  }, [items, openFaqId]);
 
   useEffect(() => {
     if (!openFaqId) return undefined;
@@ -84,11 +86,11 @@ export function FaqSection() {
     aria-labelledby="faqs-title"
     style={{ backgroundImage: `url("${homeMedia('BG-FAQS.png')}")` }}
   >
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(createFaqSchema(items)) }} />
     <div className="dipe-faqs__inner">
-      <h2 id="faqs-title">FAQs sobre nuestra Agencia de desarrollo web</h2>
+      <h2 id="faqs-title">{title}</h2>
       <div className="dipe-faqs__list">
-        {faqs.map((faq) => <div
+        {items.map((faq) => <div
           aria-controls={`faq-answer-${faq.id}`}
           aria-expanded={openFaqId === faq.id}
           className={`dipe-faqs__item${openFaqId === faq.id ? ' is-open' : ''}`}

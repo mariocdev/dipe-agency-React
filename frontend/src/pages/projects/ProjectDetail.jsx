@@ -3,6 +3,8 @@ import { getProject, plainText, projectBannerImage, projectGalleryMedia } from '
 import { ProjectGallery } from './ProjectGallery';
 import { RelatedProjects } from './RelatedProjects';
 import { ProjectsContact } from './ProjectsContact';
+import { EditorialContent } from '../../components/content/EditorialContent';
+import { sitePath } from '../../lib/site';
 import './ProjectDetail.css';
 
 function formatDevelopmentDate(value) {
@@ -45,9 +47,9 @@ function youtubeEmbedUrl(value) {
 
 function ProjectMetadata({ item }) {
   const date = formatDevelopmentDate(item.acf?.dipe_project_development_date);
-  const services = item.projectCategoryHierarchy?.roots?.map((category) => category.name).join(' · ');
   const childCategories = item.projectCategoryHierarchy?.children || [];
   const liveUrl = publicUrl(item.acf?.dipe_project_live_url);
+  const relatedServices = Array.isArray(item.dipe_related_services) ? item.dipe_related_services : [];
 
   return <div className="dipe-project-detail__summary">
     <dl className="dipe-project-detail__metadata">
@@ -55,9 +57,12 @@ function ProjectMetadata({ item }) {
         <dt>Fecha</dt>
         <dd>{date}</dd>
       </div>}
-      {services && <div>
-        <dt>Servicio</dt>
-        <dd>{services}</dd>
+      {relatedServices.length > 0 && <div>
+        <dt>{relatedServices.length === 1 ? 'Servicio' : 'Servicios'}</dt>
+        <dd>{relatedServices.map((service, index) => <span key={service.id}>
+          {index > 0 && ' · '}
+          <a className="dipe-project-detail__service-link" href={sitePath(service.url)}>{plainText(service.name)}</a>
+        </span>)}</dd>
       </div>}
     </dl>
     {(childCategories.length > 0 || liveUrl) && <div className="dipe-project-detail__links">
@@ -77,7 +82,7 @@ function ProjectMainContent({ item, title }) {
 
   return <section className="dipe-project-detail__body">
     <div className={`dipe-project-detail__body-section${videoUrl ? '' : ' dipe-project-detail__body-section--full-width'}`}>
-      <div className="dipe-project-detail__content" dangerouslySetInnerHTML={{ __html: item.content?.rendered || '' }} />
+      <EditorialContent className="dipe-project-detail__content" html={item.content?.rendered || ''} />
       {videoUrl && <div className="dipe-project-detail__video">
         <iframe
           src={videoUrl}

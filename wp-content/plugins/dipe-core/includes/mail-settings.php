@@ -14,6 +14,7 @@ function dipe_core_mail_defaults() {
 		'user_email' => 'noreply@bonsolis.servidordepruebas.net',
 		'user_pass'  => '',
 		'contact_recipients' => '',
+		'services_recipients' => '',
 	);
 }
 
@@ -103,10 +104,15 @@ function dipe_core_mail_settings_page() {
 				<tr><th scope="row"><label for="dipe-mail-team-email">Usuario SMTP y remitente</label></th><td><input id="dipe-mail-team-email" name="dipe_mail[team_email]" type="email" class="regular-text" required autocomplete="off" value="<?php echo esc_attr( $settings['team_email'] ); ?>"></td></tr>
 				<tr><th scope="row"><label for="dipe-mail-team-pass">Contraseña SMTP</label></th><td><input id="dipe-mail-team-pass" name="dipe_mail[team_pass]" type="password" class="regular-text" autocomplete="new-password" value=""><p class="description"><?php echo false !== dipe_core_mail_decrypt( $settings['team_pass'] ) ? 'Guardada. Deja el campo vacío para conservarla.' : 'Sin configurar o no disponible. Introduce la contraseña de esta cuenta.'; ?></p></td></tr>
 			</table>
-			<h2>Destinatarios de Contacto</h2>
-			<p>Recibirán una copia individual de cada solicitud de Contacto. No se muestran ni se aceptan desde el formulario público.</p>
+			<h2>Destinatarios de Contacto internas</h2>
+			<p>Recibirán una copia individual de cada solicitud de Contacto internas. No se muestran ni se aceptan desde el formulario público.</p>
 			<table class="form-table" role="presentation">
 				<tr><th scope="row"><label for="dipe-mail-contact-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-contact-recipients" name="dipe_mail[contact_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['contact_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas.</p></td></tr>
+			</table>
+			<h2>Destinatarios de Contacto Servicios</h2>
+			<p>Lista independiente para las solicitudes de servicios. Configúrala antes de activar el formulario: si está vacía, la solicitud se guarda en Solicitudes con estado Error de envío, sin enviar avisos.</p>
+			<table class="form-table" role="presentation">
+				<tr><th scope="row"><label for="dipe-mail-services-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-services-recipients" name="dipe_mail[services_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['services_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas. Usa el remitente de avisos al equipo.</p></td></tr>
 			</table>
 			<h2>Confirmaciones al visitante</h2>
 			<p>Remitente de los mensajes automáticos al usuario. Solo se utilizará en los formularios que tengan confirmación.</p>
@@ -150,10 +156,15 @@ function dipe_core_mail_save() {
 	$user   = sanitize_email( $posted['user_email'] ?? '' );
 	$recipient_input = isset( $posted['contact_recipients'] ) && is_string( $posted['contact_recipients'] ) ? $posted['contact_recipients'] : '';
 	$contact_recipients = dipe_core_mail_contact_recipients( $recipient_input );
+	$services_input = isset( $posted['services_recipients'] ) && is_string( $posted['services_recipients'] ) ? $posted['services_recipients'] : ( $old['services_recipients'] ?? '' );
+	$services_recipients = dipe_core_mail_contact_recipients( $services_input );
 	if ( ! preg_match( '/^[a-z0-9.-]+$/', $host ) || false !== strpos( $host, '..' ) || ! in_array( $mode, array( 'smtps', 'starttls' ), true ) || ! is_email( $team ) || ! is_email( $user ) || $team === $user ) {
 		dipe_core_mail_redirect( 'invalid' );
 	}
 	if ( '' !== trim( $recipient_input ) && ! $contact_recipients ) {
+		dipe_core_mail_redirect( 'invalid' );
+	}
+	if ( '' !== trim( $services_input ) && ! $services_recipients ) {
 		dipe_core_mail_redirect( 'invalid' );
 	}
 	$new = array(
@@ -164,6 +175,7 @@ function dipe_core_mail_save() {
 		'user_email' => $user,
 		'user_pass'  => $old['user_pass'],
 		'contact_recipients' => implode( "\n", $contact_recipients ),
+		'services_recipients' => implode( "\n", $services_recipients ),
 	);
 	foreach ( array( 'team', 'user' ) as $profile ) {
 		$password = isset( $posted[ $profile . '_pass' ] ) && is_string( $posted[ $profile . '_pass' ] ) ? $posted[ $profile . '_pass' ] : '';
