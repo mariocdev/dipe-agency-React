@@ -39,11 +39,12 @@ function ZoomableImage({ media }) {
 
   const fit = natural.width && frame.width ? Math.min(1, frame.width / natural.width, frame.height / natural.height) : 0;
   const fittedWidth = natural.width * fit;
-  // Use the full space between the arrows for every zoomed image.
-  const enlarged = zoomed;
-  const width = enlarged ? frame.width : fittedWidth;
+  // Adapt the zoom to each image without exceeding its original resolution.
+  const zoomWidth = Math.min(natural.width, Math.max(fittedWidth * 1.6, frame.width));
+  const enlarged = zoomed && zoomWidth > fittedWidth;
+  const width = enlarged ? zoomWidth : fittedWidth;
   const height = natural.width ? width * natural.height / natural.width : 0;
-  const left = (frame.width - width) / 2;
+  const left = width > frame.width ? -(width - frame.width) * point.x / 100 : (frame.width - width) / 2;
   const top = height > frame.height ? -(height - frame.height) * point.y / 100 : (frame.height - height) / 2;
 
   return <div className="dipe-project-gallery__image-frame" ref={frameRef}>
