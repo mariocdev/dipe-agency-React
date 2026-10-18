@@ -54,12 +54,11 @@ export function IntroAnimation({ onComplete }) {
     let exit;
     import('gsap').then(({ gsap }) => {
       if (!active || !rootRef.current) return;
-      exit = gsap.to(rootRef.current, {
-        yPercent: -100,
-        duration: 0.8,
-        ease: 'power3.inOut',
-        onComplete: () => { if (active) onComplete(); },
-      });
+      const brand = rootRef.current.querySelector('.dipe-intro__brand');
+      exit = gsap.timeline({ onComplete: () => { if (active) onComplete(); } });
+      exit
+        .to(brand, { scale: 1.12, duration: 0.65, ease: 'power2.out' }, 0)
+        .to(rootRef.current, { opacity: 0, duration: 0.75, ease: 'sine.inOut' }, 0.16);
     }).catch(() => { if (active) onComplete(); });
 
     return () => {
