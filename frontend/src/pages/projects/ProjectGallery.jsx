@@ -6,40 +6,57 @@ function isVideo(media) {
 }
 
 function ZoomableImage({ media }) {
+  const frameRef = useRef(null);
   const imageRef = useRef(null);
-  const [scale, setScale] = useState(1);
+  const [frame, setFrame] = useState({ width: 0, height: 0 });
+  const [natural, setNatural] = useState({ width: 0, height: 0 });
   const [zoomed, setZoomed] = useState(false);
   const [point, setPoint] = useState({ x: 50, y: 50 });
 
-  function measureZoom() {
+  function readImageSize() {
     const image = imageRef.current;
-    if (!image?.offsetWidth || !image.offsetHeight) return;
-    // Never enlarge beyond the original image's pixel dimensions.
-    setScale(Math.max(1, Math.min(4, image.naturalWidth / image.offsetWidth, image.naturalHeight / image.offsetHeight)));
+    if (image?.naturalWidth) setNatural({ width: image.naturalWidth, height: image.naturalHeight });
   }
 
   useEffect(() => {
-    measureZoom();
-    const observer = new ResizeObserver(measureZoom);
-    observer.observe(imageRef.current);
+    function measureFrame() {
+      setFrame({ width: frameRef.current.clientWidth, height: frameRef.current.clientHeight });
+    }
+    measureFrame();
+    readImageSize();
+    const observer = new ResizeObserver(measureFrame);
+    observer.observe(frameRef.current);
     return () => observer.disconnect();
   }, []);
 
   function followPointer(event) {
-    const bounds = event.currentTarget.getBoundingClientRect();
+    const bounds = frameRef.current.getBoundingClientRect();
     setPoint({
       x: Math.min(100, Math.max(0, (event.clientX - bounds.left) / bounds.width * 100)),
       y: Math.min(100, Math.max(0, (event.clientY - bounds.top) / bounds.height * 100)),
     });
   }
 
-  return <button type="button" className={`dipe-project-gallery__image-zoom${zoomed && scale > 1 ? ' is-zoomed' : ''}`}
-    aria-label={zoomed ? 'Reducir imagen' : 'Acercar imagen; mueve el puntero para explorar'} aria-pressed={zoomed && scale > 1}
+  const fit = natural.width && frame.width ? Math.min(1, frame.width / natural.width, frame.height / natural.height) : 0;
+  const fittedWidth = natural.width * fit;
+  // Tall screenshots expand to the viewer's width; ordinary images get a gentler zoom.
+  // Both stay within the original file's pixel dimensions.
+  const zoomWidth = Math.min(natural.width, Math.max(fittedWidth * 1.6, frame.width));
+  const enlarged = zoomed && zoomWidth > fittedWidth;
+  const width = enlarged ? zoomWidth : fittedWidth;
+  const height = natural.width ? width * natural.height / natural.width : 0;
+  const left = width > frame.width ? -(width - frame.width) * point.x / 100 : (frame.width - width) / 2;
+  const top = height > frame.height ? -(height - frame.height) * point.y / 100 : (frame.height - height) / 2;
+
+  return <div className="dipe-project-gallery__image-frame" ref={frameRef}>
+    <button type="button" className={`dipe-project-gallery__image-zoom${enlarged ? ' is-zoomed' : ''}`}
+    style={{ width, height, left, top, cursor: enlarged ? 'zoom-out' : 'zoom-in' }}
+    aria-label={enlarged ? 'Reducir imagen' : 'Acercar imagen; mueve el puntero para explorar'} aria-pressed={enlarged}
     onPointerMove={(event) => { if (zoomed) followPointer(event); }} onBlur={() => setZoomed(false)}
     onClick={(event) => { if (event.detail === 0) setPoint({ x: 50, y: 50 }); else followPointer(event); setZoomed((current) => !current); }}>
-    <img ref={imageRef} src={media.url} alt={media.alt} draggable={false} onLoad={measureZoom}
-      style={{ transform: `scale(${zoomed ? scale : 1})`, transformOrigin: `${point.x}% ${point.y}%` }} />
-  </button>;
+      <img ref={imageRef} src={media.url} alt={media.alt} draggable={false} onLoad={readImageSize} />
+    </button>
+  </div>;
 }
 
 function GalleryMedia({ media, expanded, onExpand, className = '' }) {
@@ -116,7 +133,9 @@ export function ProjectGallery({ media }) {
   const [isDragging, setIsDragging] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const viewportRef = useRef(null);
+  const rootRef = useRef(null);
   const trackRef = useRef(null);
+  const activeSlideRef = useRef(0);
   const lastScrollRef = useRef(0);
   const wheelLockedRef = useRef(false);
   const dragStateRef = useRef(null);
@@ -135,6 +154,10 @@ export function ProjectGallery({ media }) {
   useEffect(() => {
     setActiveSlide((current) => Math.min(current, maxSlide));
   }, [maxSlide]);
+
+  useEffect(() => {
+    activeSlideRef.current = activeSlide;
+  }, [activeSlide]);
 
   useEffect(() => {
     const item = trackRef.current?.firstElementChild;
@@ -165,30 +188,24 @@ export function ProjectGallery({ media }) {
         wheelLockedRef.current = false;
         return;
       }
-      if (event.ctrlKey || !event.cancelable || event.deltaY === 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (event.ctrlKey || event.deltaY === 0) return;
 
       const now = Date.now();
-      if (activeSlide >= maxSlide) {
+      if (activeSlideRef.current >= maxSlide) {
         // Finish the last slide's transition before releasing downward scrolling.
         if (wheelLockedRef.current && now - lastScrollRef.current < 500) event.preventDefault();
         else wheelLockedRef.current = false;
         return;
       }
 
-      const bounds = viewportRef.current?.getBoundingClientRect();
-      if (!bounds) return;
-      const viewportHeight = window.innerHeight;
-      const distanceToCenter = bounds.top + bounds.height / 2 - viewportHeight / 2;
-      // Release if the page moved by keyboard, scrollbar or a viewport resize.
-      if (wheelLockedRef.current && Math.abs(distanceToCenter) > 2) wheelLockedRef.current = false;
-
       if (!wheelLockedRef.current) {
-        const wheelDistance = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportHeight : 1);
-        const remainingScroll = Math.max(0, document.documentElement.scrollHeight - viewportHeight - window.scrollY);
-        // Intercept only the downward step that actually reaches the center.
-        if (distanceToCenter < -1 || distanceToCenter > wheelDistance || distanceToCenter > remainingScroll + 1) return;
+        // Restore the original gallery-entry check; do not require an exact
+        // position or predict how far a wheel event will scroll the browser.
+        const bounds = rootRef.current?.getBoundingClientRect();
+        if (!bounds || bounds.top > window.innerHeight * 0.45 || bounds.bottom < window.innerHeight * 0.35) return;
         event.preventDefault();
-        window.scrollBy({ top: distanceToCenter, behavior: 'instant' });
+        const carousel = viewportRef.current?.getBoundingClientRect();
+        if (carousel) window.scrollBy({ top: carousel.top + carousel.height / 2 - window.innerHeight / 2, behavior: 'instant' });
         wheelLockedRef.current = true;
         lastScrollRef.current = 0;
       }
@@ -199,12 +216,14 @@ export function ProjectGallery({ media }) {
       }
 
       lastScrollRef.current = now;
-      setActiveSlide((current) => Math.min(current + 1, maxSlide));
+      const next = Math.min(activeSlideRef.current + 1, maxSlide);
+      activeSlideRef.current = next;
+      setActiveSlide(next);
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [activeSlide, maxSlide, expandedIndex]);
+  }, [maxSlide, expandedIndex]);
 
   if (media.length === 0) return null;
 
@@ -281,7 +300,7 @@ export function ProjectGallery({ media }) {
     suppressClickRef.current = false;
   }
 
-  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title">
+  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title" ref={rootRef}>
     <h2 id="project-gallery-title">Galería del proyecto</h2>
     <div className="dipe-project-gallery__carousel" aria-roledescription="carrusel" aria-label="Galería del proyecto">
       {maxSlide > 0 && <button className="dipe-project-gallery__nav dipe-project-gallery__nav--previous" type="button" onClick={() => moveSlide(-1)} disabled={activeSlide === 0} aria-label="Diapositiva anterior"><ArrowIcon previous /></button>}
