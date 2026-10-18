@@ -18,6 +18,7 @@
 - La administración de Solicitudes, los ajustes de Correo Dipe, proyectos por CPT/REST, el tratamiento de imágenes ACF y la sección de reseñas con dos opiniones reales repetidas están presentes en el código. Las confirmaciones de servidor siguen limitadas a las indicadas más abajo.
 - Tras la primera propuesta de un indicador intermedio, el usuario precisó que quería una **entrada a pantalla completa** que se muestre solo la primera vez en cada pestaña. `IntroAnimation.jsx` y su CSS cubren la web durante una secuencia GSAP de barras naranjas simétricas y terminan con el logo configurado en WordPress en el centro antes de revelar la página. El usuario confirmó que le gusta el efecto de entrada, pero pidió sustituir la salida tipo cortina por una transición más suave; el código ahora deja el logo centrado y desvanece la pantalla sobre la web. Esta nueva salida queda pendiente de revisión en el servidor. `sessionStorage` evita repetir la entrada al navegar o recargar en esa pestaña; con movimiento reducido se omite. Home y Blog se importan con la aplicación para eliminar la espera de sus antiguos chunks al cambiar de página. Las consultas REST editoriales siguen siendo asíncronas y pueden mostrar sus estados de carga si la red tarda.
 - El usuario observó tirones al abrir y cerrar las FAQ en pantallas grandes. La animación anterior interpolaba filas de CSS Grid durante 520 ms; se sustituyó por una transición de altura medida de 300 ms, con el área de respuesta contenida para acotar el repintado y sin temporizadores de cierre. El ajuste está pendiente de su revisión en el servidor; no se ha medido FPS localmente por el flujo de revisión acordado.
+- En la revisión final de Home, la navegación superior naranja se separó del `<header>` para que solo el bloque negro de logo y menú quede fijo mediante `position: sticky` al desplazarse. El banner de Home recibió 20 px más de padding vertical (140 px en escritorio y 100 px en el breakpoint móvil). El grid de proyectos destacados ocupa ahora todo el contenedor compartido del 80%; sus separaciones laterales pasan de 80 a 120 px en escritorio y conservan 80 px en pantallas de hasta 860 px. Pendiente de revisión del usuario en el servidor.
 
 ### Estado actual del desarrollo
 
@@ -34,7 +35,7 @@
 ### Producción y FTP
 
 - **Última versión confirmada como publicada en producción:** pendiente de identificar. No consta en el repositorio un commit, etiqueta o lista de archivos que pueda vincularse con certeza a la versión activa en el servidor.
-- **Archivos pendientes de subir por FTP:** tras la compilación del ajuste de FAQ, publicar el nuevo `assets/.vite/manifest.json` y los bundles de JS/CSS cuyos nombres cambien en `wp-content/themes/dipe-react/assets/assets/`. No hay cambios PHP. El usuario confirmará el resultado antes de anotarlo como publicado.
+- **Archivos pendientes de subir por FTP:** tras la compilación de los últimos ajustes de Home, publicar el nuevo `assets/.vite/manifest.json` y los bundles de JS/CSS cuyos nombres cambien en `wp-content/themes/dipe-react/assets/assets/`. No hay cambios PHP. El usuario confirmará el resultado antes de anotarlo como publicado.
 
 ## Lo que existe en código
 

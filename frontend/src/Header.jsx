@@ -63,7 +63,7 @@ export function Header() {
     return () => document.removeEventListener('keydown', closeOnEscape);
   }, []);
 
-  return <header className="dipe-header">
+  return <>
     <div className="dipe-header__utility-bar">
       <nav className="dipe-header__inner" aria-label="Navegación superior">
         <ul className="dipe-header__utility-list">
@@ -71,27 +71,29 @@ export function Header() {
         </ul>
       </nav>
     </div>
-    <div className="dipe-header__main-bar">
-      <div className="dipe-header__inner dipe-header__main-inner">
-        <a className="dipe-header__brand" href={sitePath('/')} aria-label="Ir al inicio">
-          {logo.url ? <img src={logo.url} alt={logo.alt || 'Dipe Agency'} /> : <span>{logo.alt || 'Dipe Agency'}</span>}
-        </a>
-        <button
-          className="dipe-header__menu-toggle"
-          type="button"
-          aria-expanded={mobileOpen}
-          aria-controls="dipe-primary-navigation"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          <span className="visually-hidden">Abrir menú principal</span>
-          <span aria-hidden="true">☰</span>
-        </button>
-        <nav className={`dipe-header__primary-nav ${mobileOpen ? 'is-open' : ''}`} id="dipe-primary-navigation" aria-label="Navegación principal">
-          <ul className="dipe-header__primary-list">
-            {primary.map((item) => <PrimaryItem item={item} key={item.id} openItem={openItem} setOpenItem={setOpenItem} />)}
-          </ul>
-        </nav>
+    <header className="dipe-header">
+      <div className="dipe-header__main-bar">
+        <div className="dipe-header__inner dipe-header__main-inner">
+          <a className="dipe-header__brand" href={sitePath('/')} aria-label="Ir al inicio">
+            {logo.url ? <img src={logo.url} alt={logo.alt || 'Dipe Agency'} /> : <span>{logo.alt || 'Dipe Agency'}</span>}
+          </a>
+          <button
+            className="dipe-header__menu-toggle"
+            type="button"
+            aria-expanded={mobileOpen}
+            aria-controls="dipe-primary-navigation"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <span className="visually-hidden">Abrir menú principal</span>
+            <span aria-hidden="true">☰</span>
+          </button>
+          <nav className={`dipe-header__primary-nav ${mobileOpen ? 'is-open' : ''}`} id="dipe-primary-navigation" aria-label="Navegación principal">
+            <ul className="dipe-header__primary-list">
+              {primary.map((item) => <PrimaryItem item={item} key={item.id} openItem={openItem} setOpenItem={setOpenItem} />)}
+            </ul>
+          </nav>
+        </div>
       </div>
-    </div>
-  </header>;
+    </header>
+  </>;
 }

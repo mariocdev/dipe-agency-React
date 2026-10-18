@@ -40,7 +40,8 @@ h3,
 }
 
 .dipe-header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 100;
   font-family: var(--dipe-font-primary);
 }
@@ -434,7 +435,7 @@ h3,
 
   .dipe-video-hero__inner {
     width: min(92%, 72rem);
-    padding-block: 5rem;
+    padding-block: calc(5rem + 20px);
   }
 
   .dipe-video-hero__title {
