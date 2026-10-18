@@ -39,7 +39,6 @@ function ZoomableImage({ media }) {
     onClick={(event) => { if (event.detail === 0) setPoint({ x: 50, y: 50 }); else followPointer(event); setZoomed((current) => !current); }}>
     <img ref={imageRef} src={media.url} alt={media.alt} draggable={false} onLoad={measureZoom}
       style={{ transform: `scale(${zoomed ? scale : 1})`, transformOrigin: `${point.x}% ${point.y}%` }} />
-    {scale > 1 && <span className="dipe-project-gallery__zoom-hint" aria-hidden="true"><MagnifierIcon /></span>}
   </button>;
 }
 
@@ -58,16 +57,7 @@ function GalleryMedia({ media, expanded, onExpand, className = '' }) {
     {video
       ? <video src={media.url} muted playsInline preload="metadata" aria-label={media.alt || 'Vídeo de la galería'} />
       : <img src={media.url} alt={media.alt} draggable={false} />}
-    {!video && <span className="dipe-project-gallery__zoom-hint" aria-hidden="true"><MagnifierIcon /></span>}
   </button>;
-}
-
-function MagnifierIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="10.5" cy="10.5" r="5.5" />
-    <path d="m15 15 5 5" />
-    <path d="M10.5 7.75v5.5M7.75 10.5h5.5" />
-  </svg>;
 }
 
 function ArrowIcon({ previous = false }) {
@@ -128,6 +118,7 @@ export function ProjectGallery({ media }) {
   const viewportRef = useRef(null);
   const trackRef = useRef(null);
   const lastScrollRef = useRef(0);
+  const wheelLockedRef = useRef(false);
   const dragStateRef = useRef(null);
   const suppressClickRef = useRef(false);
   const maxSlide = Math.max(0, media.length - visibleItems);
@@ -165,28 +156,44 @@ export function ProjectGallery({ media }) {
     if (maxSlide < 1) return undefined;
 
     function handleWheel(event) {
-      if (expandedIndex !== null || dragStateRef.current?.started || activeSlide >= maxSlide || event.ctrlKey || !event.cancelable || event.deltaY <= 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      // Upward scrolling always belongs to the page, including during a sequence.
+      if (event.deltaY < 0) {
+        wheelLockedRef.current = false;
+        return;
+      }
+      if (expandedIndex !== null || dragStateRef.current?.started) {
+        wheelLockedRef.current = false;
+        return;
+      }
+      if (event.ctrlKey || !event.cancelable || event.deltaY === 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+
+      const now = Date.now();
+      if (activeSlide >= maxSlide) {
+        // Finish the last slide's transition before releasing downward scrolling.
+        if (wheelLockedRef.current && now - lastScrollRef.current < 500) event.preventDefault();
+        else wheelLockedRef.current = false;
+        return;
+      }
+
       const bounds = viewportRef.current?.getBoundingClientRect();
       if (!bounds) return;
       const viewportHeight = window.innerHeight;
-      const center = bounds.top + bounds.height / 2;
-      const target = viewportHeight / 2;
-      const tolerance = viewportHeight * 0.12;
-      const remainingScroll = Math.max(0, document.documentElement.scrollHeight - viewportHeight - window.scrollY);
-      const wheelDistance = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportHeight : 1);
-      // Catch a wheel step that crosses the center, even if it skips the activation band.
-      const reachesCenter = center - Math.min(wheelDistance, remainingScroll) <= target + tolerance;
-      const coversCenter = bounds.top <= target && bounds.bottom >= target;
-      // A gallery at the end of a short page may never reach the exact center.
-      const atPageEnd = remainingScroll <= 1 && bounds.top < viewportHeight * 0.65 && bounds.bottom > target;
-      const isCarouselInUse = (reachesCenter && bounds.bottom >= target && center >= target - tolerance) || (coversCenter && center <= target) || atPageEnd;
-      if (!isCarouselInUse) return;
+      const distanceToCenter = bounds.top + bounds.height / 2 - viewportHeight / 2;
+      // Release if the page moved by keyboard, scrollbar or a viewport resize.
+      if (wheelLockedRef.current && Math.abs(distanceToCenter) > 2) wheelLockedRef.current = false;
 
-      const now = Date.now();
-      event.preventDefault();
-      if (center > target + tolerance && remainingScroll > 0) {
-        window.scrollBy({ top: Math.min(center - target, remainingScroll), behavior: 'instant' });
+      if (!wheelLockedRef.current) {
+        const wheelDistance = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportHeight : 1);
+        const remainingScroll = Math.max(0, document.documentElement.scrollHeight - viewportHeight - window.scrollY);
+        // Intercept only the downward step that actually reaches the center.
+        if (distanceToCenter < -1 || distanceToCenter > wheelDistance || distanceToCenter > remainingScroll + 1) return;
+        event.preventDefault();
+        window.scrollBy({ top: distanceToCenter, behavior: 'instant' });
+        wheelLockedRef.current = true;
+        lastScrollRef.current = 0;
       }
+
+      event.preventDefault();
       if (now - lastScrollRef.current < 600) {
         return;
       }
@@ -211,6 +218,7 @@ export function ProjectGallery({ media }) {
 
   function startDrag(event) {
     if (event.button !== 0 || !event.isPrimary || maxSlide < 1) return;
+    wheelLockedRef.current = false;
     suppressClickRef.current = false;
     dragStateRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, offset: 0, started: false };
     // Keep simple clicks on their button, even when the pointer leaves it.

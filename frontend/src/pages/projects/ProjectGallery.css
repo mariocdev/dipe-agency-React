@@ -221,32 +221,6 @@
   color: var(--dipe-color-white);
 }
 
-.dipe-project-gallery__zoom-hint {
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  display: grid;
-  width: 3.25rem;
-  height: 3.25rem;
-  padding: 0;
-  border: 1px solid rgb(255 255 255 / 32%);
-  border-radius: 50%;
-  color: var(--dipe-color-white);
-  background: rgb(2 2 2 / 48%);
-  pointer-events: none;
-  place-items: center;
-}
-
-.dipe-project-gallery__zoom-hint svg {
-  width: 1.45rem;
-  height: 1.45rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
-
 .dipe-project-gallery__lightbox-nav {
   padding: 0.5rem;
   font-size: 4rem;
