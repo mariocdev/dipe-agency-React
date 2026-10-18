@@ -121,7 +121,7 @@
 .dipe-project-detail__sections {
   display: grid;
   width: var(--dipe-content-width);
-  gap: 75px;
+  gap: 100px;
   margin-inline: auto;
   padding-block: 75px;
 }
@@ -129,7 +129,7 @@
 .dipe-project-detail__body-section {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
-  column-gap: 50px;
+  column-gap: 75px;
 }
 
 .dipe-project-detail__body-section--full-width {
