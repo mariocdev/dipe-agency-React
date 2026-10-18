@@ -35,8 +35,7 @@ function ZoomableImage({ media }) {
 
   return <button type="button" className={`dipe-project-gallery__image-zoom${zoomed && scale > 1 ? ' is-zoomed' : ''}`}
     aria-label={zoomed ? 'Reducir imagen' : 'Acercar imagen; mueve el puntero para explorar'} aria-pressed={zoomed && scale > 1}
-    onPointerEnter={(event) => { if (event.pointerType === 'mouse') { followPointer(event); setZoomed(true); } }}
-    onPointerMove={followPointer} onPointerLeave={() => setZoomed(false)} onBlur={() => setZoomed(false)}
+    onPointerMove={(event) => { if (zoomed) followPointer(event); }} onBlur={() => setZoomed(false)}
     onClick={(event) => { if (event.detail === 0) setPoint({ x: 50, y: 50 }); else followPointer(event); setZoomed((current) => !current); }}>
     <img ref={imageRef} src={media.url} alt={media.alt} draggable={false} onLoad={measureZoom}
       style={{ transform: `scale(${zoomed ? scale : 1})`, transformOrigin: `${point.x}% ${point.y}%` }} />
@@ -128,7 +127,6 @@ export function ProjectGallery({ media }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const viewportRef = useRef(null);
   const trackRef = useRef(null);
-  const autoCompletedRef = useRef(false);
   const lastScrollRef = useRef(0);
   const dragStateRef = useRef(null);
   const suppressClickRef = useRef(false);
@@ -167,24 +165,34 @@ export function ProjectGallery({ media }) {
     if (maxSlide < 1) return undefined;
 
     function handleWheel(event) {
-      if (expandedIndex !== null || dragStateRef.current || activeSlide >= maxSlide || autoCompletedRef.current || event.ctrlKey || !event.cancelable || event.deltaY <= 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (expandedIndex !== null || dragStateRef.current?.started || activeSlide >= maxSlide || event.ctrlKey || !event.cancelable || event.deltaY <= 0 || Math.abs(event.deltaX) > Math.abs(event.deltaY) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const bounds = viewportRef.current?.getBoundingClientRect();
-      const tolerance = Math.min(80, window.innerHeight * 0.1);
-      const isCarouselInUse = bounds && Math.abs(bounds.top + bounds.height / 2 - window.innerHeight / 2) <= tolerance;
+      if (!bounds) return;
+      const viewportHeight = window.innerHeight;
+      const center = bounds.top + bounds.height / 2;
+      const target = viewportHeight / 2;
+      const tolerance = viewportHeight * 0.12;
+      const remainingScroll = Math.max(0, document.documentElement.scrollHeight - viewportHeight - window.scrollY);
+      const wheelDistance = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? viewportHeight : 1);
+      // Catch a wheel step that crosses the center, even if it skips the activation band.
+      const reachesCenter = center - Math.min(wheelDistance, remainingScroll) <= target + tolerance;
+      const coversCenter = bounds.top <= target && bounds.bottom >= target;
+      // A gallery at the end of a short page may never reach the exact center.
+      const atPageEnd = remainingScroll <= 1 && bounds.top < viewportHeight * 0.65 && bounds.bottom > target;
+      const isCarouselInUse = (reachesCenter && bounds.bottom >= target && center >= target - tolerance) || (coversCenter && center <= target) || atPageEnd;
       if (!isCarouselInUse) return;
 
       const now = Date.now();
       event.preventDefault();
+      if (center > target + tolerance && remainingScroll > 0) {
+        window.scrollBy({ top: Math.min(center - target, remainingScroll), behavior: 'instant' });
+      }
       if (now - lastScrollRef.current < 600) {
         return;
       }
 
       lastScrollRef.current = now;
-      setActiveSlide((current) => {
-        const next = Math.min(current + 1, maxSlide);
-        if (next === maxSlide) autoCompletedRef.current = true;
-        return next;
-      });
+      setActiveSlide((current) => Math.min(current + 1, maxSlide));
     }
 
     window.addEventListener('wheel', handleWheel, { passive: false });
