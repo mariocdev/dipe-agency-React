@@ -30,12 +30,14 @@ que ese campo solo admite imágenes. Cada archivo admite JPG, PNG, GIF, WebP,
 AVIF, MP4 o WebM. Los campos nuevos se exponen por REST mediante ACF. La
 cabecera del detalle ya consume la imagen de banner, fecha, URL publicada y
 jerarquía de categorías. Su primer bloque muestra el contenido HTML nativo y
-el vídeo de YouTube. La galería multimedia se presenta como carrusel de tres
-elementos altos con avance unitario mediante rueda al bajar, flechas o arrastre
-horizontal, permite ampliarlos y navegar entre ellos; los vídeos y GIF se
-mantienen como archivos del ACF. El visor conserva el archivo original y
-permite ampliar imágenes y GIF mediante una lupa. Los destacados se maquetarán
-después.
+el vídeo de YouTube. La galería multimedia se presenta como carrusel de cuatro
+elementos altos en escritorio, dos hasta 860 px y uno hasta 560 px, con avance
+mediante flechas, paginación o arrastre horizontal. No captura la rueda ni centra
+la página automáticamente. Permite ampliar los archivos y navegar entre ellos;
+los vídeos y GIF se mantienen como archivos del ACF. El visor conserva el
+archivo original y permite ampliar imágenes y GIF por clic y recorrerlos con
+el ratón; la lupa es el cursor, sin iconos superpuestos. Los destacados se
+maquetarán después.
 
 ## Archivo de proyectos
 

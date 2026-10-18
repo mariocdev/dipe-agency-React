@@ -52,7 +52,7 @@
 .dipe-project-gallery__media {
   position: relative;
   display: block;
-  flex: 0 0 calc((100% - 40px) / 3);
+  flex: 0 0 calc((100% - 60px) / 4);
   width: 100%;
   min-width: 0;
   aspect-ratio: 4 / 5;

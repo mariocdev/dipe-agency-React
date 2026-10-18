@@ -127,26 +127,19 @@ function GalleryLightbox({ media, activeIndex, onClose, onMove }) {
 
 export function ProjectGallery({ media }) {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [visibleItems, setVisibleItems] = useState(3);
+  const [visibleItems, setVisibleItems] = useState(4);
   const [slideStep, setSlideStep] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
-  const viewportRef = useRef(null);
-  const rootRef = useRef(null);
   const trackRef = useRef(null);
-  const activeSlideRef = useRef(0);
-  const lastScrollRef = useRef(0);
-  const wheelLockedRef = useRef(false);
-  const hasCenteredRef = useRef(false);
-  const isCenteringRef = useRef(false);
   const dragStateRef = useRef(null);
   const suppressClickRef = useRef(false);
   const maxSlide = Math.max(0, media.length - visibleItems);
 
   useEffect(() => {
     function updateVisibleItems() {
-      setVisibleItems(window.innerWidth <= 560 ? 1 : window.innerWidth <= 860 ? 2 : 3);
+      setVisibleItems(window.innerWidth <= 560 ? 1 : window.innerWidth <= 860 ? 2 : 4);
     }
     updateVisibleItems();
     window.addEventListener('resize', updateVisibleItems);
@@ -156,10 +149,6 @@ export function ProjectGallery({ media }) {
   useEffect(() => {
     setActiveSlide((current) => Math.min(current, maxSlide));
   }, [maxSlide]);
-
-  useEffect(() => {
-    activeSlideRef.current = activeSlide;
-  }, [activeSlide]);
 
   useEffect(() => {
     const item = trackRef.current?.firstElementChild;
@@ -177,70 +166,6 @@ export function ProjectGallery({ media }) {
     return () => observer.disconnect();
   }, [visibleItems, media.length]);
 
-  useEffect(() => {
-    if (maxSlide < 1) return undefined;
-
-    function handleWheel(event) {
-      const bounds = rootRef.current?.getBoundingClientRect();
-      // A direction change within the gallery is still the same visit.
-      if (bounds && (bounds.top >= window.innerHeight || bounds.bottom <= 0)) hasCenteredRef.current = false;
-
-      // Upward scrolling always belongs to the page, including during a sequence.
-      if (event.deltaY < 0) {
-        if (isCenteringRef.current) {
-          window.scrollTo({ top: window.scrollY, behavior: 'instant' });
-          isCenteringRef.current = false;
-        }
-        wheelLockedRef.current = false;
-        return;
-      }
-      if (expandedIndex !== null || dragStateRef.current?.started) {
-        wheelLockedRef.current = false;
-        return;
-      }
-      if (event.ctrlKey || event.deltaY === 0) return;
-
-      const now = Date.now();
-      if (activeSlideRef.current >= maxSlide) {
-        // Finish the last slide's transition before releasing downward scrolling.
-        if (wheelLockedRef.current && now - lastScrollRef.current < 500) event.preventDefault();
-        else wheelLockedRef.current = false;
-        return;
-      }
-
-      if (!wheelLockedRef.current) {
-        // Restore the original gallery-entry check; do not require an exact
-        // position or predict how far a wheel event will scroll the browser.
-        if (!bounds || bounds.top > window.innerHeight * 0.45 || bounds.bottom < window.innerHeight * 0.35) return;
-        event.preventDefault();
-        if (!hasCenteredRef.current) {
-          const carousel = viewportRef.current?.getBoundingClientRect();
-          if (carousel) {
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            window.scrollBy({ top: carousel.top + carousel.height / 2 - window.innerHeight / 2, behavior: reduceMotion ? 'instant' : 'smooth' });
-            isCenteringRef.current = !reduceMotion;
-          }
-          hasCenteredRef.current = true;
-          lastScrollRef.current = 0;
-        }
-        wheelLockedRef.current = true;
-      }
-
-      event.preventDefault();
-      if (now - lastScrollRef.current < 600) {
-        return;
-      }
-
-      lastScrollRef.current = now;
-      const next = Math.min(activeSlideRef.current + 1, maxSlide);
-      activeSlideRef.current = next;
-      setActiveSlide(next);
-    }
-
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [maxSlide, expandedIndex]);
-
   if (media.length === 0) return null;
 
   function moveSlide(direction) {
@@ -253,7 +178,6 @@ export function ProjectGallery({ media }) {
 
   function startDrag(event) {
     if (event.button !== 0 || !event.isPrimary || maxSlide < 1) return;
-    wheelLockedRef.current = false;
     suppressClickRef.current = false;
     dragStateRef.current = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, offset: 0, started: false };
     // Keep simple clicks on their button, even when the pointer leaves it.
@@ -316,11 +240,11 @@ export function ProjectGallery({ media }) {
     suppressClickRef.current = false;
   }
 
-  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title" ref={rootRef}>
+  return <section className="dipe-project-gallery" aria-labelledby="project-gallery-title">
     <h2 id="project-gallery-title">Galería del proyecto</h2>
     <div className="dipe-project-gallery__carousel" aria-roledescription="carrusel" aria-label="Galería del proyecto">
       {maxSlide > 0 && <button className="dipe-project-gallery__nav dipe-project-gallery__nav--previous" type="button" onClick={() => moveSlide(-1)} disabled={activeSlide === 0} aria-label="Diapositiva anterior"><ArrowIcon previous /></button>}
-      <div className="dipe-project-gallery__viewport" ref={viewportRef}>
+      <div className="dipe-project-gallery__viewport">
         <div className={`dipe-project-gallery__track${isDragging ? ' is-dragging' : ''}`} ref={trackRef} onPointerDown={startDrag} onPointerMove={dragCarousel} onPointerUp={endDrag} onPointerCancel={cancelDrag} onLostPointerCapture={cancelDrag} onDragStart={(event) => event.preventDefault()} onClickCapture={blockClickAfterDrag} style={{ transform: `translate3d(-${activeSlide * slideStep - dragOffset}px, 0, 0)` }}>
           {media.map((entry, index) => <GalleryMedia media={entry} key={entry.id} onExpand={() => setExpandedIndex(index)} />)}
         </div>
