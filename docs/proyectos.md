@@ -36,8 +36,10 @@ mediante flechas, paginación o arrastre horizontal. No captura la rueda ni cent
 la página automáticamente. Permite ampliar los archivos y navegar entre ellos;
 los vídeos y GIF se mantienen como archivos del ACF. El visor conserva el
 archivo original y permite ampliar imágenes y GIF por clic y recorrerlos con
-el ratón; la lupa es el cursor, sin iconos superpuestos. Los destacados se
-maquetarán después.
+el ratón; la lupa es el cursor, sin iconos superpuestos. Al activar el zoom,
+todas las imágenes ocupan el ancho completo entre las flechas, conservan sus
+proporciones y permiten recorrer verticalmente la parte que excede el visor.
+Los destacados se maquetarán después.
 
 ## Archivo de proyectos
 
