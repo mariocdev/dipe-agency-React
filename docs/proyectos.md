@@ -40,7 +40,18 @@ el ratón; la lupa es el cursor, sin iconos superpuestos. El zoom se adapta a
 las proporciones y resolución de cada imagen, sin forzar un ancho común ni
 superar las dimensiones originales. Las partes que exceden el visor se
 recorren con el ratón.
-Los destacados se maquetarán después.
+## Más proyectos destacados
+
+El detalle termina con el h2 «Más proyectos destacados». En el campo ACF
+**Proyectos destacados** de cada proyecto, selecciona y ordena los proyectos
+que deben aparecer. Se muestran únicamente los publicados, sin repetir el
+proyecto actual; si no hay una selección disponible, la sección se omite.
+Esta selección es independiente de la etiqueta «Destacados» de la Home.
+
+Las tarjetas comparten componente y estilos con el archivo: imagen destacada
+nativa de WordPress, categoría enlazada y título h3. El grid muestra tres
+columnas en escritorio, dos hasta 860 px y una hasta 560 px. No requiere
+cambios del plugin ni campos nuevos. Pendiente de revisión en el servidor.
 
 ## Archivo de proyectos
 

@@ -104,6 +104,27 @@ export async function getProject(slug) {
 	};
 }
 
+export async function getRelatedProjects(project) {
+  const selected = project?.acf?.dipe_project_featured_projects;
+  if (!Array.isArray(selected)) return [];
+
+  const ids = [...new Set(selected.map((item) => Number(item?.ID || item?.id || item)))]
+    .filter((id) => Number.isInteger(id) && id > 0 && id !== Number(project.id));
+  const batches = [];
+  for (let offset = 0; offset < ids.length; offset += 100) {
+    const batch = ids.slice(offset, offset + 100);
+    const params = new URLSearchParams({
+      status: 'publish',
+      include: batch.join(','),
+      orderby: 'include',
+      per_page: String(batch.length),
+      _embed: '1',
+    });
+    batches.push(request(`wp/v2/dipe-proyectos?${params}`));
+  }
+  return (await Promise.all(batches)).flatMap((items) => items || []);
+}
+
 export async function submitContactForm(fields) {
   const response = await fetch(endpoint('dipe/v1/forms/contacto'), {
     method: 'POST',

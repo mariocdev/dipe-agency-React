@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getProject, plainText, projectBannerImage, projectGalleryMedia } from '../../lib/api';
 import { ProjectGallery } from './ProjectGallery';
+import { RelatedProjects } from './RelatedProjects';
 import './ProjectDetail.css';
 
 function formatDevelopmentDate(value) {
@@ -121,6 +122,7 @@ export function ProjectDetail({ slug, onNotFound }) {
     <div className="dipe-project-detail__sections">
       <ProjectMainContent item={item} title={title} />
       <ProjectGallery media={gallery} />
+      <RelatedProjects project={item} />
     </div>
   </article>;
 }

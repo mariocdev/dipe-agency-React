@@ -1,0 +1,68 @@
+.dipe-projects-archive__project-link {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+  color: var(--dipe-color-ink);
+  text-decoration: none;
+}
+
+.dipe-projects-archive__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  transition: transform 260ms ease;
+}
+
+.dipe-projects-archive__item:hover .dipe-projects-archive__image,
+.dipe-projects-archive__project-link:focus-visible .dipe-projects-archive__image {
+  transform: scale(1.045);
+}
+
+.dipe-projects-archive__card-content {
+  padding-block: 25px;
+}
+
+.dipe-projects-archive__category {
+  display: inline-block;
+  color: var(--dipe-color-ink);
+  font-family: var(--dipe-font-primary);
+  font-size: calc(14px * var(--dipe-font-scale));
+  font-style: normal;
+  font-weight: var(--dipe-font-weight-regular);
+  line-height: normal;
+  text-decoration: none;
+}
+
+.dipe-projects-archive__card-content h3 {
+  margin: 5px 0 0;
+  color: var(--dipe-color-ink);
+  font-family: var(--dipe-font-primary);
+  font-size: calc(20px * var(--dipe-font-scale));
+  font-style: normal;
+  font-weight: var(--dipe-font-weight-bold);
+  line-height: 1.35;
+}
+
+.dipe-projects-archive__card-content h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.dipe-projects-archive__project-link:focus-visible,
+.dipe-projects-archive__category:focus-visible,
+.dipe-projects-archive__card-content h3 a:focus-visible {
+  outline: 2px solid var(--dipe-color-orange);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dipe-projects-archive__image {
+    transition: none;
+  }
+
+  .dipe-projects-archive__item:hover .dipe-projects-archive__image,
+  .dipe-projects-archive__project-link:focus-visible .dipe-projects-archive__image {
+    transform: none;
+  }
+}
