@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { getProject, getProjects, projectHomeCardImage, rendered } from './api';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { Loading } from './Loading';
 import { siteConfig, sitePath } from './site';
 
 const Home = lazy(() => import('./Home').then((module) => ({ default: module.Home })));
@@ -18,10 +19,6 @@ function Shell({ children }) {
     <main>{children}</main>
     <Footer />
   </>;
-}
-
-function Loading() {
-  return <p className="text-secondary" role="status">Cargando contenido…</p>;
 }
 
 function Failure({ error }) {
@@ -47,7 +44,7 @@ function Projects({ limit = 24, compact = false }) {
     getProjects(limit).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: [], error }));
   }, [limit]);
 
-  if (state.loading) return <Loading />;
+  if (state.loading) return <Loading compact />;
   if (state.error) return <Failure error={state.error} />;
   if (state.data.length === 0) return <p className="text-secondary">Aún no hay proyectos publicados.</p>;
   return <div className="row g-4 mt-1">
@@ -68,7 +65,7 @@ function ProjectDetail({ slug }) {
   useEffect(() => {
     getProject(slug).then((data) => setState({ loading: false, data, error: null })).catch((error) => setState({ loading: false, data: null, error }));
   }, [slug]);
-  if (state.loading) return <section className="container py-5"><Loading /></section>;
+  if (state.loading) return <section className="container py-5"><Loading compact /></section>;
   if (state.error) return <section className="container py-5"><Failure error={state.error} /></section>;
   if (!state.data) return <NotFound />;
   const item = state.data;

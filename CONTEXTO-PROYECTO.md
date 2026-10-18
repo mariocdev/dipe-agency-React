@@ -1,6 +1,6 @@
 # Contexto del proyecto Dipe Agency
 
-**Corte de estado: 17 de octubre de 2026.** Este documento resume el árbol local y lo confirmado en la conversación. No se ejecutaron pruebas locales ni se consultó el servidor para prepararlo. El usuario instala/sube por FTP y valida los cambios en el WordPress real. No incluye credenciales, claves ni contenido de solicitudes.
+**Corte de estado: 18 de octubre de 2026.** Este documento resume el árbol local y lo confirmado en la conversación. El usuario instala/sube por FTP y valida los cambios en el WordPress real. No incluye credenciales, claves ni contenido de solicitudes.
 
 ## Objetivo y decisiones firmes
 
@@ -16,6 +16,7 @@
 
 - La base de Home y Contacto está implementada en el tema React y `dipe-core`: el formulario Contacto registra solicitudes privadas y usa el flujo de correo configurado desde WordPress. El usuario confirmó un envío recibido en Gmail, aunque llegó a spam; esto no confirma la entregabilidad general.
 - La administración de Solicitudes, los ajustes de Correo Dipe, proyectos por CPT/REST, el tratamiento de imágenes ACF y la sección de reseñas con dos opiniones reales repetidas están presentes en el código. Las confirmaciones de servidor siguen limitadas a las indicadas más abajo.
+- El indicador genérico «Cargando contenido» de `App.jsx` se sustituyó por `Loading.jsx` y `Loading.css`: tres barras naranjas y una línea de progreso indeterminada animadas con GSAP cuando hay movimiento permitido. GSAP se carga de forma diferida, la animación se limpia al desmontar el componente y el indicador queda estático si se prefiere movimiento reducido. Se aplica a la carga inicial de vistas y a la carga de proyectos. Pendiente de revisión visual del usuario en el servidor.
 
 ### Estado actual del desarrollo
 
@@ -32,7 +33,7 @@
 ### Producción y FTP
 
 - **Última versión confirmada como publicada en producción:** pendiente de identificar. No consta en el repositorio un commit, etiqueta o lista de archivos que pueda vincularse con certeza a la versión activa en el servidor.
-- **Archivos pendientes de subir por FTP:** ninguno generado por esta tarea, que solo modifica documentación. El estado de despliegue de cambios anteriores debe confirmarlo el usuario antes de marcarlo como publicado. Cuando cambie React/CSS, la entrega deberá enumerar también los assets generados por el único `pnpm build` permitido.
+- **Archivos pendientes de subir por FTP:** tras la compilación de la iteración del loader, sustituir el directorio `wp-content/themes/dipe-react/assets/` completo en el servidor, incluido `assets/.vite/manifest.json` y el nuevo chunk de GSAP. No hay cambios PHP para esta iteración. El usuario confirmará si el loader se ve correctamente antes de anotarlo como publicado.
 
 ## Lo que existe en código
 
