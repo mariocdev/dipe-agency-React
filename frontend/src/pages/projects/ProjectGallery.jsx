@@ -138,6 +138,8 @@ export function ProjectGallery({ media }) {
   const activeSlideRef = useRef(0);
   const lastScrollRef = useRef(0);
   const wheelLockedRef = useRef(false);
+  const hasCenteredRef = useRef(false);
+  const isCenteringRef = useRef(false);
   const dragStateRef = useRef(null);
   const suppressClickRef = useRef(false);
   const maxSlide = Math.max(0, media.length - visibleItems);
@@ -179,8 +181,16 @@ export function ProjectGallery({ media }) {
     if (maxSlide < 1) return undefined;
 
     function handleWheel(event) {
+      const bounds = rootRef.current?.getBoundingClientRect();
+      // A direction change within the gallery is still the same visit.
+      if (bounds && (bounds.top >= window.innerHeight || bounds.bottom <= 0)) hasCenteredRef.current = false;
+
       // Upward scrolling always belongs to the page, including during a sequence.
       if (event.deltaY < 0) {
+        if (isCenteringRef.current) {
+          window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+          isCenteringRef.current = false;
+        }
         wheelLockedRef.current = false;
         return;
       }
@@ -201,13 +211,19 @@ export function ProjectGallery({ media }) {
       if (!wheelLockedRef.current) {
         // Restore the original gallery-entry check; do not require an exact
         // position or predict how far a wheel event will scroll the browser.
-        const bounds = rootRef.current?.getBoundingClientRect();
         if (!bounds || bounds.top > window.innerHeight * 0.45 || bounds.bottom < window.innerHeight * 0.35) return;
         event.preventDefault();
-        const carousel = viewportRef.current?.getBoundingClientRect();
-        if (carousel) window.scrollBy({ top: carousel.top + carousel.height / 2 - window.innerHeight / 2, behavior: 'instant' });
+        if (!hasCenteredRef.current) {
+          const carousel = viewportRef.current?.getBoundingClientRect();
+          if (carousel) {
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            window.scrollBy({ top: carousel.top + carousel.height / 2 - window.innerHeight / 2, behavior: reduceMotion ? 'instant' : 'smooth' });
+            isCenteringRef.current = !reduceMotion;
+          }
+          hasCenteredRef.current = true;
+          lastScrollRef.current = 0;
+        }
         wheelLockedRef.current = true;
-        lastScrollRef.current = 0;
       }
 
       event.preventDefault();
