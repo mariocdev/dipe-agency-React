@@ -1,87 +1,126 @@
-# Dipe Agency
+# Dipe Agency · WordPress y React
 
-Base para una web corporativa con React + Bootstrap como interfaz pública. WordPress gestiona entradas y CPT; Home, Quiénes somos, Contacto y Trabaja con nosotros se mantienen en código. La estructura de navegación y pie se implementa en React, con menús y logo editables desde WordPress. Los metadatos SEO de todas las URL deberán poder editarse desde WordPress.
+**Diseño a medida, gestión editorial en WordPress y una interfaz construida con React.**
 
-## Estructura
+Este proyecto combina un panel conocido para publicar contenido con una experiencia visual propia: páginas corporativas, servicios, proyectos, blog, animaciones y formularios. La presentación recorre las decisiones de arquitectura, el proceso de construcción y los primeros resultados documentados; debajo se encuentra la documentación para entender y continuar la implementación.
 
-- `frontend/`: código React y configuración de Vite. Se compila localmente.
-- `wp-content/plugins/dipe-core/`: modelo de contenido y ajustes que no deben depender del tema.
-- `wp-content/themes/dipe-react/`: tema ligero que sirve las URL de WordPress y carga el build de React.
-- `docs/`: decisiones de contenido y comprobaciones de la prueba vertical.
+## Presentación del proyecto
 
-La propuesta de páginas, CPT, ACF y plugins está en [arquitectura editorial](docs/arquitectura-editorial.md). La cabecera y el pie están implementados según [su especificación](docs/maquetacion-cabecera-footer.md). Los valores visuales compartidos están en `frontend/src/tokens.css` y se explican en la [guía visual](docs/guia-visual.md). Para retomar el trabajo, empezar por [el plan actualizado](PLAN_PARA_TERRA.md) y [las directrices](AGENTS.md).
+[![Portada de la presentación Dipe Agency: una web con identidad propia](docs/presentacion/portada.png)](docs/presentacion/Dipe-Agency.pptx?raw=true)
 
-Las entradas usan `/blog/{slug}/`, las categorías `/categoria/{slug}/` y el archivo `/blog/`; los detalles de configuración y entrega están en [rutas del blog](docs/blog-rutas.md).
+**[Descargar presentación · PowerPoint editable](docs/presentacion/Dipe-Agency.pptx?raw=true)** · 12 diapositivas, incluidos dos anexos de métricas.
 
-**Revisión acordada:** el usuario sube por FTP y comprueba los cambios en el servidor. Los agentes no hacen comprobaciones locales ni pruebas visuales por iniciativa propia. `pnpm build` se usa una vez cuando cambia el front para generar los assets de entrega; no es una revisión funcional. Las listas de comprobación de documentos antiguos son referencias para la revisión posterior del usuario.
+La presentación explica qué aporta separar contenido e interfaz, cómo se reparten React, el tema y el plugin propio, qué se administra desde WordPress y cómo se prepara el paso a producción. Incluye resultados PageSpeed de cinco plantillas en móvil y escritorio. La prueba de resultados enriquecidos permanece identificada como pendiente.
 
-## Requisitos locales
+## La idea: conservar WordPress y controlar la experiencia
 
-- PHP 8.2 o superior y WordPress actualizado para comprobar la integración. WordPress recomienda PHP 8.3+ si el hosting lo permite.
-- Node.js 20.19+ o 22.12+ (recomendado Node 24) y pnpm 11 para crear el bundle.
-- Una instalación WordPress independiente con enlaces permanentes activados.
+En una web WordPress tradicional, el tema genera gran parte de lo que ve el visitante. En una arquitectura **headless**, WordPress gestiona el contenido y una interfaz independiente lo consume mediante una API. Esto permite trabajar el diseño y la interacción con herramientas de frontend sin sustituir necesariamente el sistema editorial.
 
-## Desarrollo y compilación
-
-```powershell
-cd frontend
-pnpm install --frozen-lockfile
-pnpm dev
-pnpm build
-```
-
-`pnpm dev` abre una vista independiente del front. Para ver datos publicados de
-WordPress en desarrollo, copia `.env.example` a `.env.local` y configura
-`WP_DEV_URL` con la URL de una instalación local o de pruebas; Vite enviará
-`/wp-json/` a ese WordPress. No pongas credenciales en ese archivo.
-
-`pnpm build` escribe los recursos versionados y su manifiesto directamente en
-`wp-content/themes/dipe-react/assets/`. Esos recursos se suben por FTP junto con el tema.
-El build incluye también las tres fuentes Gordita OTF usadas ahora por la
-cabecera. Consulta la [guía visual](docs/guia-visual.md) antes de sustituirlas
-por WOFF2 o publicar fuera del entorno de pruebas; el ZIP original no se sube por FTP.
-
-## Instalación en WordPress
-
-1. Copia `wp-content/plugins/dipe-core` a `wp-content/plugins/` y actívalo.
-2. Copia `wp-content/themes/dipe-react` a `wp-content/themes/` y activa el tema.
-3. En **Ajustes > Enlaces permanentes**, guarda una estructura distinta de “Simple”.
-4. Ejecuta `pnpm build` antes de copiar el tema por FTP. Sin `assets/.vite/manifest.json`, el tema mostrará un aviso de build pendiente.
-5. Sube los archivos necesarios por FTP y comunica al agente los resultados de la revisión en el servidor; [la prueba vertical anterior](docs/prueba-vertical.md) documenta el CPT de ensayo ya retirado.
-
-### Administración de la cabecera
-
-En **Apariencia → Menús**, edita las ubicaciones “Cabecera: menú superior” y
-“Cabecera: menú principal”; arrastra un elemento ligeramente a la derecha para
-crear un submenú. La clase CSS `menu-cta` convierte un elemento del menú
-principal en el botón naranja. Cambia el logo en **Apariencia → Personalizar →
-Identidad del sitio** y el favicon/Site Icon en **Ajustes → Generales** (la ruta
-puede variar según la versión de WordPress).
-
-### Entorno no indexable
-
-Mientras este proyecto sea de desarrollo, `dipe-core` fuerza la visibilidad de
-WordPress a "disuadir a los motores de búsqueda", añade las directivas
-`noindex`/`nofollow` al HTML y a la cabecera `X-Robots-Tag`, y publica un
-`robots.txt` con `Disallow: /`. Estas directivas evitan indexación normal, pero
-no impiden que un robot visite una URL. Para que el entorno no sea accesible
-desde Internet, protege el subdominio desde el panel de hosting con contraseña
-HTTP o una lista de IP permitidas. Mantén ambas barreras hasta que se decida una
-puesta en producción explícita.
-
-No se versionan el núcleo de WordPress, `wp-config.php`, medios, la base de datos, credenciales ni los assets generados. Hay que ejecutar `pnpm build` antes de cada subida del tema. No se requiere Node.js en el hosting.
-
-## Despliegue por FTP
-
-Sube únicamente las dos carpetas personalizadas y los assets generados:
+Dipe aplica esa separación con una solución integrada: **React se sirve dentro de un tema del propio WordPress**. WordPress conserva las URL, los estados HTTP y los metadatos; React dibuja las páginas y obtiene los datos editoriales por REST. No hay un segundo servidor Node en producción.
 
 ```text
-wp-content/plugins/dipe-core/
-wp-content/themes/dipe-react/
+WordPress                       Tema dipe-react                  React
+Contenido, menús y logos  →      Documento y recursos      →      Diseño e interacción
+       ↑                                                              │
+       └────────────────── REST API + dipe-core ────────────────────────┘
 ```
 
-Antes de publicar: activa HTTPS, realiza una copia de seguridad, comprueba la URL canónica, regenera enlaces permanentes y prueba una publicación/despublicación. Con Varnish activo, configura un TTL corto o una purga al publicar para no servir contenido antiguo.
+La web combina tres piezas con responsabilidades claras: frontend React, tema ligero y plugin `dipe-core`. El contenido y la lógica del negocio permanecen separados de la maquetación.
 
-## Estado actual
+## Qué aporta este enfoque
 
-WordPress está instalado con el tema y `dipe-core` activos en el entorno de pruebas. La prueba vertical antigua de `dipe_item` se validó y ese CPT se retiró; el flujo de `dipe_proyecto` sigue pendiente de verificación completa en el servidor. Cabecera, pie y varias secciones de Home están montados; quedan páginas y contenidos definitivos. Ver [plan](PLAN_PARA_TERRA.md).
+| Ventaja | Aplicación concreta en Dipe |
+| --- | --- |
+| Identidad visual propia | Secciones, tarjetas, responsive y animaciones ajustados al diseño, sin depender de un constructor visual |
+| Administración conocida | Entradas, proyectos, equipo, medios, menús y logos se gestionan desde WordPress |
+| Coherencia entre páginas | Tokens, componentes y lógica compartida para mantener tipografía, navegación y comportamiento |
+| Evolución del diseño | El modelo editorial vive en el plugin, separado del tema, para reducir el acoplamiento con una interfaz concreta |
+| Control de las integraciones | Formularios propios con validación en servidor, solicitudes privadas y correo mediante WordPress/PHPMailer |
+| Optimización dirigida | Recursos compilados, carga diferida y caché, con mediciones por plantilla para decidir mejoras |
+| Continuidad del desarrollo | Código y decisiones documentados, con una guía para reproducir el enfoque con contenido propio |
+
+El beneficio principal es disponer de una experiencia propia manteniendo una herramienta editorial familiar. Rendimiento, accesibilidad, SEO y conversión se trabajan y se miden: no aparecen automáticamente por elegir React o headless.
+
+### Qué se puede editar y qué requiere desarrollo
+
+**Desde WordPress:** entradas y categorías, proyectos y sus campos, equipo, medios, menús, logos y ajustes disponibles de SEO y formularios.
+
+**Desde React/CSS:** estructura y textos de las páginas corporativas, secciones, diseño, responsive y animaciones. Esta versión no es un editor visual de todas las páginas.
+
+El cuerpo principal se dibuja en el navegador, sin SSR ni prerender en la versión documentada. WordPress y Yoast aportan los metadatos; el renderizado, el contenido visible y la indexación deben revisarse también. La solución necesita mantenimiento de frontend, WordPress y plugins, además de copias y revisión en servidor.
+
+## Referencias reales del enfoque
+
+Hay implementaciones documentadas tanto en grandes plataformas como en comercios especializados. Los siguientes casos describen proyectos publicados por sus proveedores o equipos de desarrollo; son referencias de arquitectura, no una auditoría del estado actual de cada dominio ni una promesa de repetir sus resultados.
+
+### Corporativas y plataformas de contenido
+
+| Proyecto | Implementación documentada | Qué ilustra |
+| --- | --- | --- |
+| **WP Engine** · corporativa tecnológica | Drewl documenta una arquitectura headless con WordPress, React, Faust, GraphQL y ACF | Una web corporativa puede mantener WordPress y desarrollar su experiencia y sistema de diseño en React. [Caso del equipo responsable](https://drewl.com/projects/wp-engine/) |
+| **Al Jazeera** · medio internacional | WordPress VIP documenta una plataforma desacoplada con WordPress, GraphQL y React | La separación puede servir a una operación editorial internacional, conservando herramientas para publicar contenido. [Caso de WordPress VIP](https://wpvip.com/case-studies/al-jazeera/) |
+
+### Tiendas con WooCommerce headless
+
+| Proyecto | Implementación documentada | Qué ilustra |
+| --- | --- | --- |
+| **Gourmet Basket** · regalos y cestas, con demanda estacional | Blaze Commerce documenta su paso a headless manteniendo productos y pedidos en WooCommerce | Se puede renovar el escaparate conservando la administración y las integraciones comerciales existentes. [Caso del proveedor](https://blazecommerce.io/blog/woocommerce-headless-case-study-gourmet-basket-instant-pageloads/) |
+| **WeWantSaké** · comercio especializado | WonderWeb documenta un frontend Next.js en Vercel con el backoffice WooCommerce | El enfoque también aparece en un comercio especializado, con catálogo y fichas propios. [Caso del equipo responsable](https://www.wonderweb.pro/en/projets/wewantsake) |
+
+Referencias consultadas el **19-10-2026**. Se incluyen proyectos de alcance internacional y negocios especializados; no se atribuyen categorías de tamaño empresarial sin datos que las acrediten. Sus infraestructuras y formas de renderizar no son idénticas a las de Dipe.
+
+### Cómo encaja WooCommerce en una evolución futura
+
+Una tienda puede conservar WooCommerce para catálogo y operación y desarrollar un escaparate propio. Su [Store API oficial](https://developer.woocommerce.com/docs/apis/store-api/) ofrece funciones orientadas a productos, carrito y checkout.
+
+**Este repositorio no implementa una tienda ni un checkout WooCommerce.** Incorporarlos sería otra fase: hay que diseñar sesiones, pagos, envíos, impuestos, cuentas y compatibilidad de extensiones. Para una tienda sencilla, una solución convencional puede reducir trabajo; el desacoplamiento se justifica cuando la experiencia o las integraciones necesitan ese control adicional.
+
+## Resultados recogidos en la presentación
+
+La presentación aportada registra los siguientes resultados de laboratorio del **19-10-2026 en el entorno de pruebas**, con una ejecución por página y modo. No hay datos CrUX y el estado del loader no está confirmado. No son una medición nueva realizada desde este repositorio.
+
+| Plantilla | Rendimiento móvil | Rendimiento escritorio | SEO móvil / escritorio |
+| --- | ---: | ---: | ---: |
+| Home | 80 | 98 | 100 / 100 |
+| Agencia | 91 | 83 | 100 / 100 |
+| Proyectos | 80 | 97 | 92 / 92 |
+| Desarrollo web | 82 | 97 | 100 / 100 |
+| WordPress | 82 | 98 | 100 / 100 |
+
+La presentación identifica margen de mejora en la carga móvil y en los saltos de diseño de Home y Agencia; también registra una observación sobre la metadescripción de Proyectos. Las métricas completas y sus condiciones están en los anexos del PowerPoint. Estas evidencias complementan la documentación previa, sin sustituir la revisión del servidor actual.
+
+Una puntuación SEO de Lighthouse no acredita posicionamiento o indexación. Los resultados enriquecidos siguen pendientes de evidencia y un marcado válido tampoco garantiza su aparición en Google. [Alcance de PageSpeed](https://developers.google.com/speed/docs/insights/v5/about) · [Datos estructurados y resultados de búsqueda](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data).
+
+## Documentación técnica
+
+La explicación completa de instalación, arquitectura, creación del tema/plugin, contenido, maquetación, animaciones e integraciones está en la **[guía técnica del proyecto](docs/guia-tecnica.md)**.
+
+| Área | Documentos |
+| --- | --- |
+| Arquitectura e instalación | [Guía técnica](docs/guia-tecnica.md) · [Modelo de contenido](docs/modelo-contenido.md) · [Propuesta editorial inicial](docs/arquitectura-editorial.md) |
+| Diseño y frontend | [Guía visual](docs/guia-visual.md) · [Cabecera y footer](docs/maquetacion-cabecera-footer.md) · [Reseñas](docs/resenas-home.md) |
+| Contenido editorial | [Proyectos](docs/proyectos.md) · [Blog y rutas](docs/blog-rutas.md) · [Entradas](docs/entradas.md) · [Equipo](docs/equipo.md) |
+| Formularios y correo | [Flujo, solicitudes y configuración](docs/formularios.md) |
+| SEO y rendimiento | [Yoast y SEO](docs/seo.md) · [Caché y rendimiento](docs/cache-rendimiento.md) |
+| Seguridad y mantenimiento | [Auditoría y mejoras](docs/auditoria-refactor-seguridad-2026-10-19.md) · [Revisión del repositorio público](docs/repositorio-publico.md) |
+| Paso a producción | [Plan de lanzamiento, migración y recuperación](docs/plan-lanzamiento.md) |
+| Presentación | [PowerPoint](docs/presentacion/Dipe-Agency.pptx?raw=true) · [Prompt de preparación y actualización](docs/prompt-presentacion-work.md) |
+
+Para continuar el desarrollo: [estado breve](PLAN_PARA_TERRA.md), [contexto operativo](CONTEXTO-PROYECTO.md) y [directrices de trabajo](AGENTS.md). Los documentos históricos conservan decisiones anteriores; el estado actual del código y las notas vigentes prevalecen sobre propuestas antiguas.
+
+<details>
+<summary>Pruebas e histórico</summary>
+
+- [Utilidad de contenido de prueba y paginación](docs/paginacion-pruebas.md).
+- [Prueba vertical inicial, con su CPT ya retirado](docs/prueba-vertical.md).
+- [Histórico de contexto del 18-10-2026](docs/historico-contexto-2026-10-18.md).
+
+</details>
+
+## Qué incluye este repositorio
+
+Comparte React, el tema `dipe-react`, el plugin `dipe-core` y documentación. **No incluye los uploads originales, la base de datos, las entradas, los proyectos, las solicitudes, las credenciales ni los paquetes de plugins de terceros.** Clonarlo y subir React no reproduce la web completa: cada instalación necesita WordPress, configuración, medios y contenido propios.
+
+Sí se conservan textos corporativos en código, iconos, fuentes, capturas de documentación y la presentación. La entrega al servidor y su revisión corresponden al propietario; Git no despliega la web.
+
+Hacer público el repositorio no incorpora licencias de terceros. La licencia del código propio y el permiso de redistribución de Gordita quedan pendientes de confirmación por el titular; ver [revisión de publicación](docs/repositorio-publico.md).
