@@ -6,9 +6,11 @@ Este proyecto combina un panel conocido para publicar contenido con una experien
 
 ## Presentación del proyecto
 
-[![Portada de la presentación Dipe Agency: una web con identidad propia](docs/presentacion/portada.png)](docs/presentacion/Dipe-Agency.pptx?raw=true)
+[![Portada de la presentación Dipe Agency: una web con identidad propia](docs/presentacion/portada.png)](https://raw.githubusercontent.com/mariocdev/dipe-agency-React/refs/heads/codex/auditoria-refactor-2026-10-19/docs/presentacion/Dipe-Agency.pptx)
 
-**[Descargar presentación · PowerPoint editable](docs/presentacion/Dipe-Agency.pptx?raw=true)** · 12 diapositivas, incluidos dos anexos de métricas.
+**[Descargar presentación · PowerPoint editable](https://raw.githubusercontent.com/mariocdev/dipe-agency-React/refs/heads/codex/auditoria-refactor-2026-10-19/docs/presentacion/Dipe-Agency.pptx)** · 12 diapositivas, incluidos dos anexos de métricas.
+
+El enlace entrega el archivo para abrirlo en PowerPoint o una aplicación compatible; la imagen de arriba es la vista previa de su portada.
 
 La presentación explica qué aporta separar contenido e interfaz, cómo se reparten React, el tema y el plugin propio, qué se administra desde WordPress y cómo se prepara el paso a producción. Incluye resultados PageSpeed de cinco plantillas en móvil y escritorio. La prueba de resultados enriquecidos permanece identificada como pendiente.
 
@@ -104,7 +106,7 @@ La explicación completa de instalación, arquitectura, creación del tema/plugi
 | SEO y rendimiento | [Yoast y SEO](docs/seo.md) · [Caché y rendimiento](docs/cache-rendimiento.md) |
 | Seguridad y mantenimiento | [Auditoría y mejoras](docs/auditoria-refactor-seguridad-2026-10-19.md) · [Revisión del repositorio público](docs/repositorio-publico.md) |
 | Paso a producción | [Plan de lanzamiento, migración y recuperación](docs/plan-lanzamiento.md) |
-| Presentación | [PowerPoint](docs/presentacion/Dipe-Agency.pptx?raw=true) · [Prompt de preparación y actualización](docs/prompt-presentacion-work.md) |
+| Presentación | [Descargar PowerPoint](https://raw.githubusercontent.com/mariocdev/dipe-agency-React/refs/heads/codex/auditoria-refactor-2026-10-19/docs/presentacion/Dipe-Agency.pptx) · [Prompt de preparación y actualización](docs/prompt-presentacion-work.md) |
 
 Para continuar el desarrollo: [estado breve](PLAN_PARA_TERRA.md), [contexto operativo](CONTEXTO-PROYECTO.md) y [directrices de trabajo](AGENTS.md). Los documentos históricos conservan decisiones anteriores; el estado actual del código y las notas vigentes prevalecen sobre propuestas antiguas.
 
