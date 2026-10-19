@@ -304,7 +304,7 @@ export function Header() {
     <dialog
       className="dipe-header__menu-dialog"
       id="dipe-mobile-menu-dialog"
-      aria-labelledby="dipe-mobile-menu-title"
+      aria-label="Menú de navegación"
       ref={menuDialogRef}
       onCancel={(event) => {
         event.preventDefault();
@@ -316,7 +316,6 @@ export function Header() {
       }}
     >
       <div className="dipe-header__dialog-inner">
-        <h2 className="visually-hidden" id="dipe-mobile-menu-title">Menú de navegación</h2>
         <button
           className="dipe-header__menu-toggle dipe-header__dialog-close"
           type="button"
