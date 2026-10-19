@@ -134,6 +134,30 @@ export async function getPostCategories() {
   return categories;
 }
 
+export async function getRelatedServiceTerms({ signal } = {}) {
+  const services = [];
+  let totalPages = 1;
+
+  for (let page = 1; page <= totalPages; page += 1) {
+    const params = new URLSearchParams({
+      per_page: '100',
+      page: String(page),
+      hide_empty: 'false',
+      orderby: 'name',
+      order: 'asc',
+      _fields: 'id,name',
+    });
+    const response = await fetch(endpoint(`wp/v2/dipe-related-services?${params}`), {
+      headers: { Accept: 'application/json' }, signal,
+    });
+    if (!response.ok) throw new Error(`La API respondió ${response.status}.`);
+    services.push(...await response.json());
+    totalPages = Number(response.headers.get('X-WP-TotalPages')) || 1;
+  }
+
+  return services;
+}
+
 export async function getFeaturedProjects(perPage = 6) {
   const terms = await request('wp/v2/dipe-project-tags?slug=destacados&per_page=1');
   const featuredTerm = terms?.[0];
@@ -177,7 +201,7 @@ export async function getRelatedProjects(project) {
 }
 
 export async function submitContactForm(fields, formType = 'contacto') {
-  if (!['contacto', 'contacto-servicios'].includes(formType)) {
+  if (!['contacto', 'contacto-servicios', 'contacto-general'].includes(formType)) {
     throw new Error('Formulario no disponible.');
   }
   const response = await fetch(endpoint(`dipe/v1/forms/${formType}`), {

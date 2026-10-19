@@ -15,12 +15,58 @@ function dipe_core_mail_defaults() {
 		'user_pass'  => '',
 		'contact_recipients' => '',
 		'services_recipients' => '',
+		'main_recipients' => '',
+		'contact_redirect_page' => 0,
+		'services_redirect_page' => 0,
+		'main_redirect_page' => 0,
 	);
 }
 
 function dipe_core_mail_settings() {
 	$saved = get_option( DIPE_CORE_MAIL_OPTION, array() );
 	return array_merge( dipe_core_mail_defaults(), is_array( $saved ) ? $saved : array() );
+}
+
+/** Only native, published pages without a password can be redirect targets. */
+function dipe_core_mail_redirect_page_id( $value ) {
+	$id = is_scalar( $value ) ? absint( $value ) : 0;
+	$page = $id ? get_post( $id ) : null;
+	return $page && 'page' === $page->post_type && 'publish' === $page->post_status && '' === $page->post_password ? $id : 0;
+}
+
+function dipe_core_mail_form_redirect_url( $form_type, $settings = null ) {
+	$keys = array(
+		'contacto' => 'contact_redirect_page',
+		'contacto-servicios' => 'services_redirect_page',
+		'contacto-general' => 'main_redirect_page',
+	);
+	if ( ! isset( $keys[ $form_type ] ) ) {
+		return '';
+	}
+	$settings = is_array( $settings ) ? $settings : dipe_core_mail_settings();
+	$page_id = dipe_core_mail_redirect_page_id( $settings[ $keys[ $form_type ] ] ?? 0 );
+	return $page_id ? esc_url_raw( get_permalink( $page_id ) ?: '' ) : '';
+}
+
+function dipe_core_mail_redirect_page_row( $settings, $key ) {
+	$id = 'dipe-mail-' . $key;
+	?>
+	<tr>
+		<th scope="row"><label for="<?php echo esc_attr( $id ); ?>">Página de gracias</label></th>
+		<td>
+			<?php wp_dropdown_pages( array(
+				'name' => 'dipe_mail[' . $key . ']',
+				'id' => $id,
+				'selected' => absint( $settings[ $key ] ?? 0 ),
+				'post_status' => 'publish',
+				'show_option_none' => 'Sin redirección (mostrar confirmación en el formulario)',
+				'option_none_value' => '0',
+				'sort_column' => 'post_title',
+			) ); ?>
+			<p class="description">Tras recibir la solicitud, el visitante irá a esta página. Selecciona una página publicada sin contraseña.</p>
+		</td>
+	</tr>
+	<?php
 }
 
 /** The database holds ciphertext; the WordPress auth salt supplies the key. */
@@ -77,6 +123,7 @@ function dipe_core_mail_settings_page() {
 	$messages = array(
 		'saved'        => 'Configuración guardada. Las contraseñas no se muestran de nuevo.',
 		'invalid'      => 'Revisa el servidor, el tipo de conexión y las direcciones de correo.',
+		'redirect'     => 'Selecciona páginas de gracias publicadas y sin contraseña, o elige Sin redirección.',
 		'password'     => 'Al cambiar una dirección de envío, introduce también la contraseña de esa cuenta.',
 		'encryption'   => 'No se pudo proteger la contraseña. La configuración anterior sigue intacta.',
 		'test-sent'    => 'El servidor aceptó el correo de prueba. Comprueba también su recepción.',
@@ -108,11 +155,19 @@ function dipe_core_mail_settings_page() {
 			<p>Recibirán una copia individual de cada solicitud de Contacto internas. No se muestran ni se aceptan desde el formulario público.</p>
 			<table class="form-table" role="presentation">
 				<tr><th scope="row"><label for="dipe-mail-contact-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-contact-recipients" name="dipe_mail[contact_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['contact_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas.</p></td></tr>
+				<?php dipe_core_mail_redirect_page_row( $settings, 'contact_redirect_page' ); ?>
 			</table>
 			<h2>Destinatarios de Contacto Servicios</h2>
 			<p>Lista independiente para las solicitudes de servicios. Configúrala antes de activar el formulario: si está vacía, la solicitud se guarda en Solicitudes con estado Error de envío, sin enviar avisos.</p>
 			<table class="form-table" role="presentation">
 				<tr><th scope="row"><label for="dipe-mail-services-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-services-recipients" name="dipe_mail[services_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['services_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas. Usa el remitente de avisos al equipo.</p></td></tr>
+				<?php dipe_core_mail_redirect_page_row( $settings, 'services_redirect_page' ); ?>
+			</table>
+			<h2>Destinatarios de Contacto principal</h2>
+			<p>Lista independiente para el formulario de la página Contacto. Si está vacía, la solicitud se guarda en Solicitudes con estado Error de envío, sin enviar avisos.</p>
+			<table class="form-table" role="presentation">
+				<tr><th scope="row"><label for="dipe-mail-main-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-main-recipients" name="dipe_mail[main_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['main_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas. Usa el remitente de avisos al equipo.</p></td></tr>
+				<?php dipe_core_mail_redirect_page_row( $settings, 'main_redirect_page' ); ?>
 			</table>
 			<h2>Confirmaciones al visitante</h2>
 			<p>Remitente de los mensajes automáticos al usuario. Solo se utilizará en los formularios que tengan confirmación.</p>
@@ -158,6 +213,8 @@ function dipe_core_mail_save() {
 	$contact_recipients = dipe_core_mail_contact_recipients( $recipient_input );
 	$services_input = isset( $posted['services_recipients'] ) && is_string( $posted['services_recipients'] ) ? $posted['services_recipients'] : ( $old['services_recipients'] ?? '' );
 	$services_recipients = dipe_core_mail_contact_recipients( $services_input );
+	$main_input = isset( $posted['main_recipients'] ) && is_string( $posted['main_recipients'] ) ? $posted['main_recipients'] : ( $old['main_recipients'] ?? '' );
+	$main_recipients = dipe_core_mail_contact_recipients( $main_input );
 	if ( ! preg_match( '/^[a-z0-9.-]+$/', $host ) || false !== strpos( $host, '..' ) || ! in_array( $mode, array( 'smtps', 'starttls' ), true ) || ! is_email( $team ) || ! is_email( $user ) || $team === $user ) {
 		dipe_core_mail_redirect( 'invalid' );
 	}
@@ -167,7 +224,22 @@ function dipe_core_mail_save() {
 	if ( '' !== trim( $services_input ) && ! $services_recipients ) {
 		dipe_core_mail_redirect( 'invalid' );
 	}
-	$new = array(
+	if ( '' !== trim( $main_input ) && ! $main_recipients ) {
+		dipe_core_mail_redirect( 'invalid' );
+	}
+	$redirect_pages = array();
+	foreach ( array( 'contact_redirect_page', 'services_redirect_page', 'main_redirect_page' ) as $key ) {
+		$value = $posted[ $key ] ?? $old[ $key ];
+		if ( ! is_scalar( $value ) || ! preg_match( '/^(0|[1-9][0-9]*)$/', (string) $value ) ) {
+			dipe_core_mail_redirect( 'redirect' );
+		}
+		$page_id = absint( $value );
+		if ( $page_id && ! dipe_core_mail_redirect_page_id( $page_id ) ) {
+			dipe_core_mail_redirect( 'redirect' );
+		}
+		$redirect_pages[ $key ] = $page_id;
+	}
+	$new = array_merge( array(
 		'host'       => $host,
 		'mode'       => $mode,
 		'team_email' => $team,
@@ -176,7 +248,8 @@ function dipe_core_mail_save() {
 		'user_pass'  => $old['user_pass'],
 		'contact_recipients' => implode( "\n", $contact_recipients ),
 		'services_recipients' => implode( "\n", $services_recipients ),
-	);
+		'main_recipients' => implode( "\n", $main_recipients ),
+	), $redirect_pages );
 	foreach ( array( 'team', 'user' ) as $profile ) {
 		$password = isset( $posted[ $profile . '_pass' ] ) && is_string( $posted[ $profile . '_pass' ] ) ? $posted[ $profile . '_pass' ] : '';
 		if ( $new[ $profile . '_email' ] !== $old[ $profile . '_email' ] && '' === $password ) {

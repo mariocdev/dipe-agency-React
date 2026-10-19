@@ -1,0 +1,156 @@
+# ===================================================================================
+# Reglas generales para TODOS los bots
+# ===================================================================================
+User-agent: Googlebot
+Disallow:
+
+User-agent: Googlebot-image
+Disallow:
+
+# Herramientas de inspección y prueba de resultados enriquecidos de Google
+User-agent: Google-InspectionTool
+Disallow:
+
+User-agent: *
+Allow: /wp-content/uploads/
+Allow: /wp-content/*.js
+Allow: /wp-content/*.css
+Allow: /wp-includes/*.js
+Allow: /wp-includes/*.css
+Allow: /wp-content/themes/*.js
+Allow: /wp-content/themes/*.css
+
+Disallow: /cgi-bin/
+Disallow: /wp-content/plugins/
+Disallow: /wp-includes/
+Disallow: /*/attachment/
+Disallow: /tag/*/page/
+Disallow: /tag/*/feed/
+Disallow: /comments/
+Disallow: /xmlrpc.php
+Disallow: /?attachment_id*
+Disallow: /*?
+Disallow: /?s=
+Disallow: /search
+Disallow: /trackback
+Disallow: /*trackback
+Disallow: /*trackback*
+Disallow: /*/trackback
+
+# Feeds
+Allow: /feed/$
+Disallow: /feed/
+Disallow: /comments/feed/
+Disallow: /*/feed/$
+Disallow: /*/feed/rss/$
+Disallow: /*/trackback/$
+Disallow: /*/*/feed/$
+Disallow: /*/*/feed/rss/$
+Disallow: /*/*/trackback/$
+Disallow: /*/*/*/feed/$
+Disallow: /*/*/*/feed/rss/$
+Disallow: /*/*/*/trackback/$
+
+# ===================================================================================
+# Reglas para bots específicos (si deseas ralentizarlos o bloquearlos)
+# ===================================================================================
+
+# Ejemplo: Ralentizar algunos bots
+User-agent: noxtrumbot
+Crawl-delay: 20
+
+User-agent: msnbot
+Crawl-delay: 20
+
+User-agent: Slurp
+Crawl-delay: 20
+
+# Bloqueo de bots y crawlers poco útiles
+User-agent: MSIECrawler
+Disallow: /
+
+User-agent: WebCopier
+Disallow: /
+
+User-agent: HTTrack
+Disallow: /
+
+User-agent: Microsoft.URL.Control
+Disallow: /
+
+User-agent: libwww
+Disallow: /
+
+User-agent: Orthogaffe
+Disallow: /
+
+User-agent: UbiCrawler
+Disallow: /
+
+User-agent: DOC
+Disallow: /
+
+User-agent: Zao
+Disallow: /
+
+User-agent: sitecheck.internetseer.com
+Disallow: /
+
+User-agent: Zealbot
+Disallow: /
+
+User-agent: SiteSnagger
+Disallow: /
+
+User-agent: WebStripper
+Disallow: /
+
+User-agent: Fetch
+Disallow: /
+
+User-agent: Offline Explorer
+Disallow: /
+
+User-agent: Teleport
+Disallow: /
+
+User-agent: TeleportPro
+Disallow: /
+
+User-agent: WebZIP
+Disallow: /
+
+User-agent: linko
+Disallow: /
+
+User-agent: Xenu
+Disallow: /
+
+User-agent: larbin
+Disallow: /
+
+User-agent: ZyBORG
+Disallow: /
+
+User-agent: Download Ninja
+Disallow: /
+
+User-agent: wget
+Disallow: /
+
+User-agent: grub-client
+Disallow: /
+
+User-agent: k2spider
+Disallow: /
+
+User-agent: NPBot
+Disallow: /
+
+User-agent: WebReaper
+Disallow: /
+
+# ===================================================================================
+# Sitemap
+# ===================================================================================
+Sitemap: https://bonsolis.servidordepruebas.net/sitemap_index.xml

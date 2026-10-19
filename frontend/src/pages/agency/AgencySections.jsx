@@ -1,4 +1,5 @@
 import { agencyMedia as media } from './agencyMedia';
+import { ResponsiveTitle } from '../../components/content/ResponsiveTitle';
 
 function AgencyValueCard({ className, image, title, children }) {
   return <article className={`dipe-agency-value ${className}`}>
@@ -13,7 +14,7 @@ function AgencyValueCard({ className, image, title, children }) {
 export function WhoWeAreSection() {
   return <section className="dipe-agency-intro dipe-web-container" id="quienes-somos" aria-labelledby="agency-about-title">
     <header className="dipe-agency-intro__heading">
-      <h2 id="agency-about-title">Quiénes somos<br />(versión café corto)</h2>
+      <h2 id="agency-about-title"><ResponsiveTitle>Quiénes somos<br />(versión café corto)</ResponsiveTitle></h2>
       <p>Equipo senior, cercano y alérgico a los “ya si eso”. Diseñamos, desarrollamos y medimos: web corporativa en <strong>WordPress</strong>, ecommerce en <strong>PrestaShop</strong> y proyectos con acento local de <strong>Diseño web Salamanca</strong>. Trabajamos por sprints, enseñamos progreso y llegamos a tiempo (sí, pasa).</p>
     </header>
     <div className="dipe-agency-intro__values">

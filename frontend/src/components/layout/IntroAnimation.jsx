@@ -24,6 +24,8 @@ export function IntroAnimation({ onComplete }) {
 
     let active = true;
     let timeline;
+    // La intro es decorativa: nunca esperar indefinidamente al chunk de GSAP.
+    const maxWait = window.setTimeout(() => { if (active) onComplete(); }, 2500);
 
     import('gsap').then(({ gsap }) => {
       if (!active || !rootRef.current) return;
@@ -35,16 +37,16 @@ export function IntroAnimation({ onComplete }) {
 
       timeline = gsap.timeline({ onComplete: () => { if (active) setSequenceDone(true); } });
       timeline
-        .fromTo(left, { x: -60, scaleY: 0.25, opacity: 0 }, { x: 0, scaleY: 1, opacity: 1, duration: 0.7, stagger: 0.1, ease: 'power3.out' }, 0)
-        .fromTo(right, { x: 60, scaleY: 0.25, opacity: 0 }, { x: 0, scaleY: 1, opacity: 1, duration: 0.7, stagger: -0.1, ease: 'power3.out' }, 0)
-        .fromTo(brand, { scale: 0.82, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'power3.out' }, 0.35)
-        .to(bars, { scaleY: 0.45, duration: 0.35, stagger: { each: 0.08, from: 'center' }, repeat: 1, yoyo: true, ease: 'power2.inOut' }, 0.95)
-        .to(bars, { scaleY: 0, opacity: 0, duration: 0.32, stagger: { each: 0.05, from: 'edges' }, ease: 'power2.in' }, 2.1)
-        .to(brand, { scale: 1.05, duration: 0.3, ease: 'power2.out' }, 2.15);
+        .fromTo(left, { x: -60, scaleY: 0.25, opacity: 0 }, { x: 0, scaleY: 1, opacity: 1, duration: 0.4, stagger: 0.06, ease: 'power3.out' }, 0)
+        .fromTo(right, { x: 60, scaleY: 0.25, opacity: 0 }, { x: 0, scaleY: 1, opacity: 1, duration: 0.4, stagger: -0.06, ease: 'power3.out' }, 0)
+        .fromTo(brand, { scale: 0.82, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: 'power3.out' }, 0.08)
+        .to(bars, { scaleY: 0, opacity: 0, duration: 0.2, stagger: { each: 0.03, from: 'edges' }, ease: 'power2.in' }, 0.72)
+        .to(brand, { scale: 1.02, duration: 0.2, ease: 'power2.out' }, 0.9);
     }).catch(() => { if (active) onComplete(); });
 
     return () => {
       active = false;
+      window.clearTimeout(maxWait);
       timeline?.kill();
     };
   }, [onComplete]);
@@ -89,16 +91,16 @@ export function IntroAnimation({ onComplete }) {
               x: target.left + target.width / 2 - (source.left + source.width / 2),
               y: target.top + target.height / 2 - (source.top + source.height / 2),
               scale: Number(gsap.getProperty(brand, 'scaleX')) * target.width / sourceWidth,
-              duration: 0.95,
+              duration: 0.7,
               ease: 'power3.inOut',
             }, 0)
             .to(rootRef.current.querySelector('.dipe-intro__backdrop'), {
-              opacity: 0.45, duration: 0.85, ease: 'sine.inOut',
-            }, 0.05)
+              opacity: 0.45, duration: 0.6, ease: 'sine.inOut',
+            }, 0)
             // Retirar la capa solo después de que el logo haya terminado de encajar.
             .to(rootRef.current.querySelector('.dipe-intro__backdrop'), {
-              opacity: 0, duration: 0.3, ease: 'sine.inOut',
-            }, 0.95);
+              opacity: 0, duration: 0.2, ease: 'sine.inOut',
+            }, 0.7);
 
           // Si cambia el encuadre durante el viaje, mostrar el logo en su posición actual.
           window.addEventListener('resize', finishExit);
@@ -108,7 +110,7 @@ export function IntroAnimation({ onComplete }) {
       }
 
       // Con un logo ausente o sin cargar, conservar una salida por fundido.
-      exit.to(rootRef.current, { opacity: 0, duration: 0.75, ease: 'sine.inOut' });
+      exit.to(rootRef.current, { opacity: 0, duration: 0.9, ease: 'sine.inOut' });
     }).catch(finishExit);
 
     return () => {

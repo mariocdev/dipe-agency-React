@@ -21,6 +21,7 @@
 
 .dipe-projects-banner__inner {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   width: var(--dipe-content-width);
   place-content: center;
   margin-inline: auto;
@@ -56,11 +57,24 @@
 }
 
 .dipe-projects-archive__filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  justify-content: center;
+  position: relative;
   margin-bottom: 50px;
+}
+
+.dipe-projects-archive__filter-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+.dipe-projects-archive__filters[data-compact] .dipe-projects-archive__filter-buttons {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .dipe-projects-archive__filter,
@@ -76,12 +90,14 @@
 }
 
 .dipe-projects-archive__filter {
-  padding: 14px 42px;
+  flex: 0 0 auto;
+  padding: 14px var(--dipe-project-filter-padding, 42px);
   border: 1px solid var(--dipe-color-ink);
   border-radius: 100px;
   background: transparent;
-  font-size: calc(18px * var(--dipe-font-scale));
+  font-size: var(--dipe-project-filter-font-size, 18px);
   line-height: normal;
+  white-space: nowrap;
   transition: background-color 180ms ease;
 }
 
@@ -93,6 +109,69 @@
 .dipe-projects-archive__filter:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.dipe-projects-archive__filter-select {
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+}
+
+.dipe-projects-archive__filter-select select {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 14px 48px 14px 20px;
+  appearance: none;
+  border: 1px solid var(--dipe-color-ink);
+  border-radius: 100px;
+  color: var(--dipe-color-ink);
+  background: var(--dipe-color-white);
+  color-scheme: light;
+  font-family: var(--dipe-font-primary);
+  font-size: 16px;
+  font-weight: var(--dipe-font-weight-regular);
+  line-height: normal;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.dipe-projects-archive__filter-select option {
+  background: var(--dipe-color-white);
+}
+
+.dipe-projects-archive__filter-select::after {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  width: 12px;
+  height: 12px;
+  background: url('../../assets/icons/chevron-down-solid-full.svg') center / contain no-repeat;
+  content: '';
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.dipe-projects-archive__filter:focus-visible,
+.dipe-projects-archive__filter-select select:focus-visible {
+  outline: 2px solid var(--dipe-color-ink);
+  outline-offset: 4px;
+}
+
+@media (forced-colors: active) {
+  .dipe-projects-archive__filter-select select {
+    appearance: auto;
+  }
+
+  .dipe-projects-archive__filter-select::after {
+    display: none;
+  }
+}
+
+.dipe-projects-archive__filter-anchor,
+.dipe-projects-archive__back {
+  scroll-margin-top: calc(var(--dipe-anchor-header-offset, 72px) + 20px);
 }
 
 .dipe-projects-archive__grid {
@@ -167,8 +246,8 @@
 }
 
 .dipe-projects-archive__page[aria-current='page'] {
-  color: var(--dipe-color-white);
-  background: var(--dipe-color-ink);
+  color: var(--dipe-color-ink);
+  background: var(--dipe-color-orange);
 }
 
 @media (max-width: 860px) {
@@ -194,9 +273,6 @@
     width: var(--dipe-content-width);
   }
 
-  .dipe-projects-archive__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 560px) {
@@ -208,9 +284,6 @@
     margin-bottom: 35px;
   }
 
-  .dipe-projects-archive__grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

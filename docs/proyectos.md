@@ -33,7 +33,7 @@ AVIF, MP4 o WebM. Los campos nuevos se exponen por REST mediante ACF. La
 cabecera del detalle ya consume la imagen de banner, fecha, URL publicada y
 jerarquía de categorías. Su primer bloque muestra el contenido HTML nativo y
 el vídeo de YouTube. La galería multimedia se presenta como carrusel de cuatro
-elementos altos en escritorio, dos hasta 860 px y uno hasta 560 px, con avance
+elementos altos en escritorio, tres hasta 1500 px, dos hasta 860 px y uno hasta 560 px, con avance
 mediante flechas, paginación o arrastre horizontal. No captura la rueda ni centra
 la página automáticamente. Permite ampliar los archivos y navegar entre ellos;
 los vídeos y GIF se mantienen como archivos del ACF. El visor conserva el
@@ -56,10 +56,17 @@ Esta selección es independiente de la etiqueta «Destacados» de la Home.
 
 Las tarjetas comparten componente y estilos con el archivo: imagen destacada
 nativa de WordPress, categoría enlazada y título h3. El grid muestra tres
-columnas en escritorio, dos hasta 860 px y una hasta 560 px. No requiere
+columnas en escritorio; desde 1240 px muestra dos y oculta desde la tercera
+tarjeta. En 767 px pasa a una columna y recupera las tarjetas ocultas, igual
+que Recursos y Blog de Home. No requiere
 cambios del plugin ni campos nuevos. Pendiente de revisión en el servidor.
 
 ## Cierre del detalle
+
+Al apilar contenido y vídeo en 1240 px, el contenido editorial del proyecto
+elimina sus 50 px de padding superior e inferior, conservando el padding
+exterior compartido de la sección. Ajustes responsive preparados el 19-10-2026;
+pendiente revisión en servidor, sin comprobaciones locales ni compilación.
 
 Después de «Más proyectos destacados» aparece el mismo bloque de contacto,
 imagen flotante y logos que en el archivo, compartido en `ProjectsContact`.
@@ -72,9 +79,15 @@ El archivo conserva su texto anterior. Pendiente de revisión en el servidor.
 
 ## Archivo de proyectos
 
+**Loader y scroll a los filtros (19-10-2026):** el usuario rechaza el fundido/parpadeo anterior. Lo sustituye `ArchiveLoadingOverlay`, compartido con blog mediante `useArchiveGridFeedback`: fondo blanco al 72 % por encima de las tarjetas, spinner naranja y «Cargando…», visible durante la actualización de número/filtro y al menos 350 ms. Los datos no se retrasan; el mínimo afecta a la capa. Conserva tarjetas previas mientras llegan las nuevas y el skeleton inicial. Tras una respuesta válida hace scroll suave al comienzo de los filtros, con altura de cabecera + 20 px; en categorías, que no tienen selector, al enlace «Todos los proyectos». No desplaza al entrar por primera vez ni en errores. Movimiento reducido: spinner estático y scroll inmediato. Mantiene tamaños, filtros, números, activo naranja y foco. Cambian `ProjectsArchive.jsx/.css`, hook y componente/CSS compartidos; sin PHP, rutas ni cambios SEO. FTP de assets completos con manifiesto tras compilación del usuario; sin comprobaciones locales, publicación ni revisión confirmadas.
+
+**SEO editable en admin (19-10-2026):** `dipe-core` 0.4.24 añade **Proyectos > SEO del archivo** para título SEO, metadescripción e indexación del listado general. Reutiliza las opciones de archivo de Yoast y su salida actual; no crea una página `/proyectos/` duplicada ni cambia el H1/diseño de React. Requiere Yoast activo y permisos de administrador; sin guardado expreso conserva los valores anteriores. Las categorías y fichas mantienen sus editores propios. FTP: nuevo `wp-content/plugins/dipe-core/includes/project-archive-seo.php` antes de `wp-content/plugins/dipe-core/dipe-core.php`; sin compilación ni assets del tema. Purgar otras cachés si existen y revisar en servidor; la herramienta solicita purga Rocket al cambiar valores. Sin comprobaciones locales ni publicación confirmada. Detalles en `docs/seo.md`.
+
 `/proyectos/` muestra los 12 proyectos publicados más recientes por página. Las
 tarjetas usan la imagen principal de WordPress y la categoría de proyecto
 asignada. La imagen ACF permanece reservada para la Home.
+
+**Paginación, ajuste del 19-10-2026:** conserva los números, tamaños y disposición existentes; la página activa pasa a fondo naranja corporativo (`--dipe-color-orange`) con número en tinta para mantener contraste. Se aplica tanto al archivo general como a categorías. Sin cambios de lógica, rutas o PHP. Pendiente revisión del usuario en servidor tras compilación/FTP de assets completos con manifiesto; sin comprobaciones locales.
 
 Para los filtros del archivo, crea y asigna estas categorías de proyectos en
 WordPress con estos *slugs* exactos:
@@ -86,6 +99,20 @@ WordPress con estos *slugs* exactos:
 
 El plugin crea esas dos categorías al actualizarse. Se muestran en el archivo
 como filtros “Proyectos con WordPress” y “Proyectos con PrestaShop”.
+
+**Filtro responsive (19-10-2026):** los botones se mantienen en una fila sin
+saltos. Según el ancho real disponible, reducen progresivamente letra de
+18 a un mínimo de 16 px y padding lateral de 42 a un mínimo de 20 px.
+Si no caben con esos mínimos, pasan a un selector nativo alineado a la
+izquierda, con borde redondeado, fondo blanco (también en las opciones) y
+flecha del diseño existente.
+Comparte selección, categorías disponibles y reinicio de paginación con los
+botones. Recalcula al cambiar el ancho y cargar fuentes; recupera los botones
+al ampliar y conserva el foco si cambia de control. Pendiente revisión en
+servidor; sin comprobaciones locales ni compilación.
+
+Las cabeceras de categorías de proyectos muestran su nombre de WordPress
+como H1, convertido a texto plano, en lugar del título general del archivo.
 
 ## Etiquetas y categorías
 

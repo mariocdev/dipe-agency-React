@@ -1,14 +1,17 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { FitText } from '../../components/content/FitText';
 import { formatPostDate } from '../../components/blog/BlogSection';
 import { getPostCategories, plainText, postCardImage, postPrimaryCategory } from '../../lib/api';
 import { sitePath } from '../../lib/site';
 import { blogMedia } from './blogMedia';
 
 export function BlogArchiveHero({ title = 'Blog', description = <>Tendencias en desarrollo web, SEO técnico, UX y<br className="dipe-blog-archive__hero-break" /> analítica para mejorar tu sitio.</> }) {
+  const [titleFontSize, setTitleFontSize] = useState(null);
+
   return <header className="dipe-blog-archive__hero" style={blogMedia.heroBackground ? { backgroundImage: `url("${blogMedia.heroBackground}")` } : undefined}>
     <div className="dipe-blog-archive__container">
-      <h1>{title}</h1>
-      <p>{description}</p>
+      <FitText as="h1" onSizeChange={setTitleFontSize}>{title}</FitText>
+      <FitText as="p" maxFontSize={titleFontSize === null ? undefined : titleFontSize - 6}>{description}</FitText>
     </div>
   </header>;
 }
@@ -131,8 +134,10 @@ export function BlogArchiveCard({ post }) {
       {image && <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />}
     </a>
     <div className="dipe-blog-archive-card__content">
-      {category && <a className="dipe-blog-archive-card__category" href={sitePath(category.link)}>{plainText(category.name)}</a>}
-      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+      <div className="dipe-blog-archive-card__meta">
+        {category && <a className="dipe-blog-archive-card__category" href={sitePath(category.link)}>{plainText(category.name)}</a>}
+        <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+      </div>
       <h2><a href={href}>{title}</a></h2>
     </div>
   </article>;

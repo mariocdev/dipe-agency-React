@@ -29,6 +29,52 @@ function dipe_core_brand_admin_class( $classes ) {
 }
 add_filter( 'admin_body_class', 'dipe_core_brand_admin_class' );
 
+/** Compact image column for the three editorial content lists. */
+function dipe_core_admin_image_column( $columns ) {
+	$result = array();
+	foreach ( $columns as $key => $label ) {
+		if ( 'title' === $key ) {
+			$result['dipe_thumbnail'] = __( 'Imagen', 'dipe-core' );
+		}
+		$result[ $key ] = $label;
+	}
+	return $result;
+}
+
+function dipe_core_admin_image_cell( $column, $post_id ) {
+	if ( 'dipe_thumbnail' !== $column ) {
+		return;
+	}
+
+	$post_type = get_post_type( $post_id );
+	if ( 'dipe_equipo' === $post_type ) {
+		$image_id = absint( get_post_meta( $post_id, 'dipe_team_image', true ) );
+	} else {
+		$image_id = get_post_thumbnail_id( $post_id );
+		if ( ! $image_id && 'dipe_proyecto' === $post_type ) {
+			$image_id = absint( get_post_meta( $post_id, 'dipe_project_home_card_image', true ) );
+		}
+	}
+
+	$image = $image_id ? wp_get_attachment_image( $image_id, 'thumbnail', false, array(
+		'class' => 'dipe-admin-thumbnail',
+		'alt' => '',
+		'loading' => 'lazy',
+		'sizes' => '40px',
+	) ) : '';
+	if ( $image ) {
+		echo $image;
+	} else {
+		echo '<span aria-hidden="true">—</span><span class="screen-reader-text">' . esc_html__( 'Sin imagen', 'dipe-core' ) . '</span>';
+	}
+}
+
+foreach ( array( 'post', 'dipe_proyecto', 'dipe_equipo' ) as $dipe_admin_post_type ) {
+	add_filter( "manage_{$dipe_admin_post_type}_posts_columns", 'dipe_core_admin_image_column' );
+	add_action( "manage_{$dipe_admin_post_type}_posts_custom_column", 'dipe_core_admin_image_cell', 10, 2 );
+}
+unset( $dipe_admin_post_type );
+
 function dipe_core_brand_login_classes( $classes ) {
 	$classes[] = 'dipe-login';
 	if ( dipe_core_brand_logo_url() ) {

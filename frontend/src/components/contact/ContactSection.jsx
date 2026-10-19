@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { submitContactForm } from '../../lib/api';
+import { redirectToFormThankYou } from '../../lib/formThankYou';
 import { sitePath } from '../../lib/site';
 import './ContactSection.css';
 
@@ -11,9 +12,11 @@ const defaultIntro = <>
 
 export function ContactSection({ source = 'home', formType = 'contacto', title = '¿Hablamos?', intro = defaultIntro, hideDetails = false }) {
   const [submission, setSubmission] = useState(initialSubmissionState);
+  const submitting = useRef(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (submitting.current) return;
     const form = event.currentTarget;
 
     if (!form.checkValidity()) {
@@ -22,6 +25,7 @@ export function ContactSection({ source = 'home', formType = 'contacto', title =
     }
 
     const values = new FormData(form);
+    submitting.current = true;
     setSubmission({ status: 'sending', message: '', fields: {} });
 
     try {
@@ -41,12 +45,15 @@ export function ContactSection({ source = 'home', formType = 'contacto', title =
         message: response.message || 'Gracias. Hemos recibido tu mensaje.',
         fields: {},
       });
+      redirectToFormThankYou(response.redirect_url);
     } catch (error) {
       setSubmission({
         status: 'error',
         message: error.message || 'No se ha podido enviar el mensaje. Inténtalo de nuevo.',
         fields: error.fields || {},
       });
+    } finally {
+      submitting.current = false;
     }
   };
 

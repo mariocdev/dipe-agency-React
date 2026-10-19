@@ -35,7 +35,7 @@ function BlogPostHero({ post }) {
   </header>;
 }
 
-export function BlogPost({ slug }) {
+export function BlogPost({ slug, onNotFound }) {
   const [state, setState] = useState({ loading: true, post: null, error: null });
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export function BlogPost({ slug }) {
 
   if (state.loading) return <section className="dipe-post__container dipe-post__status"><p role="status">Cargando entrada…</p></section>;
   if (state.error) return <section className="dipe-post__container dipe-post__status"><p role="alert">No se ha podido cargar la entrada.</p></section>;
-  if (!state.post) return <section className="dipe-post__container dipe-post__status"><h1>Entrada no encontrada</h1></section>;
+  if (!state.post) return onNotFound ? onNotFound() : <section className="dipe-post__container dipe-post__status"><h1>Entrada no encontrada</h1></section>;
 
   return <article className="dipe-post">
     <BlogPostHero post={state.post} />

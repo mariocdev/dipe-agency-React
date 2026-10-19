@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.11
+ * Version: 0.4.24
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.11';
+const DIPE_CORE_VERSION = '0.4.24';
 const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';
@@ -20,6 +20,10 @@ require_once __DIR__ . '/includes/admin-branding.php';
 require_once __DIR__ . '/includes/team.php';
 require_once __DIR__ . '/includes/related-services.php';
 require_once __DIR__ . '/includes/blog.php';
+require_once __DIR__ . '/includes/seo.php';
+require_once __DIR__ . '/includes/project-archive-seo.php';
+require_once __DIR__ . '/includes/cache.php';
+require_once __DIR__ . '/includes/site-tools.php';
 
 /**
  * Set the site's editorial URLs once. Do not override later admin changes.
@@ -96,39 +100,16 @@ function dipe_core_redirect_old_blog_urls() {
 }
 add_action( 'template_redirect', 'dipe_core_redirect_old_blog_urls' );
 
-/**
- * This project is a non-public environment until an explicit production
- * transition. Keep every WordPress response out of search results.
- */
-function dipe_core_prevent_search_indexing( $robots ) {
-	$robots['noindex']      = true;
-	$robots['nofollow']     = true;
-	$robots['noarchive']    = true;
-	$robots['nosnippet']    = true;
-	$robots['noimageindex'] = true;
-
-	return $robots;
-}
-add_filter( 'wp_robots', 'dipe_core_prevent_search_indexing' );
-
-function dipe_core_send_noindex_header() {
-	if ( ! is_admin() ) {
-		header( 'X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex', true );
+/** Restore visibility once after removing the former global staging lock. */
+function dipe_core_restore_search_visibility() {
+	if ( ! current_user_can( 'manage_options' ) || get_option( 'dipe_core_search_visibility_restored' ) ) {
+		return;
 	}
-}
-add_action( 'send_headers', 'dipe_core_send_noindex_header' );
 
-function dipe_core_disallow_robots() {
-	return "User-agent: *\nDisallow: /\n";
+	update_option( 'blog_public', 1 );
+	update_option( 'dipe_core_search_visibility_restored', 1, false );
 }
-add_filter( 'robots_txt', 'dipe_core_disallow_robots' );
-
-function dipe_core_disable_search_visibility() {
-	if ( '0' !== (string) get_option( 'blog_public' ) ) {
-		update_option( 'blog_public', 0 );
-	}
-}
-add_action( 'admin_init', 'dipe_core_disable_search_visibility' );
+add_action( 'admin_init', 'dipe_core_restore_search_visibility' );
 
 function dipe_core_register_content_types() {
 	register_post_type(
@@ -479,7 +460,6 @@ function dipe_core_activate() {
 	dipe_core_register_content_types();
 	dipe_core_seed_project_terms();
 	dipe_core_ensure_blog_page();
-	update_option( 'blog_public', 0 );
 	flush_rewrite_rules();
 	update_option( 'dipe_core_rewrite_version', DIPE_CORE_REWRITE_VERSION );
 }

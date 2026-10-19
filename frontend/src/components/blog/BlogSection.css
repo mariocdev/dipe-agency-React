@@ -155,10 +155,6 @@
     font-size: clamp(2rem, 6vw, calc(38px * var(--dipe-font-scale)));
   }
 
-  .dipe-blog__grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

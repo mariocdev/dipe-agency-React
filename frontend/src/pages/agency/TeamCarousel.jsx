@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ResponsiveTitle } from '../../components/content/ResponsiveTitle';
 import { useEqualizedBlockSize } from '../../hooks/useEqualizedBlockSize';
 import { getTeamMembers } from '../../lib/api';
 import chevronIcon from '../../assets/icons/chevron-down-solid-full.svg';
@@ -173,7 +174,7 @@ export function TeamCarousel() {
 
   return <section className="dipe-team dipe-web-container" aria-labelledby="team-title" ref={namesRef}>
     <header className="dipe-team__heading">
-      <h2 id="team-title">Nuestro equipo<br />(la parte humana de tanta sigla)</h2>
+      <h2 id="team-title"><ResponsiveTitle>Nuestro equipo<br />(la parte humana de tanta sigla)</ResponsiveTitle></h2>
       <p>El humor es opcional; la profesionalidad, no.</p>
     </header>
     {state.loading && <p className="dipe-team__message" role="status">Cargando equipo…</p>}

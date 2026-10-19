@@ -243,6 +243,12 @@
   line-height: 1;
 }
 
+@media (max-width: 1500px) {
+  .dipe-project-gallery__media {
+    flex-basis: calc((100% - 40px) / 3);
+  }
+}
+
 @media (max-width: 860px) {
   .dipe-project-gallery__carousel {
     gap: 15px;

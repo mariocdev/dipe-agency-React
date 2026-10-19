@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { FitText } from '../../components/content/FitText';
+import { useArchiveGridFeedback } from '../../hooks/useArchiveGridFeedback';
+import { ArchiveLoadingOverlay } from '../../components/content/ArchiveLoadingOverlay';
 import { getProjectArchive, getProjectCategory, plainText } from '../../lib/api';
 import { sitePath } from '../../lib/site';
 import { homeMedia } from '../home/homeMedia';
 import { ProjectCard } from './ProjectCard';
 import { ProjectsContact } from './ProjectsContact';
+import { ProjectsArchiveFilters } from './ProjectsArchiveFilters';
 import './ProjectsArchive.css';
 
 const archiveDescription = 'Una muestra de cómo alineamos diseño, desarrollo web y marketing para lograr resultados.';
@@ -39,12 +43,13 @@ function ProjectGridLoader() {
   </div>;
 }
 
-function Projects({ categoryId = null, page = 1, onTotalPages }) {
+function Projects({ categoryId = null, page = 1, onTotalPages, scrollTargetRef }) {
   const [state, setState] = useState({ loading: true, projects: [], error: null });
+  const { resultsRef, showLoader } = useArchiveGridFeedback({ content: state.projects, loading: state.loading, error: state.error, scrollTargetRef });
 
   useEffect(() => {
     let active = true;
-    setState({ loading: true, projects: [], error: null });
+    setState((current) => ({ ...current, loading: true, error: null }));
     getProjectArchive({ page, categoryId, perPage }).then((result) => {
       if (!active) return;
       onTotalPages?.(result.totalPages);
@@ -55,25 +60,36 @@ function Projects({ categoryId = null, page = 1, onTotalPages }) {
     return () => { active = false; };
   }, [categoryId, onTotalPages, page]);
 
-  if (state.loading) return <ProjectGridLoader />;
-  if (state.error) return <p className="dipe-projects-archive__message" role="alert">No se han podido cargar los proyectos.</p>;
-  if (state.projects.length === 0) return <p className="dipe-projects-archive__message">Aún no hay proyectos publicados.</p>;
-
-  return <div className="dipe-projects-archive__grid">
-    {state.projects.map((item) => <ProjectCard item={item} key={item.id} />)}
-  </div>;
+  return <>
+    <span className="visually-hidden" role="status">{showLoader && state.loading ? 'Cargando proyectos…' : ''}</span>
+    <div className="dipe-projects-archive__results dipe-archive-loading-surface" ref={resultsRef} aria-busy={state.loading}>
+    {state.error
+      ? <p className="dipe-projects-archive__message" role="alert">No se han podido cargar los proyectos.</p>
+      : state.loading && state.projects.length === 0
+        ? <ProjectGridLoader />
+        : state.projects.length === 0
+          ? <p className="dipe-projects-archive__message">Aún no hay proyectos publicados.</p>
+          : <div className="dipe-projects-archive__grid">
+            {state.projects.map((item) => <ProjectCard item={item} key={item.id} />)}
+          </div>}
+      <ArchiveLoadingOverlay active={showLoader} />
+    </div>
+  </>;
 }
 
 function ProjectsBanner({ title, description }) {
+  const [titleFontSize, setTitleFontSize] = useState(null);
+
   return <header className="dipe-projects-banner" style={{ backgroundImage: `url(${homeMedia('Cabecera-proyectos.png')})` }}>
     <div className="dipe-projects-banner__inner">
-      <h1>{title}</h1>
-      {description && <h2>{description}</h2>}
+      <FitText as="h1" onSizeChange={setTitleFontSize}>{title}</FitText>
+      {description && <FitText as="h2" maxFontSize={titleFontSize === null ? undefined : titleFontSize - 6}>{description}</FitText>}
     </div>
   </header>;
 }
 
 export function ProjectsArchive() {
+  const filtersRef = useRef(null);
   const [categories, setCategories] = useState({ loading: true, items: {} });
   const [filter, setFilter] = useState(null);
   const [page, setPage] = useState(1);
@@ -99,20 +115,10 @@ export function ProjectsArchive() {
   return <>
     <ProjectsBanner title="Proyectos" description={archiveDescription} />
     <section className="dipe-projects-archive" aria-label="Archivo de proyectos">
-      <div className="dipe-projects-archive__filters" aria-label="Filtrar proyectos">
-        <button className="dipe-projects-archive__filter" type="button" aria-pressed={!filter} onClick={() => selectFilter(null)}>Todos los proyectos</button>
-        {projectFilters.map((filterOption) => <button
-          className="dipe-projects-archive__filter"
-          type="button"
-          key={filterOption.slug}
-          aria-pressed={filter === filterOption.slug}
-          disabled={categories.loading || !categories.items[filterOption.slug]}
-          onClick={() => selectFilter(filterOption.slug)}
-        >
-          {filterOption.label}
-        </button>)}
+      <div className="dipe-projects-archive__filter-anchor" ref={filtersRef}>
+        <ProjectsArchiveFilters options={projectFilters} categories={categories} filter={filter} onChange={selectFilter} />
       </div>
-      <Projects categoryId={categoryId} page={page} onTotalPages={setTotalPages} />
+      <Projects categoryId={categoryId} page={page} onTotalPages={setTotalPages} scrollTargetRef={filtersRef} />
       <ProjectPagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
     <ProjectsContact />
@@ -120,6 +126,7 @@ export function ProjectsArchive() {
 }
 
 export function ProjectCategoryArchive({ slug, onNotFound }) {
+  const filtersRef = useRef(null);
   const [state, setState] = useState({ loading: true, data: null, error: null });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -135,10 +142,10 @@ export function ProjectCategoryArchive({ slug, onNotFound }) {
 
   const category = state.data;
   return <>
-    <ProjectsBanner title={category.name} description={plainText(category.description)} />
+    <ProjectsBanner title={plainText(category.name)} description={plainText(category.description)} />
     <section className="dipe-projects-archive" aria-label={`Proyectos de ${category.name}`}>
-      <a className="dipe-projects-archive__back" href={sitePath('/proyectos/')}>← Todos los proyectos</a>
-      <Projects categoryId={category.id} page={page} onTotalPages={setTotalPages} />
+      <a className="dipe-projects-archive__back" ref={filtersRef} href={sitePath('/proyectos/')}>← Todos los proyectos</a>
+      <Projects categoryId={category.id} page={page} onTotalPages={setTotalPages} scrollTargetRef={filtersRef} />
       <ProjectPagination page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   </>;

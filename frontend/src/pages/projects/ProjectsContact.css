@@ -40,6 +40,14 @@
   transform-origin: bottom center;
 }
 
+@media (max-width: 1240px) {
+  .dipe-projects-contact__background-bridge img {
+    left: auto;
+    right: 0;
+    transform: translateY(20%);
+  }
+}
+
 @media (max-width: 560px) {
   .dipe-projects-contact__background-bridge {
     height: 70px;

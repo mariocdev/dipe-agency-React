@@ -1,3 +1,5 @@
+import './Footer.css';
+import { ResponsiveTitle } from '../content/ResponsiveTitle';
 import { useEqualizedBlockSize } from '../../hooks/useEqualizedBlockSize';
 import { siteConfig, sitePath } from '../../lib/site';
 
@@ -22,7 +24,7 @@ function FooterLink({ item, legal = false }) {
 
 function FooterMenu({ section, items }) {
   return <section className="dipe-footer__menu-group" aria-labelledby={`dipe-footer-${section.key}`}>
-    <p className="dipe-footer__menu-title" id={`dipe-footer-${section.key}`}>{section.title}</p>
+    <p className="dipe-footer__menu-title" id={`dipe-footer-${section.key}`}><ResponsiveTitle>{section.title}</ResponsiveTitle></p>
     {items.length > 0 && <ul className="dipe-footer__menu-list">
       {items.map((item) => <li key={item.id}><FooterLink item={item} /></li>)}
     </ul>}
@@ -51,8 +53,10 @@ export function Footer() {
           Oficina Salamanca<br />
           Jesús Arambarri, 33 – 37003 Salamanca
         </a>
-        <a className="dipe-footer__contact-link dipe-footer__phone" href="tel:+34923623738">(+34) 923 623 738</a>
-        <a className="dipe-footer__contact-link" href="mailto:info@dipe.es">info@dipe.es</a>
+        <div className="dipe-footer__direct-contact">
+          <a className="dipe-footer__contact-link dipe-footer__phone" href="tel:+34923623738">(+34) 923 623 738</a>
+          <a className="dipe-footer__contact-link" href="mailto:info@dipe.es">info@dipe.es</a>
+        </div>
       </div>
 
       <nav className="dipe-footer__menus" aria-label="Índice del sitio" ref={menusRef}>

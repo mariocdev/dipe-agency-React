@@ -1,8 +1,12 @@
 import { useId, useState } from 'react';
+import { FitText } from '../../components/content/FitText';
+import { ResponsiveTitle } from '../../components/content/ResponsiveTitle';
+import { ResponsiveParagraphs } from '../../components/content/ResponsiveParagraphs';
 import chevronIcon from '../../assets/icons/chevron-down-solid-full.svg';
 import { sitePath } from '../../lib/site';
 import { webDevelopmentMedia as media } from './webDevelopmentMedia';
 import { developmentServiceRoutes } from './developmentServiceRoutes';
+import { DevelopmentHeroVideo } from './DevelopmentHeroVideo';
 
 const includedFeatures = [
   {
@@ -117,17 +121,20 @@ export function WebDevelopmentHero({
   imageSrc = null,
   description = null,
   anchorHref = '#web-contacto',
+  secondaryAction = { label: 'Ver proyectos', href: sitePath('/proyectos/') },
 }) {
+  const [titleFontSize, setTitleFontSize] = useState(null);
+
   return <header className="dipe-web-hero" style={imageSrc ? { backgroundImage: `url("${imageSrc}")`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}>
-    {videoSrc && <video className="dipe-web-hero__video" autoPlay loop muted playsInline preload="metadata" aria-hidden="true">
-      <source src={videoSrc} type="video/mp4" />
-    </video>}
+    {videoSrc && <DevelopmentHeroVideo src={videoSrc} />}
     <div className="dipe-web-hero__inner">
-      <h1>{title}<span>{subtitle}</span></h1>
-      {description && <div className="dipe-web-hero__description">{description}</div>}
+      <h1><FitText onSizeChange={setTitleFontSize}>{title}</FitText><FitText className="dipe-web-hero__subtitle" maxFontSize={titleFontSize === null ? undefined : titleFontSize - 6}>{subtitle}</FitText></h1>
+      {description && <div className="dipe-web-hero__description"><ResponsiveParagraphs>{description}</ResponsiveParagraphs></div>}
       <div className="dipe-web-hero__actions">
         <a className="dipe-web-button dipe-web-button--outline" href={anchorHref}>{auditLabel}</a>
-        <a className="dipe-web-button dipe-web-button--outline" href={sitePath('/proyectos/')}>Ver proyectos</a>
+        {secondaryAction.href
+          ? <a className="dipe-web-button dipe-web-button--outline" href={secondaryAction.href}>{secondaryAction.label}</a>
+          : <button className="dipe-web-button dipe-web-button--outline" type="button" disabled>{secondaryAction.label}</button>}
       </div>
     </div>
   </header>;
@@ -150,7 +157,7 @@ export function WebDevelopmentIncludes({
 }) {
   const cards = features.map((feature) => <article className="dipe-web-feature" key={feature.title}>
     <img src={feature.icon} alt="" loading="lazy" />
-    <h3>{feature.title}</h3>
+    <h3><ResponsiveTitle>{feature.title}</ResponsiveTitle></h3>
     <p>{feature.description}</p>
   </article>);
 
@@ -163,7 +170,7 @@ export function WebDevelopmentIncludes({
     <div className="dipe-web-includes__body" style={backgroundSrc ? { backgroundImage: `url("${backgroundSrc}")` } : undefined}>
       <div className={`dipe-web-container ${gridLayout ? 'dipe-web-includes__cards-grid' : 'dipe-web-includes__layout'}`}>
         <div className="dipe-web-includes__heading">
-          <h2 id="web-includes-title">{title}</h2>
+          <h2 id="web-includes-title"><ResponsiveTitle>{title}</ResponsiveTitle></h2>
           <a className="dipe-web-button" href="#web-contacto">Solicita una auditoría gratuita</a>
         </div>
         {gridLayout ? cards : <div className="dipe-web-includes__grid">{cards}</div>}
@@ -174,12 +181,12 @@ export function WebDevelopmentIncludes({
 
 export function WebDevelopmentPaths({ title = 'Elige tu camino (mini-hub de servicios)', cards = servicePaths, showLinks = true }) {
   return <section className="dipe-web-paths dipe-web-container" aria-labelledby="web-paths-title">
-    <h2 id="web-paths-title">{title}</h2>
+    <h2 id="web-paths-title"><ResponsiveTitle>{title}</ResponsiveTitle></h2>
     <div className="dipe-web-paths__grid">
       {cards.map((service) => <article className="dipe-web-path" key={service.id}>
         <h3>{!showLinks && service.href
-          ? <a className="dipe-web-path__title-link" href={sitePath(service.href)}>{service.title}</a>
-          : service.title}</h3>
+          ? <a className="dipe-web-path__title-link" href={sitePath(service.href)}><ResponsiveTitle>{service.title}</ResponsiveTitle></a>
+          : <ResponsiveTitle>{service.title}</ResponsiveTitle>}</h3>
         <p>{service.description}</p>
         {showLinks && (service.href
           ? <a className="dipe-web-path__link" href={sitePath(service.href)}>{service.linkLabel}</a>
@@ -197,7 +204,7 @@ export function WebDevelopmentCapabilities({ groups = capabilityGroups, imageSrc
   return <section className="dipe-web-capabilities" aria-label="Integraciones, rendimiento y mantenimiento">
     <div className="dipe-web-capabilities__content">
       {groups.map((group, index) => <div className="dipe-web-capabilities__group" key={index}>
-        <h2>{group.title}</h2>
+        <h2><ResponsiveTitle>{group.title}</ResponsiveTitle></h2>
         <ul>{group.items.map((item, itemIndex) => {
           const itemId = `${accordionId}-${index}-${itemIndex}`;
           const isOpen = openItemId === itemId;

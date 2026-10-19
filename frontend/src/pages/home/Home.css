@@ -434,8 +434,6 @@
   box-shadow: 0 0 0 transparent;
   text-decoration: none;
   transition: box-shadow 180ms ease;
-  animation: dipe-project-card-enter 600ms both ease-out;
-  animation-delay: calc(var(--project-index) * 100ms);
 }
 
 .dipe-featured-projects__card:hover,
@@ -525,14 +523,3 @@
   background: var(--dipe-color-orange);
 }
 
-@keyframes dipe-project-card-enter {
-  from {
-    opacity: 0;
-    transform: translateY(1.5rem) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}

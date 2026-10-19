@@ -66,7 +66,7 @@
   line-height: 1.3;
 }
 
-.dipe-web-hero h1 span {
+.dipe-web-hero__subtitle {
   display: block;
   margin-top: 8px;
   font-size: calc(64px * var(--dipe-font-scale));
@@ -140,7 +140,7 @@
 
 .dipe-web-includes__intro {
   display: grid;
-  width: 85%;
+  width: calc(100% * var(--dipe-content-inset-ratio));
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 75px;
   margin: 0 auto 85px;
@@ -574,7 +574,7 @@ a.dipe-web-path__link:hover {
     font-size: clamp(2.25rem, 8vw, calc(89px * var(--dipe-font-scale)));
   }
 
-  .dipe-web-hero h1 span {
+  .dipe-web-hero__subtitle {
     font-size: clamp(1.5rem, 5.8vw, calc(64px * var(--dipe-font-scale)));
   }
 
@@ -583,7 +583,6 @@ a.dipe-web-path__link:hover {
   }
 
   .dipe-web-includes__intro {
-    width: 100%;
     grid-template-columns: 1fr;
     gap: 25px;
     margin-bottom: 55px;

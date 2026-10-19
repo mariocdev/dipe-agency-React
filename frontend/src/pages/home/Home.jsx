@@ -1,5 +1,6 @@
 import { BlogSection } from '../../components/blog/BlogSection';
 import { ContactSection } from '../../components/contact/ContactSection';
+import { FloatingImage } from '../../components/content/FloatingImage';
 import { FeaturedProjectsSection } from './sections/FeaturedProjectsSection';
 import { FaqSection } from './sections/FaqSection';
 import { homeMedia } from './homeMedia';
@@ -8,6 +9,7 @@ import { ReviewsSection } from './sections/ReviewsSection';
 import { ServiceCardsSection } from './sections/ServiceCardsSection';
 import { VideoHero } from './sections/VideoHero';
 import { WorkProcessSection } from './sections/WorkProcessSection';
+import { developmentServiceRoutes } from '../web-development/developmentServiceRoutes';
 import './Home.css';
 
 const serviceCards = [
@@ -18,9 +20,9 @@ const serviceCards = [
     backgroundIcon: homeMedia('Soluciones-de-desarrollo-web-a-medida.svg'),
     backgroundPosition: 'left',
     items: [
-      { label: 'Desarrollo web con WordPress' },
-      { label: 'Desarrollo web con PrestaShop' },
-      { label: 'Desarrollo de aplicaciones web (custom)' },
+      { label: 'Desarrollo web con WordPress', href: developmentServiceRoutes.wordpress },
+      { label: 'Desarrollo web con PrestaShop', href: developmentServiceRoutes.prestashop },
+      { label: 'Desarrollo de aplicaciones web (custom)', href: developmentServiceRoutes.applications },
       { label: 'Apps móviles (iOS · Android · PWA)' },
     ],
   },
@@ -98,7 +100,7 @@ export function Home() {
     <div className="dipe-home__blog-contact">
       <BlogSection />
       <div className="dipe-home__background-bridge" aria-hidden="true">
-        <img src={homeMedia('Hablamos.png')} alt="" />
+        <FloatingImage src={homeMedia('Hablamos.png')} />
       </div>
       <ContactSection />
     </div>

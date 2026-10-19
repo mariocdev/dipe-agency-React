@@ -1,11 +1,9 @@
 import { homeMedia } from '../home/homeMedia';
 
-// Añadir aquí el nombre del fondo definitivo cuando lo aporte el usuario.
 // Las imágenes de las entradas proceden de WordPress, no de la maqueta.
-const heroBackgroundFilename = null;
 
 export const blogMedia = {
-  heroBackground: heroBackgroundFilename ? homeMedia(heroBackgroundFilename) : null,
+  heroBackground: homeMedia('Cabecera-blog.png'),
   shareIcons: {
     linkedin: homeMedia('linkedin-brands-solid-full.svg'),
     whatsapp: homeMedia('whatsapp-brands-solid-full.svg'),

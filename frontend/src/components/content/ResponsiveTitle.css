@@ -1,0 +1,24 @@
+.dipe-responsive-title {
+  display: block;
+  min-width: 0;
+}
+
+.dipe-title-space {
+  display: none;
+}
+
+[data-responsive-title-flow] > .dipe-title-break {
+  display: none;
+}
+
+[data-responsive-title-flow] > .dipe-title-space {
+  display: inline;
+}
+
+[data-responsive-title-flow] > .dipe-title-line {
+  white-space: normal;
+}
+
+[data-responsive-title-measuring] > .dipe-title-line {
+  white-space: nowrap;
+}

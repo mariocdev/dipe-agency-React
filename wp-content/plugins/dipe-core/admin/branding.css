@@ -136,6 +136,23 @@ body.dipe-admin {
   border-bottom-color: #e8e8e8;
 }
 
+.dipe-admin .wp-list-table .dipe-admin-thumbnail {
+  display: block;
+  width: 40px;
+  height: 40px;
+  max-width: 100%;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+@media (min-width: 783px) {
+  .dipe-admin .wp-list-table .column-dipe_thumbnail {
+    width: 48px;
+    padding: 8px;
+    vertical-align: middle;
+  }
+}
+
 .dipe-admin-welcome {
   box-sizing: border-box;
   margin: 20px 20px 24px 0;

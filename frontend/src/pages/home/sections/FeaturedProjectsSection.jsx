@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getFeaturedProjects, projectHomeCardImage, rendered } from '../../../lib/api';
 import { sitePath } from '../../../lib/site';
 import { homeMedia } from '../homeMedia';
+import { useDeferredMedia } from '../../../hooks/useDeferredMedia';
 
 function FeaturedProjectCard({ item, index }) {
   const image = projectHomeCardImage(item);
@@ -10,7 +11,7 @@ function FeaturedProjectCard({ item, index }) {
   return <article className="dipe-featured-projects__item" style={{ '--project-index': index }}>
     <a className="dipe-featured-projects__card" href={sitePath(item.link)}>
       <div className="dipe-featured-projects__media">
-        {image && <img src={image.url} alt={image.alt} />}
+        {image && <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />}
       </div>
       <div className="dipe-featured-projects__card-content">
         <h3 dangerouslySetInnerHTML={{ __html: title }} />
@@ -22,7 +23,7 @@ function FeaturedProjectCard({ item, index }) {
 
 export function FeaturedProjectsSection() {
   const [state, setState] = useState({ loading: true, data: [], error: null });
-  const canvasRef = useRef(null);
+  const [canvasRef, mediaReady] = useDeferredMedia();
 
   useEffect(() => {
     getFeaturedProjects().then(
@@ -33,7 +34,7 @@ export function FeaturedProjectsSection() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!canvas || !mediaReady || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
 
     let frame = 0;
     const updateBackgroundPosition = () => {
@@ -58,9 +59,9 @@ export function FeaturedProjectsSection() {
       window.removeEventListener('scroll', scheduleBackgroundPosition);
       window.removeEventListener('resize', scheduleBackgroundPosition);
     };
-  }, []);
+  }, [mediaReady, canvasRef]);
 
-  return <section className="dipe-featured-projects" aria-labelledby="featured-projects-title" ref={canvasRef} style={{ backgroundImage: `url(${homeMedia('IMG-Proyectos.png')})` }}>
+  return <section className="dipe-featured-projects" aria-labelledby="featured-projects-title" ref={canvasRef} style={mediaReady ? { backgroundImage: `url(${homeMedia('IMG-Proyectos.png')})` } : undefined}>
     <div className="dipe-featured-projects__inner">
       <header className="dipe-featured-projects__heading">
         <h2 id="featured-projects-title">Proyectos destacados</h2>

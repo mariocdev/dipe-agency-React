@@ -45,7 +45,7 @@ const reviews = [
 ].filter((review) => review.rating >= 4 && review.text.trim().length > 0);
 
 function Stars({ rating }) {
-  return <span className="dipe-reviews__stars" aria-label={`${rating} de 5 estrellas`}>
+  return <span className="dipe-reviews__stars" role="img" aria-label={`${rating} de 5 estrellas`}>
     {Array.from({ length: rating }, (_, index) => <img src={starIcon} alt="" aria-hidden="true" key={index} />)}
   </span>;
 }
@@ -121,7 +121,7 @@ export function ReviewsSection() {
           <address>Jesús Arambarri, 33, 37003 Salamanca</address>
         </header>
 
-        <div className="dipe-reviews__rating" aria-label="Valoración estática facilitada por el usuario: 5,0 de 5, basada en 8 reseñas">
+        <div className="dipe-reviews__rating" role="group" aria-label="Valoración estática facilitada por el usuario: 5,0 de 5, basada en 8 reseñas">
           <div><strong>5,0</strong><Stars rating={5} /><span>8 reseñas</span></div>
           <a href={googleListingUrl} target="_blank" rel="noreferrer">Reseñas en Google <span className="visually-hidden">(dato no sincronizado)</span></a>
         </div>
@@ -129,6 +129,7 @@ export function ReviewsSection() {
 
       <div
         className="dipe-reviews__carousel"
+        role="group"
         aria-roledescription="carrusel"
         aria-label="Opiniones de clientes"
         onFocusCapture={() => setIsPaused(true)}
@@ -146,7 +147,7 @@ export function ReviewsSection() {
           onPointerUp={handlePointerEnd}
         >
           <div className={`dipe-reviews__track${isDragging ? ' is-dragging' : ''}`} style={{ transform: `translateX(calc(${-activeIndex * 100}% + ${dragOffset}px))` }}>
-            {reviews.map((review, index) => <article
+            {reviews.map((review, index) => <div
               aria-hidden={index !== activeIndex}
               aria-label={`Reseña ${index + 1} de ${reviews.length}`}
               aria-roledescription="diapositiva"
@@ -163,11 +164,11 @@ export function ReviewsSection() {
               </header>
               <blockquote>{review.text}</blockquote>
               {review.isRepeat && <p className="dipe-reviews__repeat-note">Reseña repetida para esta demostración</p>}
-            </article>)}
+            </div>)}
           </div>
         </div>
 
-        <div className="dipe-reviews__indicators" aria-label="Seleccionar reseña">
+        <div className="dipe-reviews__indicators" role="group" aria-label="Seleccionar reseña">
           {reviews.map((review, index) => <button
             aria-current={index === activeIndex ? 'true' : undefined}
             aria-label={`Mostrar reseña ${index + 1} de ${reviews.length}${review.isRepeat ? ', repetida para esta demostración' : ''}`}

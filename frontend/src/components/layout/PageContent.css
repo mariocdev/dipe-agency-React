@@ -1,0 +1,39 @@
+/* JavaScript prepara los bloques que aún no han cruzado la línea de aparición. */
+@media (prefers-reduced-motion: no-preference) {
+  .dipe-scroll-reveal--pending {
+    opacity: 0;
+    translate: 0 26px;
+    filter: blur(5px);
+  }
+
+  .dipe-scroll-reveal--entering {
+    animation: dipe-scroll-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    animation-delay: var(--dipe-scroll-reveal-delay, 0ms);
+    /* Mantener el inicio oculto durante la espera de cada elemento. */
+    animation-fill-mode: backwards;
+  }
+}
+
+@keyframes dipe-scroll-reveal {
+  from {
+    opacity: 0;
+    translate: 0 26px;
+    filter: blur(5px);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
+}
+
+@media print {
+  .dipe-scroll-reveal--pending,
+  .dipe-scroll-reveal--entering {
+    opacity: 1;
+    translate: none;
+    filter: none;
+    animation: none;
+  }
+}

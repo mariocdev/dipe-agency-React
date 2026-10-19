@@ -18,12 +18,17 @@
   --dipe-font-size-small: calc(14px * var(--dipe-font-scale));
   --dipe-font-size-alternative: calc(24px * var(--dipe-font-scale));
   --dipe-content-width: 80%;
+  --dipe-content-narrow-width: 70%;
+  /* Bloques interiores: 68% de página = 85% del contenedor de 80%. */
+  --dipe-content-inset-ratio: 0.85;
   --dipe-header-shadow: 0 4px 4px 0 rgb(0 0 0 / 25%);
 }
 
 @media (max-width: 1640px) {
   :root {
     --dipe-content-width: 85%;
+    --dipe-content-narrow-width: 75%;
+    --dipe-content-inset-ratio: calc(73 / 85);
     --dipe-font-scale: 0.92;
   }
 }
@@ -31,6 +36,69 @@
 @media (max-width: 1500px) {
   :root {
     --dipe-content-width: 90%;
+    --dipe-content-narrow-width: 80%;
+    --dipe-content-inset-ratio: calc(78 / 90);
     --dipe-font-scale: 0.84;
   }
+}
+
+@media (max-width: 1240px) {
+  :root {
+    --dipe-content-narrow-width: 90%;
+    --dipe-content-inset-ratio: 1;
+  }
+}
+
+/* Escala compartida solo responsive. El escritorio conserva sus valores. */
+@media (max-width: 1640px) {
+  :root {
+    --dipe-responsive-progress: 0.15;
+    --dipe-page-gutter: calc((100% - var(--dipe-content-width)) / 2);
+    --dipe-font-size-h1: max(32px, calc(45px - 13px * var(--dipe-responsive-progress)));
+    --dipe-font-size-h2: max(28px, calc(38px - 10px * var(--dipe-responsive-progress)));
+    /* Títulos compactos de 20 px: mínimo de 18 px confirmado por el usuario. */
+    --dipe-font-size-h3: max(18px, calc(20px - 2px * var(--dipe-responsive-progress)));
+    --dipe-font-size-body: max(16px, calc(18px - 2px * var(--dipe-responsive-progress)));
+    --dipe-font-size-alternative: max(20px, calc(24px - 4px * var(--dipe-responsive-progress)));
+    --dipe-font-size-small: 14px;
+    --dipe-font-size-display-89: max(32px, calc(89px - 57px * var(--dipe-responsive-progress)));
+    --dipe-font-size-display-84: max(32px, calc(84px - 52px * var(--dipe-responsive-progress)));
+    --dipe-font-size-display-64: max(32px, calc(64px - 32px * var(--dipe-responsive-progress)));
+    --dipe-font-size-display-48: max(28px, calc(48px - 20px * var(--dipe-responsive-progress)));
+    --dipe-font-size-heading-42: max(28px, calc(42px - 14px * var(--dipe-responsive-progress)));
+    --dipe-font-size-heading-32: max(28px, calc(32px - 4px * var(--dipe-responsive-progress)));
+    --dipe-section-space-75: max(50px, calc(75px - 25px * var(--dipe-responsive-progress)));
+    --dipe-section-space-100: max(50px, calc(100px - 50px * var(--dipe-responsive-progress)));
+    --dipe-section-space-120: max(50px, calc(120px - 70px * var(--dipe-responsive-progress)));
+    --dipe-section-space-140: max(50px, calc(140px - 90px * var(--dipe-responsive-progress)));
+    --dipe-section-space-60: max(50px, calc(60px - 10px * var(--dipe-responsive-progress)));
+    /* Gaps internos: al menos 20 px menos que el padding vertical de sección. */
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-75) - 20px);
+    --dipe-banner-space-75: 75px;
+    --dipe-banner-space-80: max(75px, calc(80px - 5px * var(--dipe-responsive-progress)));
+    --dipe-banner-space-110: max(75px, calc(110px - 35px * var(--dipe-responsive-progress)));
+    --dipe-banner-space-120: max(75px, calc(120px - 45px * var(--dipe-responsive-progress)));
+    --dipe-banner-space-140: max(75px, calc(140px - 65px * var(--dipe-responsive-progress)));
+    --dipe-banner-space-160: max(75px, calc(160px - 85px * var(--dipe-responsive-progress)));
+  }
+}
+
+@media (max-width: 1500px) {
+  :root { --dipe-responsive-progress: 0.3; }
+}
+
+@media (max-width: 1260px) {
+  :root { --dipe-responsive-progress: 0.5; }
+}
+
+@media (max-width: 1240px) {
+  :root { --dipe-responsive-progress: 0.52; }
+}
+
+@media (max-width: 880px) {
+  :root { --dipe-responsive-progress: 0.8; }
+}
+
+@media (max-width: 680px) {
+  :root { --dipe-responsive-progress: 1; }
 }

@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ResponsiveTitle } from '../../../components/content/ResponsiveTitle';
 import chevronIcon from '../../../assets/icons/chevron-down-solid-full.svg';
 import { homeMedia } from '../homeMedia';
 import './FaqSection.css';
+import { useDeferredMedia } from '../../../hooks/useDeferredMedia';
 
 export const homeFaqs = [
   {
@@ -51,9 +53,10 @@ function createFaqSchema(items) {
   };
 }
 
-export function FaqSection({ items = homeFaqs, title = 'FAQs sobre nuestra Agencia de desarrollo web' }) {
+export function FaqSection({ items = homeFaqs, title = 'FAQs sobre nuestra Agencia de desarrollo web', backgroundSrc = homeMedia('BG-FAQS.png') }) {
   const [openFaqId, setOpenFaqId] = useState(null);
   const answerRefs = useRef({});
+  const [mediaRef, mediaReady] = useDeferredMedia();
 
   useLayoutEffect(() => {
     for (const faq of items) {
@@ -83,12 +86,13 @@ export function FaqSection({ items = homeFaqs, title = 'FAQs sobre nuestra Agenc
 
   return <section
     className="dipe-faqs"
+    ref={mediaRef}
     aria-labelledby="faqs-title"
-    style={{ backgroundImage: `url("${homeMedia('BG-FAQS.png')}")` }}
+    style={mediaReady && backgroundSrc ? { backgroundImage: `url("${backgroundSrc}")` } : undefined}
   >
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(createFaqSchema(items)) }} />
     <div className="dipe-faqs__inner">
-      <h2 id="faqs-title">{title}</h2>
+      <h2 id="faqs-title"><ResponsiveTitle>{title}</ResponsiveTitle></h2>
       <div className="dipe-faqs__list">
         {items.map((faq) => <div
           aria-controls={`faq-answer-${faq.id}`}

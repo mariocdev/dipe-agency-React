@@ -1,4 +1,5 @@
 import { ContactSection } from '../../components/contact/ContactSection';
+import { FloatingImage } from '../../components/content/FloatingImage';
 import { homeMedia } from '../home/homeMedia';
 import { LogoCarouselSection } from '../home/sections/LogoCarouselSection';
 import './ProjectsContact.css';
@@ -11,7 +12,7 @@ export function ProjectsContact({ intro = defaultIntro, source = 'proyectos', fo
       <ContactSection source={source} formType={formType} title={title} intro={intro} hideDetails />
     </div>
     <div className="dipe-projects-contact__background-bridge" aria-hidden="true">
-      <img src={homeMedia('Hablamos.png')} alt="" />
+      <FloatingImage src={homeMedia('Hablamos.png')} />
     </div>
     <LogoCarouselSection />
   </>;

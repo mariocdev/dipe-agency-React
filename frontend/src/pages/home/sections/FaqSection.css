@@ -8,7 +8,7 @@
 }
 
 .dipe-faqs__inner {
-  width: 70%;
+  width: var(--dipe-content-narrow-width);
   margin-inline: auto;
 }
 
@@ -116,10 +116,6 @@
 @media (max-width: 860px) {
   .dipe-faqs {
     padding-block: 5rem;
-  }
-
-  .dipe-faqs__inner {
-    width: var(--dipe-content-width);
   }
 
   .dipe-faqs h2 {

@@ -138,7 +138,7 @@ export function ProjectGallery({ media }) {
 
   useEffect(() => {
     function updateVisibleItems() {
-      setVisibleItems(window.innerWidth <= 560 ? 1 : window.innerWidth <= 860 ? 2 : 4);
+      setVisibleItems(window.innerWidth <= 560 ? 1 : window.innerWidth <= 860 ? 2 : window.innerWidth <= 1500 ? 3 : 4);
     }
     updateVisibleItems();
     window.addEventListener('resize', updateVisibleItems);

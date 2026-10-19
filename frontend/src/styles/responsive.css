@@ -1,0 +1,634 @@
+/* Escala compartida y adaptación de los tipos de contenedor definidos por el usuario. */
+@media (max-width: 1640px) {
+  /* Una línea nowrap no debe ensanchar la columna automática del banner. */
+  .dipe-web-hero,
+  .dipe-projects-banner,
+  .dipe-blog-archive__hero,
+  .dipe-legal__hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-web-hero__inner,
+  .dipe-projects-banner__inner,
+  .dipe-blog-archive__container,
+  .dipe-legal__container,
+  .dipe-post__hero-inner > *,
+  .dipe-web-hero h1,
+  .dipe-projects-banner :is(h1, h2),
+  .dipe-blog-archive__hero :is(h1, p),
+  .dipe-legal__hero h1 {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .dipe-web-hero__subtitle,
+  .dipe-projects-banner h2,
+  .dipe-blog-archive__hero p {
+    --dipe-fit-min-size: 28px;
+  }
+
+  /* Tamaños de partida distintos comparten progreso y conservan su jerarquía. */
+  .dipe-video-hero__title {
+    font-size: var(--dipe-font-size-h1);
+  }
+
+  .dipe-header__primary-list > .dipe-header__primary-item > .dipe-header__item-row > .dipe-header__link {
+    font-size: var(--dipe-font-size-body);
+  }
+
+  .dipe-web-hero h1,
+  .dipe-system-page__title,
+  .dipe-projects-banner h1,
+  .dipe-legal__hero h1,
+  .dipe-post__hero h1,
+  .dipe-blog-archive__hero h1 {
+    font-size: var(--dipe-font-size-display-89);
+  }
+
+  .dipe-project-detail h1 {
+    font-size: var(--dipe-font-size-display-84);
+  }
+
+  /* 34/28 mantiene los mínimos y permite siempre 6 px de diferencia. */
+  .dipe-web-hero h1,
+  .dipe-projects-banner h1,
+  .dipe-blog-archive__hero h1 {
+    --dipe-fit-min-size: 34px;
+    font-size: max(34px, var(--dipe-font-size-display-89));
+  }
+
+  .dipe-web-hero__subtitle {
+    font-size: var(--dipe-font-size-display-64);
+  }
+
+  .dipe-projects-banner h2,
+  .dipe-blog-archive__hero p {
+    font-size: var(--dipe-font-size-display-48);
+  }
+
+  .dipe-services__title,
+  .dipe-work-process__content > h2,
+  .dipe-featured-projects__heading h2 {
+    font-size: var(--dipe-font-size-heading-42);
+  }
+
+  .dipe-related-projects h2,
+  .dipe-project-gallery h2,
+  .dipe-reviews__heading h2,
+  .dipe-reviews__rating strong,
+  .dipe-faqs h2,
+  .dipe-blog__heading h2,
+  .dipe-contact__details h2,
+  .dipe-legal__content h2 {
+    font-size: var(--dipe-font-size-h2);
+  }
+
+  .dipe-related-services__card h2,
+  .dipe-post-sidebar .dipe-related-services__card h2,
+  .dipe-editorial-index h2 {
+    font-size: var(--dipe-font-size-heading-32);
+  }
+
+  .dipe-video-hero__description,
+  .dipe-reviews__card cite {
+    font-size: var(--dipe-font-size-alternative);
+  }
+
+  .dipe-project-detail__metadata dt,
+  .dipe-project-detail__links-title,
+  .dipe-projects-archive__card-content h3 {
+    font-size: var(--dipe-font-size-h3);
+  }
+
+  .dipe-project-detail__metadata dd,
+  .dipe-reviews__card blockquote {
+    font-size: var(--dipe-font-size-body);
+  }
+
+  .dipe-reviews__rating > div > span:last-child,
+  .dipe-reviews__rating a,
+  .dipe-service-card__list a {
+    font-size: 16px;
+  }
+
+  .dipe-projects-archive__category,
+  .dipe-reviews__repeat-note {
+    font-size: var(--dipe-font-size-small);
+  }
+
+  /* H3 editorial de 24 px; los títulos compactos de 20 px siguen 20 → 18. */
+  .dipe-editorial-content h3 {
+    font-size: 24px;
+  }
+
+  /* FitText permite saltos de línea al alcanzar el mínimo, sin reducirlo más. */
+  main h1 {
+    --dipe-fit-min-size: 32px;
+  }
+
+  /* Cabeceras: suelo de 75 px por lado, aunque una regla móvil antigua pida menos. */
+  .dipe-video-hero__inner,
+  .dipe-projects-banner__inner {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-140) - 20px);
+    padding-block: var(--dipe-banner-space-140);
+  }
+
+  .dipe-web-hero,
+  .dipe-blog-archive__hero {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-120) - 20px);
+    padding-block: var(--dipe-banner-space-120);
+  }
+
+  .dipe-agency .dipe-web-hero,
+  .dipe-project-detail__inner {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-75) - 20px);
+    padding-block: var(--dipe-banner-space-75);
+  }
+
+  .dipe-post__hero {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-80) - 20px);
+    padding-block: var(--dipe-banner-space-80);
+  }
+
+  .dipe-legal__hero {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-110) - 20px);
+    padding-block: var(--dipe-banner-space-110);
+  }
+
+  .dipe-system-page {
+    --dipe-content-gap-limit: calc(var(--dipe-banner-space-160) - 20px);
+    padding-block: var(--dipe-banner-space-160);
+  }
+
+  /* Secciones: cada valor de partida converge en 50 px por lado. */
+  .dipe-featured-projects,
+  .dipe-reviews,
+  .dipe-faqs,
+  .dipe-contact,
+  .dipe-logo-carousel,
+  .dipe-blog,
+  .dipe-web-includes,
+  .dipe-contact-channels,
+  .dipe-projects-archive,
+  .dipe-project-detail__sections,
+  .dipe-post__body,
+  .dipe-post__status,
+  .dipe-legal__body {
+    padding-block: var(--dipe-section-space-75);
+  }
+
+  .dipe-services,
+  .dipe-contact-page .dipe-faqs {
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-120) - 20px);
+    padding-block: var(--dipe-section-space-120);
+  }
+
+  .dipe-web-cases {
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-100) - 20px);
+    padding-block: var(--dipe-section-space-100);
+  }
+
+  .dipe-agency-intro {
+    --dipe-content-gap-limit: 30px;
+    padding-block: var(--dipe-section-space-75) 50px;
+  }
+
+  .dipe-team,
+  .dipe-web-paths {
+    --dipe-content-gap-limit: 30px;
+    padding-block: 50px var(--dipe-section-space-100);
+  }
+
+  .dipe-web-paths {
+    padding-bottom: var(--dipe-section-space-120);
+  }
+
+  .dipe-contact-page-form {
+    --dipe-content-gap-limit: 30px;
+    padding-block: 50px var(--dipe-section-space-140);
+  }
+
+  .dipe-blog-archive__listing {
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-60) - 20px);
+    padding-block: var(--dipe-section-space-60) var(--dipe-section-space-100);
+  }
+
+  .dipe-post__footer {
+    padding-block: var(--dipe-section-space-75) var(--dipe-section-space-100);
+  }
+
+  /* El panel ocupa una parte de una banda completa: el borde exterior sigue
+     el mismo margen de página que los contenedores con width compartido. */
+  .dipe-work-process__panel {
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-100) - 20px);
+    padding-block: var(--dipe-section-space-100);
+    padding-inline: var(--dipe-section-space-75) var(--dipe-page-gutter);
+  }
+
+  .dipe-web-capabilities__content {
+    --dipe-content-gap-limit: calc(var(--dipe-section-space-60) - 20px);
+    padding-block: var(--dipe-section-space-60);
+  }
+
+  .dipe-web-capabilities {
+    margin-bottom: var(--dipe-section-space-100);
+  }
+
+  /* Gaps de contenido. Los iconos, controles y enlaces compactos conservan
+     sus microseparaciones; no son separaciones estructurales de contenedor. */
+  .dipe-services__grid,
+  .dipe-service-card__heading,
+  .dipe-work-process__grid,
+  .dipe-work-process__card,
+  .dipe-web-hero__actions,
+  .dipe-web-includes__grid,
+  .dipe-web-includes__cards-grid,
+  .dipe-web-paths__grid,
+  .dipe-web-capabilities ul,
+  .dipe-web-case__results,
+  .dipe-web-case dl,
+  .dipe-related-projects__grid,
+  .dipe-projects-archive__grid,
+  .dipe-project-detail__inner,
+  .dipe-project-detail__summary,
+  .dipe-project-gallery__track,
+  .dipe-reviews__heading,
+  .dipe-reviews__card-header,
+  .dipe-faqs__list,
+  .dipe-contact__intro,
+  .dipe-contact__form,
+  .dipe-contact-channels__grid,
+  .dipe-contact-channel,
+  .dipe-contact-page-form__fields,
+  .dipe-blog__meta,
+  .dipe-blog-archive__toolbar,
+  .dipe-blog-date-filter__content,
+  .dipe-team__viewport,
+  .dipe-agency-intro__values {
+    gap: 20px;
+  }
+
+  .dipe-project-gallery__carousel {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(24px - 4px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-featured-projects__grid,
+  .dipe-contact-page-form__details,
+  .dipe-post-sidebar__recent {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(25px - 5px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-post__navigation,
+  .dipe-blog-archive__grid,
+  .dipe-related-services,
+  .dipe-blog__grid {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(30px - 10px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-post-sidebar__resources {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(35px - 15px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-web-capabilities__content,
+  .dipe-web-cases__grid {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(40px - 20px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-reviews__summary {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(48px - 28px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-project-detail__metadata,
+  .dipe-contact-page-form__layout,
+  .dipe-agency-intro__heading {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(50px - 30px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-post__body {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(55px - 35px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-post-sidebar {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(60px - 40px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-web-includes__intro,
+  .dipe-web-includes__layout,
+  .dipe-reviews__inner,
+  .dipe-post__hero-inner {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(75px - 55px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-project-detail__sections {
+    /* Aquí se separan secciones completas, no elementos de una misma sección. */
+    gap: var(--dipe-section-space-75);
+  }
+
+  .dipe-project-detail__body-section {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(75px - 55px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-blog-archive__selection {
+    gap: 20px min(var(--dipe-content-gap-limit), max(20px, calc(30px - 10px * var(--dipe-responsive-progress))));
+  }
+
+  .dipe-post__metadata {
+    gap: min(var(--dipe-content-gap-limit), max(20px, calc(25px - 5px * var(--dipe-responsive-progress))))
+      min(var(--dipe-content-gap-limit), max(20px, calc(45px - 25px * var(--dipe-responsive-progress))));
+  }
+
+  /* Los márgenes también cuentan como separación interna entre título y contenido. */
+  .dipe-services__grid,
+  .dipe-blog__grid,
+  .dipe-blog__all-link,
+  .dipe-blog-archive__more,
+  .dipe-web-cases__grid,
+  .dipe-projects-archive__pagination {
+    margin-top: min(50px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-blog-archive__grid,
+  .dipe-contact-channels__grid,
+  .dipe-post__subtitle {
+    margin-top: min(45px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-work-process__grid,
+  .dipe-contact__intro,
+  .dipe-blog-filter__content {
+    margin-top: min(30px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-contact__address,
+  .dipe-contact__link,
+  .dipe-web-includes__heading .dipe-web-button {
+    margin-top: min(35px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-service-card__list,
+  .dipe-faqs__list {
+    margin-top: min(40px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-post__metadata,
+  .dipe-web-paths__grid {
+    margin-top: min(55px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-contact-page .dipe-faqs__list {
+    margin-top: min(65px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-featured-projects__canvas {
+    margin-top: min(64px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-featured-projects__grid {
+    --dipe-project-side-padding: max(20px, calc(120px - 100px * var(--dipe-responsive-progress)));
+  }
+
+  .dipe-featured-projects__item:nth-child(odd) {
+    padding-top: 0;
+    padding-bottom: var(--dipe-project-side-padding);
+  }
+
+  .dipe-featured-projects__item:nth-child(even) {
+    padding-top: var(--dipe-project-side-padding);
+    padding-bottom: 0;
+  }
+
+  .dipe-related-projects h2,
+  .dipe-projects-archive__filters,
+  .dipe-projects-archive__back,
+  .dipe-editorial-index {
+    margin-bottom: min(50px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-team__heading {
+    margin-bottom: min(45px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-agency-intro__heading {
+    margin-bottom: min(60px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-web-includes__intro {
+    margin-bottom: min(85px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-project-gallery__carousel {
+    /* El viewport ya reserva 14 px para la elevación y sombra de las imágenes. */
+    margin-top: max(0px, calc(min(50px, var(--dipe-content-gap-limit)) - 14px));
+  }
+
+  .dipe-legal__content h2 {
+    margin-top: min(45px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-legal__content h3 {
+    margin-top: min(35px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-legal__table {
+    margin-block: min(25px, var(--dipe-content-gap-limit)) min(35px, var(--dipe-content-gap-limit));
+  }
+
+  .dipe-post__main .dipe-editorial-content :is(h2, h3, h4, h5, h6) {
+    margin-block: min(35px, var(--dipe-content-gap-limit)) min(25px, var(--dipe-content-gap-limit));
+  }
+}
+
+@media (max-width: 1500px) {
+  .dipe-blog-archive__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1240px) {
+  /* Áreas principales en paralelo: cada bloque ocupa una fila completa. */
+  .dipe-services__grid,
+  .dipe-web-includes__intro,
+  .dipe-web-includes__layout,
+  .dipe-agency-intro__heading,
+  .dipe-reviews__inner,
+  .dipe-contact-page-form__layout,
+  .dipe-post__hero-inner,
+  .dipe-post__body,
+  .dipe-project-detail__summary,
+  .dipe-project-detail__body-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-web-includes__heading {
+    text-align: center;
+  }
+
+  /* Bandas de imagen/contenido: imagen completa y texto al ancho global. */
+  .dipe-work-process {
+    flex-direction: column;
+  }
+
+  .dipe-work-process__visual,
+  .dipe-work-process__panel {
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  .dipe-work-process__visual {
+    width: 100%;
+    min-height: 25rem;
+  }
+
+  .dipe-work-process__panel {
+    --dipe-content-gap-limit: 30px;
+    width: var(--dipe-content-width);
+    /* El siguiente bloque ya aporta la separación exterior inferior. */
+    padding: 50px 0 0;
+    margin-inline: auto;
+  }
+
+  .dipe-web-capabilities {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-web-capabilities__image {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .dipe-web-capabilities__content {
+    --dipe-content-gap-limit: 30px;
+    grid-column: 1;
+    grid-row: 2;
+    width: var(--dipe-content-width);
+    /* Imagen arriba: espacio hacia ella, sin duplicarlo al cerrar la banda. */
+    padding: 50px 0 0;
+    margin-inline: auto;
+  }
+
+  /* Bloques de datos/formulario: misma regla de dos áreas, sin perder ancho. */
+  .dipe-contact__inner {
+    display: block;
+    width: var(--dipe-content-width);
+  }
+
+  .dipe-contact__details {
+    width: 100%;
+    padding: 0 0 calc(min(48px, var(--dipe-content-gap-limit)) / 2);
+    border-right: 0;
+    border-bottom: 1px solid var(--dipe-color-ink);
+  }
+
+  .dipe-contact__form-panel {
+    width: 100%;
+    padding: calc(min(48px, var(--dipe-content-gap-limit)) / 2) 0 0;
+  }
+
+  .dipe-contact-page-form__layout > *,
+  .dipe-reviews__inner > *,
+  .dipe-post__body > *,
+  .dipe-project-detail__summary > * {
+    min-width: 0;
+  }
+
+  .dipe-project-detail__video {
+    position: static;
+  }
+
+  .dipe-project-detail__content {
+    padding-block: 0;
+  }
+
+  /* Columnas compartidas por listados y secciones de destacados. */
+  .dipe-blog__grid,
+  .dipe-blog-archive__grid,
+  .dipe-projects-archive__grid,
+  .dipe-related-projects__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dipe-blog__grid > .dipe-blog__card:nth-child(n + 3),
+  .dipe-related-projects__grid > .dipe-projects-archive__item:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (max-width: 840px) {
+  .dipe-featured-projects__grid {
+    /* 120 px en 840 px; reducción continua hasta 20 px en 680 px. */
+    --dipe-project-side-padding: clamp(20px, calc(62.5vw - 405px), 120px);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-featured-projects__item:nth-child(n) {
+    margin: 0;
+  }
+
+  .dipe-featured-projects__item:nth-child(odd) {
+    padding: 0 var(--dipe-project-side-padding) var(--dipe-project-side-padding) 0;
+  }
+
+  .dipe-featured-projects__item:nth-child(even) {
+    padding: var(--dipe-project-side-padding) 0 0 var(--dipe-project-side-padding);
+    /* Se solapan los dos paddings vacíos, manteniendo el gap entre tarjetas. */
+    margin-top: calc(-2 * var(--dipe-project-side-padding));
+  }
+
+  .dipe-featured-projects__item:last-child:nth-child(odd) {
+    margin-bottom: calc(-1 * var(--dipe-project-side-padding));
+  }
+}
+
+@media (max-width: 767px) {
+  .dipe-blog__grid,
+  .dipe-blog-archive__grid,
+  .dipe-projects-archive__grid,
+  .dipe-related-projects__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-blog__grid > .dipe-blog__card:nth-child(n + 3),
+  .dipe-related-projects__grid > .dipe-projects-archive__item:nth-child(n + 3) {
+    display: block;
+  }
+}
+
+@media (max-width: 680px) {
+  .dipe-home__background-bridge img,
+  .dipe-projects-contact__background-bridge img {
+    min-width: 45%;
+  }
+
+  /* Tarjetas de contenido: una por fila en el corte móvil compartido. */
+  .dipe-work-process__grid,
+  .dipe-web-includes__grid,
+  .dipe-web-includes__cards-grid,
+  .dipe-web-cases__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dipe-work-process__grid {
+    grid-auto-rows: auto;
+  }
+
+  .dipe-work-process__card {
+    height: auto;
+  }
+
+  .dipe-web-hero h1,
+  .dipe-projects-banner h1,
+  .dipe-blog-archive__hero h1 {
+    --dipe-fit-fixed: 1;
+    font-size: 34px;
+  }
+
+  .dipe-web-hero__subtitle,
+  .dipe-projects-banner h2,
+  .dipe-blog-archive__hero p {
+    --dipe-fit-fixed: 1;
+    font-size: 28px;
+  }
+}

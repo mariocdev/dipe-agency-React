@@ -8,6 +8,7 @@ import './styles/tokens.css';
 import './styles/styles.css';
 import './styles/navigation.css';
 import { App } from './app/App';
+import './styles/responsive.css';
 import { installNavigationTransitions } from './lib/navigationTransitions';
 
 const root = document.getElementById('dipe-react-root');
