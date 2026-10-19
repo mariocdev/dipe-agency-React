@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+// Gestiona el loader y el scroll al actualizar los resultados de un archivo.
 export function useArchiveGridFeedback({ content, loading, error, enabled = true, scrollTargetRef }) {
   const resultsRef = useRef(null);
   const previousContent = useRef(null);

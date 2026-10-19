@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Define el medio del banner y el subtítulo de las entradas.
 function dipe_core_register_blog_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -40,6 +41,7 @@ function dipe_core_register_blog_fields() {
 }
 add_action( 'acf/init', 'dipe_core_register_blog_fields' );
 
+// Devuelve las entradas contiguas publicadas y sin contraseña.
 function dipe_core_blog_navigation( $request ) {
 	$item = get_post( absint( $request['id'] ) );
 	if ( ! $item || 'post' !== $item->post_type || 'publish' !== $item->post_status || post_password_required( $item ) ) {
@@ -65,6 +67,7 @@ function dipe_core_blog_navigation( $request ) {
 	return rest_ensure_response( $result );
 }
 
+// Registra la ruta REST de navegación entre entradas.
 function dipe_core_register_blog_routes() {
 	register_rest_route(
 		'dipe/v1',

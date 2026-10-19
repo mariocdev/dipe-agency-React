@@ -12,6 +12,7 @@ const initialState = { loading: true, posts: [], page: 1, totalPages: 1, error: 
 const emptyFilters = { search: '', from: '', to: '', categoryId: null };
 const verticalCardMedia = '(max-width: 1500px) and (width > 767px)';
 
+// Coordina filtros, peticiones y paginación conservando las tarjetas durante la carga.
 function BlogArchiveListing({ category, initialSearch = '' }) {
   const [state, setState] = useState(initialState);
   const [filters, setFilters] = useState(() => ({ ...emptyFilters, search: initialSearch }));
@@ -67,6 +68,7 @@ function BlogArchiveListing({ category, initialSearch = '' }) {
     };
   }, [query.categoryId, query.search, query.after, query.before, validDates]);
 
+  // Pide la página elegida conservando los filtros y evitando peticiones solapadas.
   async function goToPage(page) {
     if (loadingPage.current || state.loading || !validDates || page === state.page || page < 1 || page > state.totalPages) return;
     const version = requestVersion.current;
@@ -120,6 +122,7 @@ function BlogArchiveListing({ category, initialSearch = '' }) {
   </>;
 }
 
+// Prepara el archivo general, de categoría o de búsqueda según la ruta.
 export function BlogArchive({ categorySlug = null, searchTerm = null, onNotFound }) {
   const initialCategory = categorySlug && siteConfig.blogCategory?.slug === categorySlug
     ? siteConfig.blogCategory

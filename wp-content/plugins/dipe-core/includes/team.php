@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Registra los perfiles del equipo sin crear fichas públicas individuales.
 function dipe_core_register_team() {
 	register_post_type(
 		'dipe_equipo',
@@ -48,6 +49,7 @@ function dipe_core_team_row_actions( $actions, $post ) {
 }
 add_filter( 'post_row_actions', 'dipe_core_team_row_actions', 10, 2 );
 
+// Define los campos ACF de los perfiles del equipo.
 function dipe_core_team_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -93,6 +95,7 @@ function dipe_core_team_fields() {
 }
 add_action( 'acf/init', 'dipe_core_team_fields' );
 
+// Prepara la imagen y su texto alternativo para el carrusel.
 function dipe_core_team_image( $post_id ) {
 	$image_id = absint( get_post_meta( $post_id, 'dipe_team_image', true ) );
 	$image = $image_id ? wp_get_attachment_image_src( $image_id, 'medium_large' ) : false;
@@ -107,6 +110,7 @@ function dipe_core_team_image( $post_id ) {
 	);
 }
 
+// Devuelve los perfiles publicados en el orden configurado.
 function dipe_core_team_rest() {
 	$posts = get_posts(
 		array(
@@ -134,6 +138,7 @@ function dipe_core_team_rest() {
 	return rest_ensure_response( $members );
 }
 
+// Expone el listado público del equipo para React.
 function dipe_core_register_team_route() {
 	register_rest_route( 'dipe/v1', '/equipo', array(
 		'methods' => WP_REST_Server::READABLE,
@@ -148,6 +153,7 @@ function dipe_core_team_order_menu() {
 }
 add_action( 'admin_menu', 'dipe_core_team_order_menu' );
 
+// Recupera los perfiles que se pueden ordenar en administración.
 function dipe_core_team_order_posts() {
 	return get_posts( array(
 		'post_type' => 'dipe_equipo',
@@ -157,6 +163,7 @@ function dipe_core_team_order_posts() {
 	) );
 }
 
+// Muestra la pantalla para reordenar los perfiles del equipo.
 function dipe_core_team_order_page() {
 	if ( ! current_user_can( 'edit_others_posts' ) ) {
 		wp_die( 'No tienes permisos para ordenar el equipo.' );
@@ -199,6 +206,7 @@ function dipe_core_team_order_page() {
 	<?php
 }
 
+// Guarda el orden solicitado tras comprobar permisos y nonce.
 function dipe_core_team_save_order() {
 	if ( ! current_user_can( 'edit_others_posts' ) ) {
 		wp_die( 'No tienes permisos para ordenar el equipo.' );
@@ -246,6 +254,7 @@ function dipe_core_team_admin_assets( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'dipe_core_team_admin_assets' );
 
+// Aplica el orden manual al listado administrativo del equipo.
 function dipe_core_team_default_order( $query ) {
 	if ( is_admin() && $query->is_main_query() && 'dipe_equipo' === $query->get( 'post_type' ) && ! $query->get( 'orderby' ) ) {
 		$query->set( 'orderby', array( 'menu_order' => 'ASC', 'ID' => 'ASC' ) );

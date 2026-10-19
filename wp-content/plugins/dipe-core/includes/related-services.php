@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Registra los servicios que relacionan entradas y proyectos.
 function dipe_core_register_related_services() {
 	register_taxonomy(
 		'dipe_related_service',
@@ -30,6 +31,7 @@ function dipe_core_register_related_services() {
 }
 add_action( 'init', 'dipe_core_register_related_services', 11 );
 
+// Obtiene el enlace de la página publicada asociada a un servicio.
 function dipe_core_related_service_page_url( $term_id ) {
 	$page_id = absint( get_term_meta( $term_id, 'dipe_service_page', true ) );
 	if ( ! $page_id || 'page' !== get_post_type( $page_id ) || 'publish' !== get_post_status( $page_id ) ) {
@@ -38,6 +40,7 @@ function dipe_core_related_service_page_url( $term_id ) {
 	return get_permalink( $page_id );
 }
 
+// Dirige el enlace del servicio a su página asociada cuando existe.
 function dipe_core_related_service_term_link( $url, $term, $taxonomy ) {
 	if ( 'dipe_related_service' !== $taxonomy ) {
 		return $url;
@@ -46,6 +49,7 @@ function dipe_core_related_service_term_link( $url, $term, $taxonomy ) {
 }
 add_filter( 'term_link', 'dipe_core_related_service_term_link', 10, 3 );
 
+// Define la imagen y la página de cada servicio relacionado.
 function dipe_core_register_related_service_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -86,6 +90,7 @@ function dipe_core_register_related_service_fields() {
 }
 add_action( 'acf/init', 'dipe_core_register_related_service_fields' );
 
+// Prepara los servicios asociados al contenido para la respuesta REST.
 function dipe_core_related_services_for_rest( $object ) {
 	$terms = get_the_terms( absint( $object['id'] ), 'dipe_related_service' );
 	if ( ! $terms || is_wp_error( $terms ) ) {
@@ -109,6 +114,7 @@ function dipe_core_related_services_for_rest( $object ) {
 	return $services;
 }
 
+// Añade los datos de servicios a las respuestas que utiliza React.
 function dipe_core_register_related_services_rest() {
 	register_rest_field(
 		array( 'post', 'dipe_proyecto' ),

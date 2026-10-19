@@ -24,6 +24,7 @@ const pendingClass = 'dipe-scroll-reveal--pending';
 const enteringClass = 'dipe-scroll-reveal--entering';
 const delayProperty = '--dipe-scroll-reveal-delay';
 
+// Anima la entrada de títulos y tarjetas al aparecer durante el scroll.
 export function PageContent({ children, effectsEnabled }) {
   const mainRef = useRef(null);
 

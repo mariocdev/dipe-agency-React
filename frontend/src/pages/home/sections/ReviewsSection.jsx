@@ -50,6 +50,7 @@ function Stars({ rating }) {
   </span>;
 }
 
+// Presenta las dos opiniones reales repetidas en el carrusel de reseñas.
 export function ReviewsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);

@@ -4,6 +4,8 @@
 
 ## Estado de Git y flujo acordado
 
+- **Comentarios de código (19-10-2026):** por petición del usuario, añadidas explicaciones breves en español a funciones principales y lógica de REST, navegación, formularios, responsive, galerías, tema y plugin propio. Solo comentarios; sin refactor, cambios funcionales, estilos, dependencias ni ajustes del servidor. Se conservan las explicaciones previas útiles. Trabajo en `codex/auditoria-refactor-2026-10-19`, en commit separado del informe y del respaldo `5b7fec6`. Sin comprobaciones locales, build ni FTP. No se requiere publicar por FTP para obtener cambios de funcionamiento o diseño. Si se desea sincronizar también los comentarios PHP con el servidor, los nueve archivos exactos están en el desglose siguiente; los comentarios de React permanecen en las fuentes y no requieren desplegar nuevos assets por sí solos. Sin push ni PR nuevo; no hace falta pull en este checkout. El plan de refactor sigue pendiente.
+
 - **Respaldo y auditoría (19-10-2026, estado vigente):** el usuario vuelve a aprobar los archivos actuales y solicita guardarlos antes de proponer refactorizaciones. Creada la rama local `codex/auditoria-refactor-2026-10-19` desde `110ed6c`; primer commit `5b7fec6c7267e41987418f060d1d384950cf51c8`, con los 101 archivos nuevos/modificados del lote aprobado, sin cambiar sus fuentes. `main` queda en su referencia anterior. Informe y plan en `docs/auditoria-refactor-seguridad-2026-10-19.md`: lógica compartida de formularios, cliente REST, separación PHP y CSS gradual; pendientes de antispam, roles/CPT, recuperación, correo, privacidad, WebP y SEO técnico. Solo documentación después del respaldo; ninguna refactorización implementada. Sin build, tests, lint, navegador, API del sitio ni FTP. Commits locales, sin push ni PR nuevo; no se ha consultado el estado remoto de PR y no hace falta pull para este trabajo local. Git no incluye base de datos, uploads, assets compilados ni configuración privada: la recuperación completa exige copia complementaria del servidor. Siguiente cambio de código propuesto: extraer solo el ciclo de envío de los dos formularios, conservando campos/HTML/CSS; seguridad y SEO se tratan en entregas independientes.
 
 - **Resultados enriquecidos, robots y caché (19-10-2026):** el usuario confirma que Google sigue informando bloqueo por robots y aporta reglas con permiso explícito a Google-InspectionTool; esas reglas no bloquean la portada. HTML pegado con schema Yoast/LocalBusiness y `index, follow`, pero con sesión de administrador, sin acreditar respuesta pública. `.htaccess` local hereda un mes de expiración también para archivos de texto. Se prepara un bloque `Dipe robots cache` fuera de los bloques automáticos: solo para `robots.txt`, desactiva Expires y fija Cache-Control público con 300 s y revalidación. Hipótesis de caché pendiente de comprobar en servidor; no invalida copias previas de Google ni se declara resuelto. FTP: solo `.htaccess` raíz, conservando reglas adicionales que existan en servidor; sin React/compilación. Siguiente paso: solicitar nueva lectura en el informe de robots de Search Console; si persiste, contrastar versión/fecha/estado y registros de acceso del alojamiento. Detalles en `docs/seo.md`. Conservados cambios ajenos; sin comprobaciones locales, consultas al servidor, FTP, commit/push ni PR nuevo; no requiere pull por este lote.
@@ -17,6 +19,47 @@
 - **No ejecutar en local ni en Cloud** servidor, navegador, capturas, pruebas, lint, builds, llamadas de prueba a API ni `git diff --check` por iniciativa propia; el usuario revisa **en WordPress del servidor**. Al cerrar cada tarea: cambios/archivos, validaciones pendientes, rama/commit/push/PR, necesidad de pull, necesidad de compilación React, archivos FTP y próxima tarea. Actualizar este contexto solo con avances relevantes y hechos confirmados; evitar cronologías repetidas.
 - `frontend/package.json` declara `pnpm@11.25.0` y `build: vite build`. El usuario ha utilizado compilación local con npm. La salida de Vite es `wp-content/themes/dipe-react/assets/`; los assets están excluidos de Git y deben subirse por FTP junto con `assets/.vite/manifest.json` cuando cambie el frontend. Para cambios PHP se suben los archivos PHP correspondientes; los cambios solo documentales no requieren build ni FTP. Varnish puede requerir purga tras publicar.
 - **Publicación vigente en servidor:** no hay commit exacto confirmado ni verificación completa del último lote de cambios por FTP. No confundir «en GitHub», «compilado», «subido por FTP» y «validado en WordPress».
+
+### Archivos de la entrega de comentarios
+
+Además de este contexto y `PLAN_PARA_TERRA.md`, se modificaron únicamente comentarios en estos archivos:
+
+- `frontend/src/app/App.jsx`
+- `frontend/src/components/contact/ContactSection.jsx`
+- `frontend/src/components/content/EditorialContent.jsx`
+- `frontend/src/components/content/ResponsiveTitle.jsx`
+- `frontend/src/components/layout/Footer.jsx`
+- `frontend/src/components/layout/Header.jsx`
+- `frontend/src/components/layout/IntroAnimation.jsx`
+- `frontend/src/components/layout/PageContent.jsx`
+- `frontend/src/hooks/useArchiveGridFeedback.js`
+- `frontend/src/hooks/useDeferredMedia.js`
+- `frontend/src/hooks/useEqualizedBlockSize.js`
+- `frontend/src/lib/api.js`
+- `frontend/src/lib/navigationTransitions.js`
+- `frontend/src/lib/site.js`
+- `frontend/src/pages/agency/TeamCarousel.jsx`
+- `frontend/src/pages/blog/BlogArchive.jsx`
+- `frontend/src/pages/blog/BlogPost.jsx`
+- `frontend/src/pages/contact/ContactSections.jsx`
+- `frontend/src/pages/home/sections/FaqSection.jsx`
+- `frontend/src/pages/home/sections/FeaturedProjectsSection.jsx`
+- `frontend/src/pages/home/sections/ReviewsSection.jsx`
+- `frontend/src/pages/projects/ProjectDetail.jsx`
+- `frontend/src/pages/projects/ProjectGallery.jsx`
+- `frontend/src/pages/projects/ProjectsArchive.jsx`
+
+PHP propio, solo para sincronizar comentarios por FTP si se desea; subir los módulos antes del cargador `dipe-core.php`:
+
+- `wp-content/plugins/dipe-core/includes/blog.php`
+- `wp-content/plugins/dipe-core/includes/form-submissions.php`
+- `wp-content/plugins/dipe-core/includes/mail-settings.php`
+- `wp-content/plugins/dipe-core/includes/project-archive-seo.php`
+- `wp-content/plugins/dipe-core/includes/related-services.php`
+- `wp-content/plugins/dipe-core/includes/site-tools.php`
+- `wp-content/plugins/dipe-core/includes/team.php`
+- `wp-content/plugins/dipe-core/dipe-core.php`
+- `wp-content/themes/dipe-react/functions.php`
 
 ## Continuidad inmediata para maquetar otras páginas
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { siteConfig, sitePath } from '../../lib/site';
 import './Header.css';
 
+// Adapta los enlaces del menú de WordPress y los padres sin destino.
 function MenuLink({ item, hasChildren, onToggle }) {
   const href = sitePath(item.url);
   const target = item.target === '_blank' ? '_blank' : undefined;
@@ -28,6 +29,7 @@ function MenuToggleIcon({ close = false }) {
   </svg>;
 }
 
+// Controla la apertura del submenú por ratón, botón y foco.
 function PrimaryItem({ item, openItem, setOpenItem, idPrefix = 'dipe-submenu' }) {
   const hasChildren = item.children?.length > 0;
   const isOpen = openItem === item.id;
@@ -69,6 +71,7 @@ function PrimaryItem({ item, openItem, setOpenItem, idPrefix = 'dipe-submenu' })
   </li>;
 }
 
+// Gestiona la navegación de escritorio y el menú móvil con su foco y animación.
 export function Header() {
   const headerRef = useRef(null);
   const headerContentRef = useRef(null);

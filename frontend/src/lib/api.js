@@ -1,6 +1,7 @@
 const config = typeof window !== 'undefined' ? (window.dipeSite || {}) : {};
 const apiRoot = config.apiRoot || '/wp-json/';
 
+// Construye la URL REST a partir de la configuración de WordPress.
 function endpoint(path) {
   const cleanPath = path.replace(/^\/+/, '');
   const base = /^https?:\/\//i.test(apiRoot)
@@ -19,6 +20,7 @@ function endpoint(path) {
   }
 }
 
+// Lee JSON y distingue contenido ausente de errores de respuesta.
 async function request(path) {
   const response = await fetch(endpoint(path), { headers: { Accept: 'application/json' } });
 
@@ -27,20 +29,24 @@ async function request(path) {
   return response.json();
 }
 
+// Obtiene proyectos publicados con sus campos ACF.
 export function getProjects(perPage = 24) {
   return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&acf_format=standard`);
 }
 
+// Recupera los perfiles públicos del carrusel de equipo.
 export async function getTeamMembers() {
   const members = await request('dipe/v1/equipo');
   if (!Array.isArray(members)) throw new Error('No se ha podido cargar el equipo.');
   return members;
 }
 
+// Filtra los proyectos por una categoría concreta.
 export function getProjectsByCategory(categoryId, perPage = 24) {
   return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&dipe-project-categories=${encodeURIComponent(categoryId)}&acf_format=standard`);
 }
 
+// Devuelve una página de proyectos y el total de páginas disponibles.
 export async function getProjectArchive({ page = 1, categoryId = null, perPage = 12 } = {}) {
   const params = new URLSearchParams({
     status: 'publish',
@@ -61,6 +67,7 @@ export async function getProjectArchive({ page = 1, categoryId = null, perPage =
   };
 }
 
+// Busca la categoría de proyectos correspondiente al slug de la ruta.
 export async function getProjectCategory(slug) {
   const categories = await request(`wp/v2/dipe-project-categories?slug=${encodeURIComponent(slug)}&per_page=1`);
   return categories?.[0] || null;
@@ -70,12 +77,14 @@ async function getProjectCategoryById(id) {
 	return request(`wp/v2/dipe-project-categories/${encodeURIComponent(id)}`);
 }
 
+// Obtiene entradas recientes, con opción de excluir la entrada actual.
 export function getPosts(perPage = 3, excludeId = null) {
   const params = new URLSearchParams({ status: 'publish', per_page: String(perPage), orderby: 'date', order: 'desc', _embed: '1' });
   if (excludeId) params.set('exclude', String(excludeId));
   return request(`wp/v2/posts?${params}`);
 }
 
+// Consulta el archivo del blog con paginación, búsqueda y filtros.
 export async function getPostArchive({ page = 1, categoryId = null, perPage = 12, search = '', after = '', before = '', signal } = {}) {
   const params = new URLSearchParams({
     status: 'publish',
@@ -98,20 +107,24 @@ export async function getPostArchive({ page = 1, categoryId = null, perPage = 12
   };
 }
 
+// Busca una entrada publicada por su slug.
 export async function getPost(slug) {
   const posts = await request(`wp/v2/posts?status=publish&slug=${encodeURIComponent(slug)}&_embed=1&acf_format=standard`);
   return posts?.[0] || null;
 }
 
+// Obtiene las entradas anterior y siguiente a la actual.
 export function getPostNavigation(id) {
   return request(`dipe/v1/posts/${encodeURIComponent(id)}/navigation`);
 }
 
+// Resuelve la categoría del blog indicada en la ruta.
 export async function getCategory(slug) {
   const categories = await request(`wp/v2/categories?slug=${encodeURIComponent(slug)}&per_page=1`);
   return categories?.[0] || null;
 }
 
+// Reúne las páginas de categorías para los filtros del blog.
 export async function getPostCategories() {
   const categories = [];
   let totalPages = 1;
@@ -134,6 +147,7 @@ export async function getPostCategories() {
   return categories;
 }
 
+// Reúne los servicios disponibles para los selectores de contacto.
 export async function getRelatedServiceTerms({ signal } = {}) {
   const services = [];
   let totalPages = 1;
@@ -158,6 +172,7 @@ export async function getRelatedServiceTerms({ signal } = {}) {
   return services;
 }
 
+// Selecciona los proyectos destacados de Home.
 export async function getFeaturedProjects(perPage = 6) {
   const terms = await request('wp/v2/dipe-project-tags?slug=destacados&per_page=1');
   const featuredTerm = terms?.[0];
@@ -167,6 +182,7 @@ export async function getFeaturedProjects(perPage = 6) {
   return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&orderby=date&order=desc&dipe_project_tag=${featuredTerm.id}&acf_format=standard`);
 }
 
+// Recupera la ficha publicada de un proyecto y sus datos relacionados.
 export async function getProject(slug) {
 	const items = await request(`wp/v2/dipe-proyectos?status=publish&slug=${encodeURIComponent(slug)}&_embed=1&acf_format=standard`);
 	const project = items?.[0] || null;
@@ -179,6 +195,7 @@ export async function getProject(slug) {
 	};
 }
 
+// Recupera los proyectos elegidos en ACF, respetando su orden y excluyendo el actual.
 export async function getRelatedProjects(project) {
   const selected = project?.acf?.dipe_project_featured_projects;
   if (!Array.isArray(selected)) return [];
@@ -200,6 +217,7 @@ export async function getRelatedProjects(project) {
   return (await Promise.all(batches)).flatMap((items) => items || []);
 }
 
+// Envía al formulario permitido y conserva los errores de campo del servidor.
 export async function submitContactForm(fields, formType = 'contacto') {
   if (!['contacto', 'contacto-servicios', 'contacto-general'].includes(formType)) {
     throw new Error('Formulario no disponible.');
@@ -227,6 +245,7 @@ export function rendered(value = '') {
   return value || '';
 }
 
+// Extrae texto legible del HTML recibido, resolviendo sus entidades.
 export function plainText(value = '') {
   const raw = String(value ?? '');
   if (!raw) return '';
@@ -240,6 +259,7 @@ export function plainText(value = '') {
   return template.content.textContent?.trim() || '';
 }
 
+// Unifica imágenes recibidas como URL u objeto de medios.
 function normalizeProjectImage(image) {
   if (typeof image === 'string' && /^(https?:\/\/|\/)/i.test(image)) {
     return { url: image, alt: '' };
@@ -254,6 +274,7 @@ export function projectBannerImage(item) {
 	return normalizeProjectImage(item?.acf?.dipe_project_banner_image);
 }
 
+// Convierte las filas ACF de la galería en medios válidos para React.
 export function projectGalleryMedia(item) {
 	const gallery = Array.isArray(item?.acf?.dipe_project_gallery) ? item.acf.dipe_project_gallery : [];
 
@@ -271,11 +292,13 @@ export function projectGalleryMedia(item) {
 	}).filter(Boolean);
 }
 
+// Prioriza la imagen ACF de Home y usa el campo REST como alternativa.
 export function projectHomeCardImage(item) {
   return normalizeProjectImage(item?.acf?.dipe_project_home_card_image)
     || normalizeProjectImage(item?.dipe_project_card_image);
 }
 
+// Usa la imagen destacada para las tarjetas del archivo de proyectos.
 export function projectArchiveCardImage(item) {
   const image = item?._embedded?.['wp:featuredmedia']?.[0];
   return normalizeProjectImage(image && { url: image.source_url, alt: image.alt_text });
@@ -291,6 +314,7 @@ function projectCategories(item) {
 	return terms.filter((term) => term.taxonomy === 'dipe_project_category');
 }
 
+// Resuelve categorías raíz e hijas para los datos de la ficha.
 async function getProjectCategoryHierarchy(item) {
 	const embeddedCategories = projectCategories(item);
 	const assignedIds = [...new Set([
@@ -337,6 +361,7 @@ export function postCardImage(item) {
   return normalizeProjectImage(image && { url: image.source_url, alt: image.alt_text });
 }
 
+// Prioriza el medio ACF del banner y recurre a la imagen destacada.
 export function postBannerMedia(item) {
   const media = item?.acf?.dipe_post_banner_media;
   const image = normalizeProjectImage(media) || postCardImage(item);

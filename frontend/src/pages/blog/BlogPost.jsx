@@ -35,6 +35,7 @@ function BlogPostHero({ post }) {
   </header>;
 }
 
+// Carga la entrada por slug y muestra su contenido, carga, error o ausencia.
 export function BlogPost({ slug, onNotFound }) {
   const [state, setState] = useState({ loading: true, post: null, error: null });
 

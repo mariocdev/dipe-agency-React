@@ -20,6 +20,7 @@ import { developmentServiceRoutes } from '../pages/web-development/developmentSe
 
 const introSessionKey = 'dipe-intro-shown-v1';
 
+// Consulta el ajuste del sitio y si la intro ya se mostró en esta pestaña.
 function shouldShowIntro() {
   if (siteConfig.loaderEnabled === false) return false;
 
@@ -30,6 +31,7 @@ function shouldShowIntro() {
   }
 }
 
+// Envuelve cada página con la cabecera, el contenido y el pie compartidos.
 function Shell({ children, effectsEnabled }) {
   return <>
     <Header />
@@ -42,6 +44,7 @@ function Failure({ error }) {
   return <div className="alert alert-danger" role="alert">No se ha podido cargar el contenido. {error.message}</div>;
 }
 
+// Selecciona la página según la URL y coordina la intro de entrada.
 export function App() {
   const [showIntro, setShowIntro] = useState(shouldShowIntro);
   const finishIntro = useCallback(() => {

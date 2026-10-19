@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Keep offscreen media requests away from the first render; keep text mounted.
+// Activa los medios al acercarse al viewport, manteniendo el texto visible.
 export function useDeferredMedia(rootMargin = '200px 0px') {
   const ref = useRef(null);
   const [ready, setReady] = useState(false);

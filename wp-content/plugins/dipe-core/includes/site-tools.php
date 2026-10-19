@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Añade el control del loader al menú Herramientas.
 function dipe_core_register_loader_tool() {
 	add_management_page(
 		__( 'Loader de la web', 'dipe-core' ),
@@ -14,6 +15,7 @@ function dipe_core_register_loader_tool() {
 }
 add_action( 'admin_menu', 'dipe_core_register_loader_tool' );
 
+// Muestra el interruptor de la animación inicial de la web.
 function dipe_core_render_loader_tool() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
@@ -52,6 +54,7 @@ function dipe_core_render_loader_tool() {
 	<?php
 }
 
+// Guarda el estado del loader y actualiza la caché si cambia.
 function dipe_core_save_loader_tool() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para cambiar este ajuste.', 'dipe-core' ), '', array( 'response' => 403 ) );

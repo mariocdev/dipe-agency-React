@@ -111,6 +111,7 @@ function dipe_core_restore_search_visibility() {
 }
 add_action( 'admin_init', 'dipe_core_restore_search_visibility' );
 
+// Registra proyectos y sus taxonomías públicas.
 function dipe_core_register_content_types() {
 	register_post_type(
 		'dipe_proyecto',
@@ -174,6 +175,7 @@ function dipe_core_register_content_types() {
 }
 add_action( 'init', 'dipe_core_register_content_types' );
 
+// Prepara los términos iniciales de los proyectos.
 function dipe_core_seed_project_terms() {
 	if ( ! term_exists( 'destacados', 'dipe_project_tag' ) ) {
 		wp_insert_term(
@@ -262,6 +264,7 @@ function dipe_core_migrate_legacy_project_categories() {
 }
 add_action( 'init', 'dipe_core_migrate_legacy_project_categories', 30 );
 
+// Regenera las reglas de URL cuando cambia su versión guardada.
 function dipe_core_maybe_flush_rewrite_rules() {
 	if ( DIPE_CORE_REWRITE_VERSION === get_option( 'dipe_core_rewrite_version' ) ) {
 		return;
@@ -272,6 +275,7 @@ function dipe_core_maybe_flush_rewrite_rules() {
 }
 add_action( 'init', 'dipe_core_maybe_flush_rewrite_rules', 20 );
 
+// Define los campos ACF utilizados en las fichas y tarjetas de proyectos.
 function dipe_core_register_project_fields() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
@@ -409,6 +413,7 @@ function dipe_core_register_project_fields() {
 }
 add_action( 'acf/init', 'dipe_core_register_project_fields' );
 
+// Prepara la imagen de tarjeta del proyecto para la respuesta REST.
 function dipe_core_get_project_card_image_for_rest( $project ) {
 	$image_id = absint( get_post_meta( $project['id'], 'dipe_project_home_card_image', true ) );
 
@@ -429,6 +434,7 @@ function dipe_core_get_project_card_image_for_rest( $project ) {
 	);
 }
 
+// Añade al proyecto los campos REST que necesita el frontend.
 function dipe_core_register_project_rest_fields() {
 	register_rest_field(
 		'dipe_proyecto',
@@ -446,6 +452,7 @@ function dipe_core_register_project_rest_fields() {
 }
 add_action( 'rest_api_init', 'dipe_core_register_project_rest_fields' );
 
+// Avisa en administración si falta ACF.
 function dipe_core_acf_required_notice() {
 	if ( function_exists( 'acf_add_local_field_group' ) || ! current_user_can( 'activate_plugins' ) ) {
 		return;
@@ -455,6 +462,7 @@ function dipe_core_acf_required_notice() {
 }
 add_action( 'admin_notices', 'dipe_core_acf_required_notice' );
 
+// Prepara el contenido y las reglas de URL al activar el plugin.
 function dipe_core_activate() {
 	dipe_core_configure_blog_urls();
 	dipe_core_register_content_types();

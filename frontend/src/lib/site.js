@@ -1,6 +1,7 @@
 export const siteConfig = typeof window !== 'undefined' ? (window.dipeSite || {}) : {};
 const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
 
+// Adapta rutas internas al subdirectorio del sitio y conserva enlaces permitidos.
 export function sitePath(path = '') {
   const value = String(path).trim();
 

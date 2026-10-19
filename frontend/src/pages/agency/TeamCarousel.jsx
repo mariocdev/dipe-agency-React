@@ -5,6 +5,7 @@ import { getTeamMembers } from '../../lib/api';
 import chevronIcon from '../../assets/icons/chevron-down-solid-full.svg';
 import './TeamCarousel.css';
 
+// Carga el equipo de WordPress y coordina el desplazamiento de sus tarjetas.
 export function TeamCarousel() {
   const [state, setState] = useState({ loading: true, members: [], error: false });
   const namesRef = useEqualizedBlockSize('.dipe-team__caption h3', state.members);

@@ -31,6 +31,7 @@ function FooterMenu({ section, items }) {
   </section>;
 }
 
+// Compone el pie con los menús y el logo configurados en WordPress.
 export function Footer() {
   const footerLogo = siteConfig.footerLogo || {};
   const navigation = siteConfig.navigation?.footer || {};

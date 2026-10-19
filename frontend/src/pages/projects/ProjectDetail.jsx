@@ -7,6 +7,7 @@ import { EditorialContent } from '../../components/content/EditorialContent';
 import { sitePath } from '../../lib/site';
 import './ProjectDetail.css';
 
+// Da formato legible a la fecha de desarrollo recibida desde ACF.
 function formatDevelopmentDate(value) {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
 
@@ -19,6 +20,7 @@ function formatDevelopmentDate(value) {
   }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
+// Normaliza el enlace público del proyecto.
 function publicUrl(value) {
   try {
     const url = new URL(value);
@@ -28,6 +30,7 @@ function publicUrl(value) {
   }
 }
 
+// Convierte enlaces de YouTube admitidos en una URL de reproductor.
 function youtubeEmbedUrl(value) {
   try {
     const url = new URL(value);
@@ -95,6 +98,7 @@ function ProjectMainContent({ item, title }) {
   </section>;
 }
 
+// Carga la ficha del proyecto y reúne sus bloques y contenido relacionado.
 export function ProjectDetail({ slug, onNotFound }) {
   const [state, setState] = useState({ loading: true, data: null, error: null });
 

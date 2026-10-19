@@ -10,10 +10,12 @@ const defaultIntro = <>
   <p>Cuéntanos tu objetivo y te devolvemos un plan claro (fases, tiempos y presupuesto). Somos tu Agencia de desarrollo web para crecer con cabeza… y un poco de chispa.</p>
 </>;
 
+// Muestra el contacto compartido y envía al tipo de formulario indicado.
 export function ContactSection({ source = 'home', formType = 'contacto', title = '¿Hablamos?', intro = defaultIntro, hideDetails = false }) {
   const [submission, setSubmission] = useState(initialSubmissionState);
   const submitting = useRef(false);
 
+  // Evita dobles envíos y redirige solo cuando el servidor acepta el mensaje.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (submitting.current) return;

@@ -43,6 +43,7 @@ function ProjectGridLoader() {
   </div>;
 }
 
+// Consulta el grid de proyectos y descarta respuestas de una selección anterior.
 function Projects({ categoryId = null, page = 1, onTotalPages, scrollTargetRef }) {
   const [state, setState] = useState({ loading: true, projects: [], error: null });
   const { resultsRef, showLoader } = useArchiveGridFeedback({ content: state.projects, loading: state.loading, error: state.error, scrollTargetRef });
@@ -88,6 +89,7 @@ function ProjectsBanner({ title, description }) {
   </header>;
 }
 
+// Compone el archivo de proyectos con sus filtros y paginación.
 export function ProjectsArchive() {
   const filtersRef = useRef(null);
   const [categories, setCategories] = useState({ loading: true, items: {} });
@@ -125,6 +127,7 @@ export function ProjectsArchive() {
   </>;
 }
 
+// Resuelve la categoría de la URL y muestra sus proyectos.
 export function ProjectCategoryArchive({ slug, onNotFound }) {
   const filtersRef = useRef(null);
   const [state, setState] = useState({ loading: true, data: null, error: null });

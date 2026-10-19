@@ -1,3 +1,4 @@
+// Coordina los enlaces internos con las transiciones de página en curso.
 export function installNavigationTransitions(root) {
   let pendingUrl = null;
   let fallbackTimer;

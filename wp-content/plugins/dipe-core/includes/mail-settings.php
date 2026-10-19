@@ -5,6 +5,7 @@ defined( 'ABSPATH' ) || exit;
 
 const DIPE_CORE_MAIL_OPTION = 'dipe_core_mail_settings';
 
+// Define los valores iniciales de correo y destinatarios.
 function dipe_core_mail_defaults() {
 	return array(
 		'host'       => 'bonsolis-servidordepruebas-net.correoseguro.dinaserver.com',
@@ -22,6 +23,7 @@ function dipe_core_mail_defaults() {
 	);
 }
 
+// Combina los ajustes guardados con sus valores iniciales.
 function dipe_core_mail_settings() {
 	$saved = get_option( DIPE_CORE_MAIL_OPTION, array() );
 	return array_merge( dipe_core_mail_defaults(), is_array( $saved ) ? $saved : array() );
@@ -34,6 +36,7 @@ function dipe_core_mail_redirect_page_id( $value ) {
 	return $page && 'page' === $page->post_type && 'publish' === $page->post_status && '' === $page->post_password ? $id : 0;
 }
 
+// Resuelve la página de gracias válida configurada para cada formulario.
 function dipe_core_mail_form_redirect_url( $form_type, $settings = null ) {
 	$keys = array(
 		'contacto' => 'contact_redirect_page',
@@ -48,6 +51,7 @@ function dipe_core_mail_form_redirect_url( $form_type, $settings = null ) {
 	return $page_id ? esc_url_raw( get_permalink( $page_id ) ?: '' ) : '';
 }
 
+// Dibuja el selector de página de gracias en los ajustes de correo.
 function dipe_core_mail_redirect_page_row( $settings, $key ) {
 	$id = 'dipe-mail-' . $key;
 	?>
@@ -74,6 +78,7 @@ function dipe_core_mail_key() {
 	return hash( 'sha256', wp_salt( 'auth' ) . '|dipe-core-mail-v1', true );
 }
 
+// Cifra la contraseña SMTP antes de guardarla en WordPress.
 function dipe_core_mail_encrypt( $password ) {
 	if ( ! function_exists( 'openssl_encrypt' ) ) {
 		return false;
@@ -91,6 +96,7 @@ function dipe_core_mail_encrypt( $password ) {
 	return 'v1:' . base64_encode( $nonce . $tag . $ciphertext );
 }
 
+// Recupera la contraseña SMTP si el valor cifrado sigue siendo válido.
 function dipe_core_mail_decrypt( $stored ) {
 	if ( ! is_string( $stored ) || 0 !== strpos( $stored, 'v1:' ) || ! function_exists( 'openssl_decrypt' ) ) {
 		return false;
@@ -114,6 +120,7 @@ function dipe_core_mail_admin_menu() {
 }
 add_action( 'admin_menu', 'dipe_core_mail_admin_menu' );
 
+// Muestra la configuración de correo y los controles de envío de prueba.
 function dipe_core_mail_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para configurar el correo.', 'dipe-core' ) );
@@ -198,6 +205,7 @@ function dipe_core_mail_redirect( $status ) {
 	exit;
 }
 
+// Valida los ajustes y conserva las contraseñas que no se hayan sustituido.
 function dipe_core_mail_save() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para configurar el correo.', 'dipe-core' ) );
@@ -275,6 +283,7 @@ function dipe_core_mail_save() {
 }
 add_action( 'admin_post_dipe_core_save_mail', 'dipe_core_mail_save' );
 
+// Normaliza la lista de destinatarios válidos y elimina duplicados.
 function dipe_core_mail_contact_recipients( $value = null ) {
 	if ( null === $value ) {
 		$settings = dipe_core_mail_settings();
@@ -320,6 +329,7 @@ function dipe_core_mail_configure_phpmailer( $mailer ) {
 }
 add_action( 'phpmailer_init', 'dipe_core_mail_configure_phpmailer' );
 
+// Envía texto plano con el remitente del perfil configurado.
 function dipe_core_mail_send( $profile, $to, $subject, $message, $headers = array() ) {
 	if ( ! in_array( $profile, array( 'team', 'user' ), true ) ) {
 		return false;
@@ -334,6 +344,7 @@ function dipe_core_mail_send( $profile, $to, $subject, $message, $headers = arra
 	return wp_mail( $to, $subject, $message, $headers );
 }
 
+// Tramita un correo de prueba autorizado desde el panel de ajustes.
 function dipe_core_mail_test() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para probar el correo.', 'dipe-core' ) );

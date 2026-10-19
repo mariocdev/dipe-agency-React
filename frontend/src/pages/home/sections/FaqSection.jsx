@@ -38,6 +38,7 @@ export const homeFaqs = [
   },
 ];
 
+// Genera los datos estructurados de las preguntas que muestra la sección.
 function createFaqSchema(items) {
   return {
   '@context': 'https://schema.org',

@@ -84,6 +84,7 @@ const budgetRanges = Array.from({ length: 10 }, (_, index) => {
   return { value: `${min}-${max}`, label: `${budgetNumber.format(min)} – ${budgetNumber.format(max)} €` };
 });
 
+// Carga los servicios disponibles y gestiona el formulario de contacto principal.
 export function ContactFormSection() {
   const [services, setServices] = useState([]);
   const [servicesStatus, setServicesStatus] = useState('loading');
@@ -95,6 +96,7 @@ export function ContactFormSection() {
     'aria-describedby': submission.fields[name] ? `contact-error-${name}` : undefined,
   });
 
+  // Recoge los campos y mantiene los errores devueltos por el servidor.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (submitting.current) return;

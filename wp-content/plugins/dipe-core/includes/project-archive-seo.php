@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Añade al menú de proyectos la edición SEO de su archivo.
 function dipe_core_register_project_archive_seo() {
 	add_submenu_page(
 		'edit.php?post_type=dipe_proyecto',
@@ -24,6 +25,7 @@ function dipe_core_project_archive_seo_available() {
 	return isset( $options['title-ptarchive-dipe_proyecto'], $options['metadesc-ptarchive-dipe_proyecto'], $options['noindex-ptarchive-dipe_proyecto'] );
 }
 
+// Muestra los ajustes del archivo guardados en las opciones de Yoast.
 function dipe_core_render_project_archive_seo() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
@@ -69,6 +71,7 @@ function dipe_core_render_project_archive_seo() {
 	<?php
 }
 
+// Guarda los metadatos en Yoast y purga la caché tras validar la petición.
 function dipe_core_save_project_archive_seo() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para editar estos ajustes.', 'dipe-core' ), '', array( 'response' => 403 ) );

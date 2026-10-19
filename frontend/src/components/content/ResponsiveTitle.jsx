@@ -25,6 +25,7 @@ export function responsiveTitleContent(children) {
   </Fragment>);
 }
 
+// Permite envolver las líneas editoriales cuando no caben en el contenedor.
 export function ResponsiveTitle({ children }) {
   const ref = useRef(null);
   const content = responsiveTitleContent(children);

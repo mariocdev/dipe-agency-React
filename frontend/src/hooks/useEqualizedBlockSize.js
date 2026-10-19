@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 
+// Iguala alturas de los bloques seleccionados en el rango responsive indicado.
 export function useEqualizedBlockSize(selector, contentKey, mediaQuery) {
   const containerRef = useRef(null);
 

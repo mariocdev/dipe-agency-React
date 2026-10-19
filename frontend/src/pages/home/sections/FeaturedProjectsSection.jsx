@@ -21,6 +21,7 @@ function FeaturedProjectCard({ item, index }) {
   </article>;
 }
 
+// Carga los proyectos destacados y activa el fondo al acercarse la sección.
 export function FeaturedProjectsSection() {
   const [state, setState] = useState({ loading: true, data: [], error: null });
   const [canvasRef, mediaReady] = useDeferredMedia();

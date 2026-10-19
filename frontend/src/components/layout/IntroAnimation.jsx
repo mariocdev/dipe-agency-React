@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { siteConfig } from '../../lib/site';
 import './IntroAnimation.css';
 
+// Reproduce la intro y avisa al terminar para liberar el contenido de la página.
 export function IntroAnimation({ onComplete }) {
   const rootRef = useRef(null);
   const restoreScrollRef = useRef(() => {});

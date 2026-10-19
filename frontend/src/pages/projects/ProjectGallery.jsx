@@ -5,6 +5,7 @@ function isVideo(media) {
   return media.mimeType.startsWith('video/') || /\.(mp4|webm|mov)(?:\?|$)/i.test(media.url);
 }
 
+// Permite ampliar y desplazar la imagen dentro del visor.
 function ZoomableImage({ media }) {
   const frameRef = useRef(null);
   const imageRef = useRef(null);
@@ -82,6 +83,7 @@ function ArrowIcon({ previous = false }) {
   </svg>;
 }
 
+// Muestra el medio ampliado y gestiona el cierre y la navegación del visor.
 function GalleryLightbox({ media, activeIndex, onClose, onMove }) {
   const active = media[activeIndex];
   const canMove = media.length > 1;
@@ -124,6 +126,7 @@ function GalleryLightbox({ media, activeIndex, onClose, onMove }) {
   </div>;
 }
 
+// Coordina el carrusel de medios y la apertura de la galería ampliada.
 export function ProjectGallery({ media }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const [visibleItems, setVisibleItems] = useState(4);

@@ -3,6 +3,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Registra las solicitudes como contenido privado y fuera de REST público.
 function dipe_core_register_submission_type() {
 	register_post_type(
 		'dipe_solicitud',
@@ -97,10 +98,12 @@ function dipe_core_set_submission_mail_status( $id, $status ) {
 	return (bool) update_post_meta( $id, '_dipe_mail_status', $status );
 }
 
+// Lee un campo escalar sin aceptar arrays u objetos como texto.
 function dipe_core_contact_request_value( $params, $key ) {
 	return isset( $params[ $key ] ) && is_scalar( $params[ $key ] ) ? (string) $params[ $key ] : '';
 }
 
+// Traduce el origen permitido del formulario a su etiqueta legible.
 function dipe_core_contact_origin_label( $params ) {
 	$origins = array(
 		'home'      => 'Home',
@@ -135,11 +138,13 @@ function dipe_core_submission_source_url( $url ) {
 	return esc_url_raw( strtolower( $parts['scheme'] ) . '://' . $parts['host'] . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' ) . $path );
 }
 
+// Genera la clave del límite de envíos a partir de la IP de conexión.
 function dipe_core_contact_rate_limit_key() {
 	$address = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 	return 'dipe_contact_rate_' . hash( 'sha256', $address ?: 'unknown' );
 }
 
+// Registra las tres rutas públicas de contacto admitidas.
 function dipe_core_register_contact_form_route() {
 	foreach ( array( 'contacto', 'contacto-servicios', 'contacto-general' ) as $form_type ) {
 		register_rest_route(
@@ -155,6 +160,7 @@ function dipe_core_register_contact_form_route() {
 }
 add_action( 'rest_api_init', 'dipe_core_register_contact_form_route' );
 
+// Valida el envío, aplica antispam, guarda la solicitud e intenta sus avisos.
 function dipe_core_submit_contact_form( WP_REST_Request $request ) {
 	// El tipo lo determina la ruta registrada, nunca un campo del visitante.
 	$route_types = array(
@@ -314,6 +320,7 @@ function dipe_core_submission_admin_url( $args = array() ) {
 	return add_query_arg( array_merge( array( 'page' => 'dipe-solicitudes' ), $args ), admin_url( 'admin.php' ) );
 }
 
+// Acepta únicamente fechas válidas para los filtros de la bandeja.
 function dipe_core_submission_filter_date( $value ) {
 	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
 		return '';
@@ -336,6 +343,7 @@ function dipe_core_submission_list_filters( $params ) {
 	), static function ( $value ) { return '' !== $value; } );
 }
 
+// Carga los controles de gestión solo en la bandeja de solicitudes.
 function dipe_core_submission_admin_assets( $hook ) {
 	if ( 'toplevel_page_dipe-solicitudes' !== $hook || ! current_user_can( 'manage_options' ) ) {
 		return;
@@ -351,6 +359,7 @@ function dipe_core_submission_restore_status( $status, $post_id ) {
 }
 add_filter( 'wp_untrash_post_status', 'dipe_core_submission_restore_status', 10, 2 );
 
+// Conserva los filtros y añade el nonce a las acciones de gestión.
 function dipe_core_submission_action_fields( $filters ) {
 	?>
 	<input type="hidden" name="action" value="dipe_core_manage_submissions">
@@ -360,6 +369,7 @@ function dipe_core_submission_action_fields( $filters ) {
 	<?php endforeach;
 }
 
+// Procesa papelera, restauración o borrado con permisos y nonce.
 function dipe_core_submission_manage() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para gestionar las solicitudes.', 'dipe-core' ), '', array( 'response' => 403 ) );
@@ -418,6 +428,7 @@ function dipe_core_submission_manage() {
 }
 add_action( 'admin_post_dipe_core_manage_submissions', 'dipe_core_submission_manage' );
 
+// Muestra el resultado de las acciones realizadas en la bandeja.
 function dipe_core_submission_action_notice() {
 	$notice = sanitize_key( dipe_core_contact_request_value( $_GET, 'notice' ) );
 	if ( 'empty' === $notice ) {
@@ -437,6 +448,7 @@ function dipe_core_submission_action_notice() {
 	echo '<div class="notice ' . ( $skipped || ! $changed ? 'notice-warning' : 'notice-success' ) . '"><p>' . esc_html( $message ) . '</p></div>';
 }
 
+// Dibuja la bandeja con búsqueda, filtros y paginación.
 function dipe_core_submission_admin_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para ver las solicitudes.', 'dipe-core' ) );
@@ -576,6 +588,7 @@ function dipe_core_submission_admin_page() {
 	<?php
 }
 
+// Muestra los campos y el estado del aviso de una solicitud.
 function dipe_core_submission_admin_detail( $id ) {
 	$entry = get_post( $id );
 	if ( ! $entry || 'dipe_solicitud' !== $entry->post_type || ! in_array( $entry->post_status, array( 'private', 'trash' ), true ) ) {

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import './EditorialContent.css';
 
+// Asigna anclas únicas a los encabezados y prepara el índice de la entrada.
 function contentWithIndex(html) {
   if (typeof DOMParser === 'undefined') return { html, headings: [] };
   const document = new DOMParser().parseFromString(html, 'text/html');
@@ -23,6 +24,7 @@ function contentWithIndex(html) {
   return { html: document.body.innerHTML, headings };
 }
 
+// Muestra el HTML editorial con un índice opcional de apartados.
 export function EditorialContent({ html = '', withIndex = false, className = '' }) {
   const content = useMemo(() => withIndex ? contentWithIndex(html) : { html, headings: [] }, [html, withIndex]);
 

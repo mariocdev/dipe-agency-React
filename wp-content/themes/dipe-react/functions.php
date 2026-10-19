@@ -3,6 +3,7 @@ defined('ABSPATH') || exit;
 
 const DIPE_REACT_THEME_VERSION = '0.4.1';
 
+// Registra las funciones del tema y sus ubicaciones de menú.
 function dipe_react_setup()
 {
 	add_theme_support('title-tag');
@@ -23,6 +24,7 @@ function dipe_react_setup()
 }
 add_action('after_setup_theme', 'dipe_react_setup');
 
+// Añade los ajustes de identidad propios del tema al personalizador.
 function dipe_react_customize_register($wp_customize)
 {
 	$wp_customize->add_setting(
@@ -57,6 +59,7 @@ add_filter('upload_mimes', function ($mimes) {
 	return $mimes;
 });
 
+// Define la estructura inicial de los menús de la web.
 function dipe_react_navigation_definitions()
 {
 	return array(
@@ -146,6 +149,7 @@ function dipe_react_navigation_definitions()
 	);
 }
 
+// Crea un elemento de menú y sus hijos en WordPress.
 function dipe_react_add_navigation_item($menu_id, $item, $parent_id = 0)
 {
 	$item_id = wp_update_nav_menu_item(
@@ -169,6 +173,7 @@ function dipe_react_add_navigation_item($menu_id, $item, $parent_id = 0)
 	}
 }
 
+// Repone la clase visual del CTA en el menú inicial.
 function dipe_react_repair_default_cta($menu)
 {
 	// Correct the initial demo menu created before classes were passed as a string.
@@ -194,6 +199,7 @@ function dipe_react_repair_default_cta($menu)
 	}
 }
 
+// Prepara los menús iniciales sin sustituir los ya configurados.
 function dipe_react_seed_navigation()
 {
 	if (DIPE_REACT_THEME_VERSION === get_option('dipe_react_navigation_version')) {
@@ -236,6 +242,7 @@ function dipe_react_seed_navigation()
 add_action('admin_init', 'dipe_react_seed_navigation');
 add_action('after_switch_theme', 'dipe_react_seed_navigation');
 
+// Filtra los protocolos permitidos en los enlaces que recibe React.
 function dipe_react_safe_navigation_url($url)
 {
 	$url = trim((string) $url);
@@ -252,6 +259,7 @@ function dipe_react_safe_navigation_url($url)
 	return esc_url_raw($url, $allowed);
 }
 
+// Convierte un menú de WordPress en una estructura con hijos para React.
 function dipe_react_menu_tree($location)
 {
 	$locations = get_nav_menu_locations();
@@ -312,6 +320,7 @@ function dipe_react_menu_tree($location)
 	return $tree;
 }
 
+// Expone la URL y los datos del logo principal configurado.
 function dipe_react_logo_data()
 {
 	$logo_id = (int) get_theme_mod('custom_logo');
@@ -330,6 +339,7 @@ function dipe_react_logo_data()
 	);
 }
 
+// Obtiene el logo del pie y su alternativa cuando no está configurado.
 function dipe_react_footer_logo_data()
 {
 	$logo_id = (int) get_theme_mod('dipe_react_footer_logo');
@@ -348,6 +358,7 @@ function dipe_react_footer_logo_data()
 	);
 }
 
+// Lee una sola vez por petición el manifiesto de assets de Vite.
 function dipe_react_manifest()
 {
 	static $manifest = null;
@@ -367,6 +378,7 @@ function dipe_react_manifest()
 	return $manifest;
 }
 
+// Carga el JavaScript y el CSS indicados por el manifiesto del tema.
 function dipe_react_enqueue_assets()
 {
 	$manifest = dipe_react_manifest();
@@ -387,6 +399,7 @@ function dipe_react_enqueue_assets()
 }
 add_action('wp_enqueue_scripts', 'dipe_react_enqueue_assets');
 
+// Entrega a React la configuración pública, los logos y los menús del sitio.
 function dipe_react_print_client_config()
 {
 	if (! wp_script_is('dipe-react-app', 'enqueued')) {
@@ -441,6 +454,7 @@ function dipe_react_module_script_tag($tag, $handle, $src)
 }
 add_filter('script_loader_tag', 'dipe_react_module_script_tag', 10, 3);
 
+// Usa el extracto como descripción cuando está disponible.
 function dipe_react_document_description()
 {
 	if (is_singular() && has_excerpt()) {
@@ -470,6 +484,7 @@ function dipe_react_social_attachment($attachment_id)
 	);
 }
 
+// Elige la imagen social de la ficha o el logo como alternativa.
 function dipe_react_social_image()
 {
 	if (is_singular(array('post', 'dipe_proyecto')) && ! post_password_required()) {
@@ -509,6 +524,7 @@ function dipe_react_og_logo()
 }
 add_action('wp_head', 'dipe_react_og_logo', 5);
 
+// Publica los metadatos propios solo cuando Yoast no se encarga de ellos.
 function dipe_react_meta_tags()
 {
 	// Yoast renders metadata through wp_head(), including HTML for each native URL.
