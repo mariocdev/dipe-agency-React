@@ -10,8 +10,10 @@ wp-content/uploads/
 wp-content/cache/
 wp-content/upgrade/
 wp-content/backups/
-# Third-party premium package; Dipe's integration is versioned in dipe-core.
-wp-content/plugins/wp-rocket/
+# Third-party WooCommerce package; install separately from our own plugins.
+wp-content/plugins/woocommerce/
+# Installable copies generated from the versioned plugin source.
+entregas/*.zip
 *.sql
 *.sqlite
 

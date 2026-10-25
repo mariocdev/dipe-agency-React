@@ -10,6 +10,10 @@ import { Home } from '../pages/home/Home';
 import { ProjectDetail } from '../pages/projects/ProjectDetail';
 import { ProjectCategoryArchive, ProjectsArchive } from '../pages/projects/ProjectsArchive';
 import { WebDevelopment } from '../pages/web-development/WebDevelopment';
+import { DigitalTransformation } from '../pages/digital-transformation/DigitalTransformation';
+import { ShopPages } from '../pages/shop/ShopPages';
+import { CartProvider } from '../components/commerce/CartProvider';
+import { FloatingCart } from '../components/commerce/FloatingCart';
 import { Agency } from '../pages/agency/Agency';
 import { Contact } from '../pages/contact/Contact';
 import { LegalPage } from '../pages/legal/LegalPage';
@@ -63,9 +67,11 @@ export function App() {
   const legalPage = Object.hasOwn(legalPages, path.slice(1)) ? legalPages[path.slice(1)] : null;
   const thankYouPage = Object.values(formThankYouPages).find((page) => page.path.replace(/\/$/, '') === path);
   let page = <NotFoundPage />;
-  if (path === '/' && searchTerm !== null) page = <BlogArchive searchTerm={searchTerm} />;
+  if (siteConfig.commerce?.enabled && siteConfig.commerce.context) page = <ShopPages context={siteConfig.commerce.context} onNotFound={NotFoundPage} />;
+  else if (path === '/' && searchTerm !== null) page = <BlogArchive searchTerm={searchTerm} />;
   else if (path === '/') page = <Home />;
   else if (path === '/desarrollo-web') page = <WebDevelopment />;
+  else if (path === '/transformacion-digital') page = <DigitalTransformation />;
   else if (path === '/agencia-desarrollo-web') page = <Agency />;
   else if (path === '/contacto') page = <Contact />;
   else if (thankYouPage) page = <ThankYouPage title={thankYouPage.title} />;
@@ -77,10 +83,11 @@ export function App() {
   else if (path === '/blog') page = <BlogArchive />;
   else if (postMatch) page = <BlogPost slug={decodeURIComponent(postMatch[1])} onNotFound={NotFoundPage} />;
   else if (categoryMatch) page = <BlogArchive categorySlug={decodeURIComponent(categoryMatch[1].split('/').at(-1))} onNotFound={NotFoundPage} />;
-  return <>
+  return <CartProvider>
     <div inert={showIntro ? true : undefined} aria-busy={showIntro}>
       <Shell effectsEnabled={!showIntro}>{page}</Shell>
     </div>
     {showIntro && <IntroAnimation onComplete={finishIntro} />}
-  </>;
+    <FloatingCart />
+  </CartProvider>;
 }

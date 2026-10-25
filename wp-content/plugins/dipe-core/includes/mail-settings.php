@@ -1,5 +1,5 @@
 <?php
-/** SMTP settings and transport for Dipe's own form notifications. */
+/** SMTP compartido por formularios, WooCommerce y los correos de WordPress. */
 
 defined( 'ABSPATH' ) || exit;
 
@@ -14,6 +14,8 @@ function dipe_core_mail_defaults() {
 		'team_pass'  => '',
 		'user_email' => 'noreply@bonsolis.servidordepruebas.net',
 		'user_pass'  => '',
+		'woocommerce_profile' => '',
+		'wordpress_profile' => '',
 		'contact_recipients' => '',
 		'services_recipients' => '',
 		'main_recipients' => '',
@@ -120,86 +122,33 @@ function dipe_core_mail_admin_menu() {
 }
 add_action( 'admin_menu', 'dipe_core_mail_admin_menu' );
 
-// Muestra la configuración de correo y los controles de envío de prueba.
+function dipe_core_mail_admin_styles( $hook ) {
+	if ( 'settings_page_dipe-correo' !== $hook ) return;
+	$path = dirname( __DIR__ ) . '/admin/mail-settings.css';
+	wp_enqueue_style( 'dipe-mail-settings', plugins_url( 'admin/mail-settings.css', dirname( __DIR__ ) . '/dipe-core.php' ), array( 'dipe-admin-branding' ), (string) filemtime( $path ) );
+}
+add_action( 'admin_enqueue_scripts', 'dipe_core_mail_admin_styles', 110 );
+
+// Muestra la configuración compartida; las credenciales nunca vuelven al HTML.
 function dipe_core_mail_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para configurar el correo.', 'dipe-core' ) );
 	}
 	$settings = dipe_core_mail_settings();
-	$status   = isset( $_GET['dipe_mail_status'] ) ? sanitize_key( wp_unslash( $_GET['dipe_mail_status'] ) ) : '';
+	$status   = isset( $_GET['dipe_mail_status'] ) && is_string( $_GET['dipe_mail_status'] ) ? sanitize_key( wp_unslash( $_GET['dipe_mail_status'] ) ) : '';
 	$messages = array(
 		'saved'        => 'Configuración guardada. Las contraseñas no se muestran de nuevo.',
 		'invalid'      => 'Revisa el servidor, el tipo de conexión y las direcciones de correo.',
 		'redirect'     => 'Selecciona páginas de gracias publicadas y sin contraseña, o elige Sin redirección.',
 		'password'     => 'Al cambiar una dirección de envío, introduce también la contraseña de esa cuenta.',
+		'route-password' => 'La cuenta elegida para tienda o WordPress necesita una contraseña SMTP válida. Introdúcela y vuelve a guardar.',
 		'encryption'   => 'No se pudo proteger la contraseña. La configuración anterior sigue intacta.',
 		'test-sent'    => 'El servidor aceptó el correo de prueba. Comprueba también su recepción.',
 		'test-failed'  => 'No se pudo enviar el correo de prueba. Revisa las cuentas y la configuración SMTP.',
 		'test-invalid' => 'Introduce un destinatario válido y configura la cuenta antes de probar.',
 	);
-	?>
-	<div class="wrap">
-		<h1>Correo Dipe</h1>
-		<p>Configura los dos remitentes usados por los formularios. Solo los administradores pueden acceder a esta pantalla. Las contraseñas se guardan cifradas en la base de datos y nunca se muestran aquí.</p>
-		<?php if ( isset( $messages[ $status ] ) ) : ?>
-			<div class="notice <?php echo 'saved' === $status || 'test-sent' === $status ? 'notice-success' : 'notice-error'; ?> is-dismissible"><p><?php echo esc_html( $messages[ $status ] ); ?></p></div>
-		<?php endif; ?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="dipe_core_save_mail">
-			<?php wp_nonce_field( 'dipe_core_save_mail' ); ?>
-			<h2>Servidor saliente</h2>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-host">Servidor SMTP</label></th><td><input id="dipe-mail-host" name="dipe_mail[host]" type="text" class="regular-text" required value="<?php echo esc_attr( $settings['host'] ); ?>"></td></tr>
-				<tr><th scope="row"><label for="dipe-mail-mode">Conexión segura</label></th><td><select id="dipe-mail-mode" name="dipe_mail[mode]"><option value="smtps" <?php selected( $settings['mode'], 'smtps' ); ?>>SMTPS · puerto 465 (recomendado)</option><option value="starttls" <?php selected( $settings['mode'], 'starttls' ); ?>>STARTTLS · puerto 587</option></select></td></tr>
-			</table>
-			<h2>Avisos al equipo</h2>
-			<p>Remitente de las notificaciones internas. El correo del visitante se usará como Reply-To cuando proceda.</p>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-team-email">Usuario SMTP y remitente</label></th><td><input id="dipe-mail-team-email" name="dipe_mail[team_email]" type="email" class="regular-text" required autocomplete="off" value="<?php echo esc_attr( $settings['team_email'] ); ?>"></td></tr>
-				<tr><th scope="row"><label for="dipe-mail-team-pass">Contraseña SMTP</label></th><td><input id="dipe-mail-team-pass" name="dipe_mail[team_pass]" type="password" class="regular-text" autocomplete="new-password" value=""><p class="description"><?php echo false !== dipe_core_mail_decrypt( $settings['team_pass'] ) ? 'Guardada. Deja el campo vacío para conservarla.' : 'Sin configurar o no disponible. Introduce la contraseña de esta cuenta.'; ?></p></td></tr>
-			</table>
-			<h2>Destinatarios de Contacto internas</h2>
-			<p>Recibirán una copia individual de cada solicitud de Contacto internas. No se muestran ni se aceptan desde el formulario público.</p>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-contact-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-contact-recipients" name="dipe_mail[contact_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['contact_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas.</p></td></tr>
-				<?php dipe_core_mail_redirect_page_row( $settings, 'contact_redirect_page' ); ?>
-			</table>
-			<h2>Destinatarios de Contacto Servicios</h2>
-			<p>Lista independiente para las solicitudes de servicios. Configúrala antes de activar el formulario: si está vacía, la solicitud se guarda en Solicitudes con estado Error de envío, sin enviar avisos.</p>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-services-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-services-recipients" name="dipe_mail[services_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['services_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas. Usa el remitente de avisos al equipo.</p></td></tr>
-				<?php dipe_core_mail_redirect_page_row( $settings, 'services_redirect_page' ); ?>
-			</table>
-			<h2>Destinatarios de Contacto principal</h2>
-			<p>Lista independiente para el formulario de la página Contacto. Si está vacía, la solicitud se guarda en Solicitudes con estado Error de envío, sin enviar avisos.</p>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-main-recipients">Destinatarios</label></th><td><textarea id="dipe-mail-main-recipients" name="dipe_mail[main_recipients]" class="large-text" rows="4" placeholder="equipo@ejemplo.com&#10;otra-persona@ejemplo.com"><?php echo esc_textarea( $settings['main_recipients'] ); ?></textarea><p class="description">Una dirección por línea o separadas por comas. Usa el remitente de avisos al equipo.</p></td></tr>
-				<?php dipe_core_mail_redirect_page_row( $settings, 'main_redirect_page' ); ?>
-			</table>
-			<h2>Confirmaciones al visitante</h2>
-			<p>Remitente de los mensajes automáticos al usuario. Solo se utilizará en los formularios que tengan confirmación.</p>
-			<table class="form-table" role="presentation">
-				<tr><th scope="row"><label for="dipe-mail-user-email">Usuario SMTP y remitente</label></th><td><input id="dipe-mail-user-email" name="dipe_mail[user_email]" type="email" class="regular-text" required autocomplete="off" value="<?php echo esc_attr( $settings['user_email'] ); ?>"></td></tr>
-				<tr><th scope="row"><label for="dipe-mail-user-pass">Contraseña SMTP</label></th><td><input id="dipe-mail-user-pass" name="dipe_mail[user_pass]" type="password" class="regular-text" autocomplete="new-password" value=""><p class="description"><?php echo false !== dipe_core_mail_decrypt( $settings['user_pass'] ) ? 'Guardada. Deja el campo vacío para conservarla.' : 'Sin configurar o no disponible. Introduce la contraseña de esta cuenta.'; ?></p></td></tr>
-			</table>
-			<?php submit_button( 'Guardar configuración de correo' ); ?>
-		</form>
-		<hr>
-		<h2>Enviar prueba</h2>
-		<p>Guarda primero los ajustes. El envío de prueba utiliza la cuenta elegida y no guarda ninguna solicitud de formulario.</p>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="dipe_core_test_mail">
-			<?php wp_nonce_field( 'dipe_core_test_mail' ); ?>
-			<label for="dipe-mail-test-profile">Remitente</label>
-			<select id="dipe-mail-test-profile" name="dipe_mail_profile"><option value="team">Formularios · avisos al equipo</option><option value="user">Noreply · confirmaciones</option></select>
-			<label for="dipe-mail-test-to">Destinatario</label>
-			<input id="dipe-mail-test-to" name="dipe_mail_to" type="email" class="regular-text" required>
-			<?php submit_button( 'Enviar correo de prueba', 'secondary', 'submit', false ); ?>
-		</form>
-	</div>
-	<?php
+	require dirname( __DIR__ ) . '/admin/mail-settings-page.php';
 }
-
 function dipe_core_mail_redirect( $status ) {
 	wp_safe_redirect( add_query_arg( 'dipe_mail_status', $status, admin_url( 'options-general.php?page=dipe-correo' ) ) );
 	exit;
@@ -217,6 +166,14 @@ function dipe_core_mail_save() {
 	$mode   = sanitize_key( $posted['mode'] ?? '' );
 	$team   = sanitize_email( $posted['team_email'] ?? '' );
 	$user   = sanitize_email( $posted['user_email'] ?? '' );
+	$routing = array();
+	foreach ( array( 'woocommerce_profile', 'wordpress_profile' ) as $key ) {
+		$value = $posted[ $key ] ?? $old[ $key ];
+		if ( ! is_string( $value ) || ! in_array( $value, array( '', 'team', 'user' ), true ) ) {
+			dipe_core_mail_redirect( 'invalid' );
+		}
+		$routing[ $key ] = $value;
+	}
 	$recipient_input = isset( $posted['contact_recipients'] ) && is_string( $posted['contact_recipients'] ) ? $posted['contact_recipients'] : '';
 	$contact_recipients = dipe_core_mail_contact_recipients( $recipient_input );
 	$services_input = isset( $posted['services_recipients'] ) && is_string( $posted['services_recipients'] ) ? $posted['services_recipients'] : ( $old['services_recipients'] ?? '' );
@@ -257,7 +214,7 @@ function dipe_core_mail_save() {
 		'contact_recipients' => implode( "\n", $contact_recipients ),
 		'services_recipients' => implode( "\n", $services_recipients ),
 		'main_recipients' => implode( "\n", $main_recipients ),
-	), $redirect_pages );
+	), $redirect_pages, $routing );
 	foreach ( array( 'team', 'user' ) as $profile ) {
 		$password = isset( $posted[ $profile . '_pass' ] ) && is_string( $posted[ $profile . '_pass' ] ) ? $posted[ $profile . '_pass' ] : '';
 		if ( $new[ $profile . '_email' ] !== $old[ $profile . '_email' ] && '' === $password ) {
@@ -272,6 +229,11 @@ function dipe_core_mail_save() {
 				dipe_core_mail_redirect( 'encryption' );
 			}
 			$new[ $profile . '_pass' ] = $encrypted;
+		}
+	}
+	foreach ( $routing as $profile ) {
+		if ( $profile && false === dipe_core_mail_decrypt( $new[ $profile . '_pass' ] ) ) {
+			dipe_core_mail_redirect( 'route-password' );
 		}
 	}
 	if ( false === get_option( DIPE_CORE_MAIL_OPTION, false ) ) {
@@ -301,11 +263,22 @@ function dipe_core_mail_contact_recipients( $value = null ) {
 	return array_values( $recipients );
 }
 
-/** Only Dipe's two configured sender addresses select these SMTP credentials. */
+// Woo conserva su contenido y destinatarios; la cuenta elegida aporta el remitente.
+function dipe_core_mail_woocommerce_from( $from ) {
+	$settings = dipe_core_mail_settings();
+	$profile  = $settings['woocommerce_profile'];
+	return in_array( $profile, array( 'team', 'user' ), true ) ? $settings[ $profile . '_email' ] : $from;
+}
+add_filter( 'woocommerce_email_from_address', 'dipe_core_mail_woocommerce_from', 99 );
+
+/** Remitentes propios primero; cuenta general de WordPress para los demás. */
 function dipe_core_mail_configure_phpmailer( $mailer ) {
 	$settings = dipe_core_mail_settings();
 	$from     = strtolower( (string) $mailer->From );
 	$profile  = $from === strtolower( $settings['team_email'] ) ? 'team' : ( $from === strtolower( $settings['user_email'] ) ? 'user' : '' );
+	if ( ! $profile && in_array( $settings['wordpress_profile'], array( 'team', 'user' ), true ) ) {
+		$profile = $settings['wordpress_profile'];
+	}
 	if ( ! $profile ) {
 		// WordPress can reuse the PHPMailer object within one request.
 		if ( in_array( strtolower( (string) $mailer->Username ), array( strtolower( $settings['team_email'] ), strtolower( $settings['user_email'] ) ), true ) ) {
@@ -315,6 +288,7 @@ function dipe_core_mail_configure_phpmailer( $mailer ) {
 			$mailer->SMTPAuth   = false;
 			$mailer->Username   = '';
 			$mailer->Password   = '';
+			$mailer->Sender     = '';
 		}
 		return;
 	}
@@ -326,6 +300,9 @@ function dipe_core_mail_configure_phpmailer( $mailer ) {
 	$mailer->SMTPAuth   = true;
 	$mailer->Username   = $settings[ $profile . '_email' ];
 	$mailer->Password   = false === $password ? '' : $password;
+	// Mantiene nombre y Reply-To; alinea remitente y retorno con el buzón autenticado.
+	$mailer->setFrom( $settings[ $profile . '_email' ], $mailer->FromName, false );
+	$mailer->Sender = $settings[ $profile . '_email' ];
 }
 add_action( 'phpmailer_init', 'dipe_core_mail_configure_phpmailer' );
 

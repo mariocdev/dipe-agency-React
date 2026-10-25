@@ -1,6 +1,35 @@
 # Caché y rendimiento
 
-## Estado vigente: caché pública permanente (19-10-2026, plugin 0.4.22)
+## Estado vigente: retirada de WP Rocket (25-10-2026, plugin 0.4.25)
+
+El usuario ha eliminado el plugin y posteriormente da por terminada su retirada. Se prepara además la limpieza de las referencias ejecutables del proyecto: desaparecen `includes/cache.php`, su carga desde `dipe-core.php`, las llamadas de purga del loader, SEO del archivo de proyectos y herramienta de contenidos de prueba, y el bloque delimitado del proveedor en `.htaccess`. Se retira su exclusión específica de `.gitignore`. Las reglas de WordPress y el bloque propio de caché breve de `robots.txt` permanecen. No se instala otro plugin de caché. React, formularios y diseño no cambian.
+
+Esta decisión sustituye las instrucciones de activación, perfiles y purgas que aparecen en el historial inferior y en notas anteriores. Las referencias históricas documentan lo ocurrido; ya no describen una dependencia activa.
+
+### Archivos FTP de la limpieza del proyecto
+
+1. Subir `wp-content/plugins/dipe-core/includes/site-tools.php` y `wp-content/plugins/dipe-core/includes/project-archive-seo.php`.
+2. Subir `wp-content/plugins/dipe-core/dipe-core.php` (0.4.25), que ya no carga el módulo retirado.
+3. Después, borrar del servidor `wp-content/plugins/dipe-core/includes/cache.php`. No borrarlo antes de sustituir el archivo principal que lo requería.
+4. Actualizar `wp-content/mu-plugins/dipe-pagination-fixtures.php` si esa herramienta sigue instalada; si ya se retiró, no reinstalarla.
+5. Aplicar la retirada del bloque del proveedor en el `.htaccess` raíz. La copia local conserva las reglas WordPress y robots; si el servidor contiene reglas adicionales, conservarlas y retirar únicamente el bloque delimitado del proveedor.
+
+No requiere compilación ni assets del tema. `.gitignore` y documentación no se suben por FTP.
+
+### Restos externos al repositorio
+
+No hay en este checkout `wp-config.php`, `advanced-cache.php`, carpeta de configuración del proveedor ni cachés generadas. Tampoco se dispone de la base de datos del servidor. No se han ejecutado borrados remotos ni se acredita un inventario completo de esos restos. El usuario da el asunto por resuelto; lo siguiente queda como referencia si encuentra residuos:
+
+- Archivos: retirar `wp-content/wp-rocket-config/`, `wp-content/cache/wp-rocket/` y `wp-content/advanced-cache.php` si pertenecen al proveedor. En `wp-config.php`, retirar su activación `WP_CACHE` solo si ninguna otra solución la necesita.
+- Recursos generados: revisar `cache/min/`, `busting/`, `used-css/`, `critical-css/`, `background-css/` y `fonts/` dentro de `wp-content/`; borrar únicamente los atribuibles al plugin, conservando cachés ajenas.
+- Base de datos, sobre copia de seguridad: retirar sus eventos programados, opciones/transients y tablas propias identificadas con el prefijo real de la instalación. No eliminar la opción global `cron` ni buscar/borrar indiscriminadamente cualquier dato que contenga «cache».
+- La marca propia de esta integración, `dipe_core_rocket_profile`, puede eliminarse de opciones; no se vuelve a crear en 0.4.25. No añadir otro plugin para borrar una sola opción. Revisar también configuraciones externas del hosting/CDN si se añadieron reglas específicas.
+
+La desinstalación desde el administrador debería efectuar la limpieza del proveedor; borrar solo su carpeta por FTP puede dejar residuos. [Procedimiento oficial de desinstalación](https://docs.wp-rocket.me/article/694-uninstalling-wp-rocket).
+
+Sin comprobaciones locales, tests, lint, build, peticiones de prueba al sitio, FTP ni operaciones Git. El usuario confirma la retirada del plugin; no confirma la publicación de una versión exacta de estos archivos preparados.
+
+## Histórico: caché pública permanente (19-10-2026, plugin 0.4.22)
 
 El usuario confirma PageSpeed con loader desactivado y solicita **habilitar Rocket permanentemente**, incluso si vuelve a poner contraseña en el index. Esta autorización sustituye la decisión anterior de mantener la guarda temporal; acepta que el HTML cacheado puede servirse antes de ese PHP y no quedar protegido por esa contraseña. No se modifica el index ni `.htaccess` manualmente.
 

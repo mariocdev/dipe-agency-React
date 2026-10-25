@@ -94,11 +94,9 @@ function dipe_core_save_project_archive_seo() {
 		'metadesc-ptarchive-dipe_proyecto' => WPSEO_Utils::sanitize_text_field( wp_unslash( $_POST['seo_description'] ) ),
 		'noindex-ptarchive-dipe_proyecto' => isset( $_POST['seo_indexable'] ) && '1' === $_POST['seo_indexable'] ? false : true,
 	);
-	$changed = false;
 	foreach ( $settings as $key => $value ) {
 		if ( WPSEO_Options::get( $key ) !== $value ) {
 			WPSEO_Options::set( $key, $value );
-			$changed = true;
 		}
 	}
 	WPSEO_Options::clear_cache();
@@ -107,9 +105,6 @@ function dipe_core_save_project_archive_seo() {
 		if ( WPSEO_Options::get( $key ) !== $value ) {
 			$saved = false;
 		}
-	}
-	if ( $changed && function_exists( 'rocket_clean_domain' ) ) {
-		rocket_clean_domain();
 	}
 	wp_safe_redirect( add_query_arg( array(
 		'post_type' => 'dipe_proyecto',

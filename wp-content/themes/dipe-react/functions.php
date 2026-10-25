@@ -3,11 +3,14 @@ defined('ABSPATH') || exit;
 
 const DIPE_REACT_THEME_VERSION = '0.4.1';
 
+require_once __DIR__ . '/inc/commerce.php';
+
 // Registra las funciones del tema y sus ubicaciones de menú.
 function dipe_react_setup()
 {
 	add_theme_support('title-tag');
 	add_theme_support('post-thumbnails');
+	add_theme_support('woocommerce');
 	add_theme_support('custom-logo', array('flex-height' => true, 'flex-width' => true));
 	add_theme_support('html5', array('comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script'));
 	register_nav_menus(
@@ -422,6 +425,8 @@ function dipe_react_print_client_config()
 		array(
 			'apiRoot'    => esc_url_raw(rest_url()),
 			'blogCategory' => $blog_category,
+			'commerce' => dipe_react_commerce_config(),
+			'language' => get_bloginfo('language'),
 			'loaderEnabled' => (bool) get_option('dipe_core_loader_enabled', 1),
 			'homeUrl'    => esc_url_raw(home_url('/')),
 			'basePath'   => wp_parse_url(home_url('/'), PHP_URL_PATH) ?: '/',

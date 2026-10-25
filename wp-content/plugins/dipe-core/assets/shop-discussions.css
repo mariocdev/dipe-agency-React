@@ -1,0 +1,23 @@
+.dipe-discussions-nav { margin-bottom: 20px; }
+.dipe-shop-discussions > .subsubsub { float: none; margin-bottom: 12px; }
+.dipe-discussion-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 18px; clear: both; margin: 16px 0; padding: 18px; border: 1px solid #dcdcde; background: #fff; }
+.dipe-discussion-filters > label { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
+.dipe-discussion-filters :is(input, select) { max-width: 100%; }
+.dipe-discussion-filters > a { padding-bottom: 6px; }
+.dipe-discussion-detail { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 24px; max-width: 1250px; margin-top: 20px; align-items: start; }
+.dipe-discussion-panel { min-width: 0; padding: 22px; border: 1px solid #dcdcde; background: #fff; }
+.dipe-discussion-panel h2 { margin-top: 0; }
+.dipe-discussion-text { white-space: pre-wrap; overflow-wrap: anywhere; padding-block: 16px; border-block: 1px solid #eee; line-height: 1.7; }
+.dipe-discussion-badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 12px; line-height: 1.5; white-space: nowrap; }
+.dipe-discussion-badge.is-answered { background: #e8f3e9; color: #23592b; }
+.dipe-discussion-badge.is-waiting { background: #fff0d6; color: #774500; }
+.dipe-shop-discussions .wp-list-table .column-question { width: 30%; }
+.dipe-shop-discussions .wp-list-table .column-product { width: 18%; }
+.dipe-shop-discussions .wp-list-table .column-answer { width: 18%; }
+.dipe-shop-discussions .row-actions .button-link { vertical-align: baseline; text-align: left; }
+.dipe-shop-discussions .row-actions .trash .button-link { color: #b32d2e; }
+.dipe-discussion-review-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; clear: both; margin: 16px 0; padding: 14px 18px; border: 1px solid #dcdcde; background: #fff; }
+.dipe-discussion-review-filter label { font-weight: 500; }
+.wp-list-table .column-dipe_answer { width: 130px; }
+@media (max-width: 960px) { .dipe-discussion-detail { grid-template-columns: 1fr; } }
+@media (max-width: 782px) { .dipe-discussion-filters { align-items: stretch; flex-direction: column; } .dipe-shop-discussions .wp-list-table :is(.column-question, .column-product, .column-answer) { width: auto; } }

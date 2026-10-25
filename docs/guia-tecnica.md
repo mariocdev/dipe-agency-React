@@ -100,11 +100,10 @@ Copiar `wp-content/plugins/dipe-core/` al destino y activarlo. Los grupos de cam
 | --- | --- | --- |
 | ACF PRO | Datos estructurados; los repetidores de galerías necesitan PRO | Instalar desde el proveedor y configurar licencia privada; no mantener ACF gratuito en paralelo |
 | Yoast SEO | Títulos, descripciones, sociales, schema y sitemap | Configurar identidad, metadatos e indexación; Premium solo si se utiliza con licencia propia |
-| WP Rocket | Caché HTML y perfil compatible con React | Instalar paquete oficial y revisar los ajustes preparados por `dipe-core` |
 | WebP Express | Entrega de imágenes optimizadas | Configurar conversión y entrega para el servidor; comprobar también imágenes creadas por React |
 | CookieYes | Gestión del consentimiento | Completar inventario de servicios, bloqueo previo cuando corresponda y acceso a preferencias |
 
-Yoast, Rocket y WebP Express constan en la continuidad del proyecto; su configuración efectiva en servidor no se deduce de este checkout. CookieYes es el gestor elegido y su revisión final sigue pendiente. Los paquetes externos y sus licencias se obtienen por separado.
+Yoast y WebP Express constan en la continuidad del proyecto; su configuración efectiva en servidor no se deduce de este checkout. CookieYes es el gestor elegido y su revisión final sigue pendiente. Los paquetes externos y sus licencias se obtienen por separado. La integración anterior de caché se ha retirado; no se necesita un plugin sustituto para iniciar la tienda. El usuario confirma WooCommerce instalado el 25-10-2026; su configuración e integración React siguen el [plan de tienda](plan-tienda-headless.md).
 
 Los formularios usan `wp_mail()` y PHPMailer de WordPress mediante código propio. No requieren Elementor ni un plugin SMTP adicional. No se añade por defecto un plugin de seguridad; los controles del hosting y el mantenimiento forman parte de la operación.
 

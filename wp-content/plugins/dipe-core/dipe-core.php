@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.24
+ * Version: 0.4.32
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.24';
+const DIPE_CORE_VERSION = '0.4.32';
 const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';
@@ -22,8 +22,11 @@ require_once __DIR__ . '/includes/related-services.php';
 require_once __DIR__ . '/includes/blog.php';
 require_once __DIR__ . '/includes/seo.php';
 require_once __DIR__ . '/includes/project-archive-seo.php';
-require_once __DIR__ . '/includes/cache.php';
 require_once __DIR__ . '/includes/site-tools.php';
+require_once __DIR__ . '/includes/shop-features.php';
+require_once __DIR__ . '/includes/shop-discussions-admin.php';
+require_once __DIR__ . '/includes/shop-checkout.php';
+require_once __DIR__ . '/includes/shop-emails.php';
 
 /**
  * Set the site's editorial URLs once. Do not override later admin changes.

@@ -43,7 +43,6 @@ function dipe_core_render_loader_tool() {
 							<?php esc_html_e( 'Mostrar el loader al entrar en la web', 'dipe-core' ); ?>
 						</label>
 						<p class="description"><?php esc_html_e( 'Se aplica a todos los visitantes. Desmárcalo y guarda antes de pasar PageSpeed para medir la carga sin la animación.', 'dipe-core' ); ?></p>
-						<p class="description"><?php esc_html_e( 'Al cambiar el valor se solicita la limpieza de la caché de WP Rocket si está activo.', 'dipe-core' ); ?></p>
 						<p class="description"><?php esc_html_e( 'Activado, conserva una aparición por pestaña. Para volver a verlo, abre la web en una pestaña nueva. Si utilizas caché del hosting o CDN, vacíala también después de cambiar este ajuste.', 'dipe-core' ); ?></p>
 					</td>
 				</tr>
@@ -54,7 +53,7 @@ function dipe_core_render_loader_tool() {
 	<?php
 }
 
-// Guarda el estado del loader y actualiza la caché si cambia.
+// Guarda el estado del loader.
 function dipe_core_save_loader_tool() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( esc_html__( 'No tienes permisos para cambiar este ajuste.', 'dipe-core' ), '', array( 'response' => 403 ) );
@@ -65,14 +64,8 @@ function dipe_core_save_loader_tool() {
 	check_admin_referer( 'dipe_core_save_loader' );
 
 	$enabled = isset( $_POST['loader_enabled'] ) && '1' === wp_unslash( $_POST['loader_enabled'] ) ? 1 : 0;
-	$before  = (int) get_option( 'dipe_core_loader_enabled', 1 );
 	update_option( 'dipe_core_loader_enabled', $enabled );
 	$saved = (int) get_option( 'dipe_core_loader_enabled', 1 ) === $enabled;
-
-	// The flag lives in cached HTML, so invalidate it when its value changes.
-	if ( $saved && $before !== $enabled && function_exists( 'rocket_clean_domain' ) ) {
-		rocket_clean_domain();
-	}
 
 	wp_safe_redirect( add_query_arg(
 		array( 'page' => 'dipe-loader', 'saved' => $saved ? '1' : '0' ),

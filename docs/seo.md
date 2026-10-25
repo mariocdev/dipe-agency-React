@@ -73,7 +73,7 @@ Subir por FTP en este orden, conservando las mismas rutas:
 
 El `dipe-core.php` local conserva referencias de iteraciones anteriores: los otros módulos existentes de `includes/` deben estar ya subidos. Si el servidor aún no tiene esas entregas, subir completa la carpeta local `wp-content/plugins/dipe-core/` antes de activar Yoast. No sustituir un plugin completo más reciente del servidor por una copia antigua.
 
-Después, instalar y activar Yoast SEO Free y Premium desde WordPress; conectar la licencia desde MyYoast sin guardar claves ni credenciales en el repositorio. Abrir una pantalla del administrador para aplicar el perfil mínimo y revisar los interruptores en Yoast SEO > Ajustes. Si la integración 0.4.15 ya se subió, en esta iteración basta con los dos PHP de `dipe-core`; el tema no vuelve a cambiar. No se necesita activar WP Rocket para esta integración.
+Después, instalar y activar Yoast SEO Free y Premium desde WordPress; conectar la licencia desde MyYoast sin guardar claves ni credenciales en el repositorio. Abrir una pantalla del administrador para aplicar el perfil mínimo y revisar los interruptores en Yoast SEO > Ajustes. Si la integración 0.4.15 ya se subió, en esta iteración basta con los dos PHP de `dipe-core`; el tema no vuelve a cambiar.
 
 ## Configuración editorial en WordPress
 

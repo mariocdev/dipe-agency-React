@@ -33,7 +33,7 @@ export function BlogCard({ post, headingLevel = 3 }) {
   </article>;
 }
 
-export function BlogSection() {
+export function BlogSection({ eyebrow, title = 'Recursos y Blog', description = <>Tendencias en <strong>desarrollo web, SEO técnico, UX y analítica</strong> para mejorar tu sitio.</> }) {
   const [state, setState] = useState({ loading: true, data: [], error: null });
 
   useEffect(() => {
@@ -46,8 +46,9 @@ export function BlogSection() {
   return <section className="dipe-blog" aria-labelledby="blog-title">
     <div className="dipe-blog__inner">
       <header className="dipe-blog__heading">
-        <h2 id="blog-title">Recursos y Blog</h2>
-        <p>Tendencias en <strong>desarrollo web, SEO técnico, UX y analítica</strong> para mejorar tu sitio.</p>
+        {eyebrow && <div className="dipe-blog__eyebrow">{eyebrow}</div>}
+        <h2 id="blog-title">{title}</h2>
+        <p>{description}</p>
       </header>
 
       {state.loading && <p className="dipe-blog__message" role="status">Cargando recursos…</p>}

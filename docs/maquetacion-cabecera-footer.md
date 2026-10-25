@@ -2,6 +2,33 @@
 
 La cabecera global ya se ha implementado según [su captura](referencias/cabecera.png), y el pie según [su referencia](referencias/footer.png). Gordita ya se carga desde los archivos OTF aportados por el usuario, como explica la [guía visual](guia-visual.md). Las marcas azules de las capturas son artefactos de selección del diseño; no forman parte de la interfaz. No maquetes todavía las páginas interiores.
 
+## Cuenta y carrito como iconos del menú (25-10-2026)
+
+**Carrito flotante:** el elemento con clase `menu-cart` abre un diálogo lateral global con productos, cantidades, eliminación, cupones y acceso directo a finalizar compra. Se conserva el elemento editable en WordPress, su clase y nombre accesible; React lo presenta como botón de apertura al estar WooCommerce activo. El menú compacto se cierra antes de abrirlo y devuelve el foco al botón de menú. Cuenta sigue como enlace. Sin cambiar separación, trazo o cortes responsive. Fuentes nuevas `components/commerce/`, cambios en App/Header y guía [Carrito y checkout](tienda-checkout.md), con FTP completo y activación de compra. Pendiente revisión en servidor.
+
+**Cortes responsive vigentes:** menú de escritorio solo con ancho **mayor de 1290 px**; hamburguesa desde **1290 px inclusive hacia abajo**, con lógica de submenús y cierre al redimensionar sincronizada en JS/CSS. El botón exterior Hablamos se oculta desde **550 px inclusive hacia abajo**. Entre 440 y 550 px queda accesible dentro del desplegable; por debajo de 440 px se conserva el diálogo existente con su CTA. Cuenta/carrito siguen en la barra. No se cambia el corte del diálogo compacto ni la configuración WordPress. Sustituye referencias anteriores al colapso en 1024 px. Fuentes `Header.jsx/.css`; assets completos con manifiesto tras compilación del usuario, sin PHP ni comprobaciones locales. Revisión en servidor pendiente.
+
+**Último ajuste de trazo y separación:** SVG de cuenta/carrito con trazo 2,2 (antes 1,7). Separación horizontal de **6 px entre cuenta, carrito y el CTA Hablamos**: se conserva el gap del resto del menú y se compensa únicamente el espacio exterior entre el grupo de iconos y el primer CTA. En la barra móvil también se usan 6 px, sustituyendo los 4 px anteriores del tramo compacto. Fondo/hover, tamaño de botones, URL, clases y nombres accesibles se conservan. Solo `Header.jsx/.css` y documentación; FTP de assets completos con manifiesto tras compilación del usuario, sin PHP. Pendiente revisión en servidor, sin comprobaciones locales/build/FTP/Git.
+
+**Aspecto posterior solicitado por el usuario:** botones de 44×44 px con icono negro, fondo naranja corporativo, radio de 0,2 rem y la misma transición de colores de Hablamos; hover/foco con fondo oscuro e icono blanco, sin desplazamiento del SVG. En escritorio ambos enlaces se agrupan en un único elemento de lista para aplicar **6 px entre ellos**, conservando el espacio exterior del menú y la posición antes del CTA. Barra móvil/diálogo mantienen el grupo (4 px en barra por debajo de 440 px, 6 px en los demás casos). Este aspecto sustituye el icono naranja sobre fondo transparente descrito originalmente; las clases `menu-account`/`menu-cart`, URL, nombres accesibles y gestión en WordPress no cambian. Fuentes `Header.jsx/.css`; solo assets tras compilación del usuario y revisión en servidor pendiente.
+
+El usuario añadirá Tienda al menú y administrará los accesos de cuenta/carrito desde WordPress. Preparados iconos SVG naranja corporativo sin texto visible, con nombre accesible y destino del menú nativo. No necesitan shortcode ni PHP adicional.
+
+En **Apariencia > Menús**, seleccionar el menú asignado a **Cabecera: menú principal**. En **Opciones de pantalla**, activar **Clases CSS**. Añadir dos enlaces personalizados como elementos de primer nivel:
+
+| Texto del enlace | URL | Clases CSS |
+| --- | --- | --- |
+| Mi cuenta | La URL real de la página Mi cuenta asignada en WooCommerce | `menu-account` |
+| Carrito | La URL real de la página Carrito asignada en WooCommerce | `menu-cart` |
+
+Conservar los textos: se usan para accesibilidad y ayuda al pasar el ratón, aunque React solo muestre el icono. No introducir HTML o shortcode como texto. No añadir `menu-cta` a los iconos; esa clase sigue identificando Hablamos. Tienda es un enlace normal a la página real de tienda, sin estas clases.
+
+React conserva el orden de los enlaces normales y de ambos iconos, colocando los iconos antes de los elementos `menu-cta`. En escritorio quedan dentro del menú; hasta 1024 px aparecen en la barra, antes del CTA exterior y la hamburguesa. Por debajo de 440 px siguen en la barra y también dentro del diálogo modal, antes de su CTA, para poder usarlos con el fondo inerte. Las copias del desplegable se ocultan en móvil para evitar duplicaciones visibles o de foco.
+
+Retirada la barra secundaria de la tienda que repetía cuenta/carrito con texto. Sus breadcrumbs y el menú general mantienen acceso a Tienda. No se generan enlaces automáticos: los iconos aparecen cuando el usuario añada los elementos con sus clases.
+
+Fuentes: `components/layout/Header.jsx/.css` y `pages/shop/ShopShared.jsx` (retirada de barra duplicada). FTP tras compilación del usuario: assets completos del tema con `.vite/manifest.json`, sin PHP. Sin comprobaciones locales, build, navegador, FTP u operaciones Git; posición/espacio y móvil pendientes de revisión en servidor.
+
 ## Tokens visuales compartidos
 
 Los valores confirmados están guardados en `frontend/src/tokens.css`, ya importado por `frontend/src/main.jsx` después de Bootstrap. **Usa esas variables en la cabecera y después en el pie y las demás páginas; no repitas los hexadecimales ni la pila tipográfica en cada componente.** Incluye la [paleta y escala tipográfica](guia-visual.md), el negro específico de la cabecera `#020202`, el ancho interior del 80 % y su sombra. Añade nuevos valores globales cuando sean recurrentes o estén confirmados. No fijes como token medidas deducidas únicamente de la captura.

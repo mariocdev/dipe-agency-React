@@ -1,5 +1,11 @@
 # Contenido de prueba y SEO de paginación
 
+## Herramienta retirada del administrador (25-10-2026)
+
+A petición del usuario se retiran los registros del menú de Herramientas y del endpoint AJAX de creación/borrado en wp-content/mu-plugins/dipe-pagination-fixtures.php (1.0.1). El código previo se conserva inactivo; no quedan acciones registradas por el mu-plugin. Las copias existentes, los originales, los términos y la biblioteca no se modifican. La retirada de la herramienta no implica borrar las 80 copias mostradas por el usuario.
+
+FTP de esta iteración: sobrescribir únicamente wp-content/mu-plugins/dipe-pagination-fixtures.php con esta versión. No requiere compilación ni assets, y no afecta al mu-plugin separado de copias de productos. Después recargar el administrador: el apartado Contenido de prueba ya no debe aparecer. Sin comprobaciones locales, build, API de prueba, FTP, cambios de contenido ni Git de escritura; pendiente revisión del usuario en servidor. Las instrucciones siguientes quedan como histórico y no deben usarse para volver a registrar la herramienta.
+
 ## Entrega local (19-10-2026)
 
 El usuario solicita 40 duplicados del proyecto `congreso-de-escuelas-de-negocios-y-direccion` y 40 de la entrada `que-es-un-sitemap-y-guia-para-crearlo-deforma-correcta`, conservando ACF, contenido y medios, con variación de categorías y servicios relacionados. Los originales se resuelven por slug y tipo en la instalación actual, sin guardar el dominio temporal.
@@ -15,7 +21,7 @@ En **Herramientas > Contenido de prueba**:
 3. Al terminar las pruebas, **Borrar todas las copias de prueba** solicita confirmación y las elimina definitivamente por lotes, incluidas papelera y copias incompletas. Una sola acción inicia el proceso completo. No afecta a los originales, otros contenidos, términos ni archivos de medios. No hace falta que los originales sigan disponibles para borrar.
 4. Cuando el contador total quede en cero, se puede retirar por FTP el archivo del mu-plugin. Retirarlo antes no elimina las copias ni permite gestionarlas desde Herramientas.
 
-Ambas acciones requieren `manage_options`, POST y nonce. La creación verifica también permiso de edición de los originales. Un bloqueo serializa cada lote frente a otras pestañas/administradores y caduca a los diez minutos si una petición muere. La pantalla informa del progreso y errores; no hay cron ni tareas ocultas al cerrar la pantalla. Al finalizar o devolver un error se solicita la purga de WP Rocket si está activo; otras cachés se purgan desde su panel.
+Ambas acciones requieren `manage_options`, POST y nonce. La creación verifica también permiso de edición de los originales. Un bloqueo serializa cada lote frente a otras pestañas/administradores y caduca a los diez minutos si una petición muere. La pantalla informa del progreso y errores; no hay cron ni tareas ocultas al cerrar la pantalla. Si se utiliza caché del hosting o CDN, se purga desde su panel después de cambiar el contenido; la herramienta ya no incorpora purgas de proveedores externos.
 
 ## Datos conservados y reparto
 

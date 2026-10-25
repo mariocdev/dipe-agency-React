@@ -1,5 +1,7 @@
 /* Mantener la navegación de WordPress y suavizar el cambio entre documentos. */
 @media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+
   @view-transition {
     navigation: auto;
   }

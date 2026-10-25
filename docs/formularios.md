@@ -1,5 +1,27 @@
 # Formularios: React, dipe-core y correo del hosting
 
+## SMTP unificado y Correo Dipe (25-10-2026, core 0.4.31)
+
+El usuario aporta el HTML del pedido de prueba #477 y de Correo Dipe: fallan «Nuevo pedido» y «Pedido a la espera» con «No se ha podido establecer la función de correo». El transporte anterior solo aplicaba SMTP cuando el remitente coincidía con `team_email` o `user_email`; los mensajes nativos de Woo con otro remitente podían usar PHP `mail()`. Esa exclusión encaja con el error, sin acreditar todavía la configuración efectiva ni la entrega en servidor. El HTML de Correo Dipe indica contraseñas guardadas para ambas cuentas, lo cual no acredita autenticación SMTP. No se incorporan valores privados de los HTML al repositorio.
+
+`includes/mail-settings.php` mantiene las dos cuentas y el cifrado existentes y añade selectores explícitos `woocommerce_profile` y `wordpress_profile` (`team`, `user` o vacío). Woo aplica el remitente de la cuenta elegida mediante `woocommerce_email_from_address`; `phpmailer_init` reconoce esa dirección y usa SMTP. Los otros remitentes pueden usar la cuenta general de WordPress si se selecciona. Los remitentes propios de formularios mantienen su prioridad. Remitente y retorno se alinean con el buzón autenticado; nombre, Reply-To, destinatarios y contenido se conservan. Sin credenciales disponibles no se deriva un envío seleccionado a PHP `mail()`. El guardado rechaza asignaciones a cuentas sin contraseña descifrable, respeta selecciones ausentes en formularios antiguos y conserva las contraseñas que se dejan vacías.
+
+Ambos selectores empiezan vacíos para conservar el comportamiento previo hasta que el administrador elija cuenta y guarde. Woo sin selección específica hereda el ajuste general; sin ninguno continúa con su transporte anterior. Para resolver esta incidencia tras subir, **asignar expresamente una de las cuentas existentes a Correos de WooCommerce y guardar**. WordPress general es una elección independiente. No se presupone qué buzón debe enviar pedidos o recuperaciones de contraseña. No se activan confirmaciones de Contacto al visitante.
+
+La pantalla sigue en **Ajustes > Correo Dipe**, con vista separada `admin/mail-settings-page.php` y estilos exclusivos `admin/mail-settings.css`, sin JS ni build: navegación por anclas, tarjetas de servidor/cuentas, indicador de contraseña guardada (sin afirmar conexión), sección Tienda y WordPress y destinatarios/gracias de los tres formularios en desplegables nativos. Las listas y redirecciones existentes mantienen las mismas claves. Destinatarios de pedidos, avisos habilitados y textos siguen en WooCommerce, enlazado desde el panel. La prueba SMTP existente sigue siendo manual por cuenta y no crea pedidos/solicitudes ni prueba por sí sola toda la ruta Woo.
+
+FTP en este orden, conservando las dependencias anteriores del plugin:
+
+1. `wp-content/plugins/dipe-core/admin/mail-settings-page.php` y `wp-content/plugins/dipe-core/admin/mail-settings.css` (nuevos).
+2. `wp-content/plugins/dipe-core/includes/mail-settings.php`.
+3. `wp-content/plugins/dipe-core/dipe-core.php` (0.4.31).
+
+Solo PHP/CSS administrativos: sin assets del tema ni compilación React. Después elegir cuenta Woo, guardar, enviar una prueba manual de esa cuenta y revisar llegada; revisar también el reenvío de notificaciones del pedido desde WooCommerce sin cambiar su estado para provocar correos. Los fallos anteriores no se reintentan automáticamente. Sin comprobaciones locales, lint/tests, build, API de prueba, envíos, FTP ni operaciones Git de escritura por Codex. Presentación, autenticación y entrega pendientes de revisión del usuario en servidor.
+
+Referencias técnicas: [remitente y envío nativo de WooCommerce](https://woocommerce.github.io/code-reference/files/woocommerce-includes-emails-class-wc-email.html), [configuración de PHPMailer en WordPress](https://developer.wordpress.org/reference/hooks/phpmailer_init/). Esta ampliación sustituye el pendiente anterior de elegir una configuración general de WordPress, sin asignarla automáticamente.
+
+**Formularios de tienda y correos Woo (25-10-2026):** reglas vigentes en [Privacidad, protección y correos de tienda](tienda-formularios-correo.md). Preguntas también sin cuenta, con aprobación para invitados/usuarios sin compra; opiniones solo de compradores identificados, pendientes. Privacidad obligatoria, tokens, origen, límites, duplicados y registro de aceptación en servidor. Core 0.4.29 añade identidad visual a los correos HTML de WooCommerce. No cambia los formularios de Contacto, sus destinatarios, credenciales ni SMTP; no se envían pruebas. Pendiente revisión del usuario en servidor.
+
 **Checkpoint aprobado (18-10-2026):** el usuario aprueba el estado actual de todos los archivos locales y autoriza incorporarlo a `main`, incluida la implementación de formularios. Esto no confirma entregabilidad general, configuración de todos los destinatarios ni cierre de los pendientes funcionales/editoriales descritos aquí. No introducir ajustes de diseño ni ampliar formularios por esta consolidación. Estado Git en `CONTEXTO-PROYECTO.md`.
 
 Estado: **configuración SMTP, bandeja de solicitudes y Contacto preparados**. El usuario quiere conservar rendimiento y sencillez, y evitar Elementor y nuevos plugins para los formularios. CookieYes será el gestor de cookies. El SMTP disponible en Dinahosting basta como **transporte de correo** si se configuran las cuentas autorizadas y se comprueba la entrega real; no aporta por sí mismo formularios, validación ni registro de entradas.

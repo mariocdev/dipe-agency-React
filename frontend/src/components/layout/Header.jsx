@@ -1,16 +1,45 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { siteConfig, sitePath } from '../../lib/site';
+import { useShopCart } from '../commerce/CartProvider';
 import './Header.css';
 
+// Las clases del menú nativo seleccionan el icono; WordPress conserva título y URL.
+function commerceMenuIcon(item) {
+  if ((item.classes || []).includes('menu-account')) return 'account';
+  if ((item.classes || []).includes('menu-cart')) return 'cart';
+  return null;
+}
+
+function CommerceMenuIcon({ name }) {
+  return <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    {name === 'account' ? <><circle cx="12" cy="8" r="3.5" /><path d="M4.5 21v-1a7.5 7.5 0 0 1 15 0v1" /></> : <><path d="M3 3h2l2.5 12h11l2-8H6" /><circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></>}
+  </svg>;
+}
+
 // Adapta los enlaces del menú de WordPress y los padres sin destino.
-function MenuLink({ item, hasChildren, onToggle }) {
+function MenuLink({ item, hasChildren, onToggle, onCartOpen }) {
+  const cart = useShopCart();
   const href = sitePath(item.url);
   const target = item.target === '_blank' ? '_blank' : undefined;
+  const icon = commerceMenuIcon(item);
+  const label = item.title || (icon === 'account' ? 'Mi cuenta' : 'Carrito');
+  const classes = (item.classes || []).filter((name) => !icon || name !== 'menu-cta');
+
+  if (icon === 'cart' && siteConfig.commerce?.enabled && cart) return <button
+    className={`dipe-header__link ${classes.join(' ')} dipe-header__link--icon`.trim()}
+    type="button"
+    title={label}
+    aria-haspopup="dialog"
+    aria-controls="dipe-floating-cart"
+    aria-expanded={cart.isOpen}
+    onClick={(event) => onCartOpen ? onCartOpen(event.currentTarget) : cart.openCart(event.currentTarget)}
+  ><CommerceMenuIcon name="cart" /><span className="visually-hidden">{label}</span></button>;
 
   return <a
-    className={`dipe-header__link ${(item.classes || []).join(' ')}`.trim()}
+    className={`dipe-header__link ${classes.join(' ')}${icon ? ' dipe-header__link--icon' : ''}`.trim()}
     href={href}
     target={target}
+    title={icon ? label : undefined}
     rel={target ? 'noopener noreferrer' : undefined}
     onClick={(event) => {
       if (hasChildren && href === '#') {
@@ -19,7 +48,7 @@ function MenuLink({ item, hasChildren, onToggle }) {
       }
     }}
   >
-    {item.title}
+    {icon ? <><CommerceMenuIcon name={icon} /><span className="visually-hidden">{label}</span></> : item.title}
   </a>;
 }
 
@@ -32,18 +61,19 @@ function MenuToggleIcon({ close = false }) {
 // Controla la apertura del submenú por ratón, botón y foco.
 function PrimaryItem({ item, openItem, setOpenItem, idPrefix = 'dipe-submenu' }) {
   const hasChildren = item.children?.length > 0;
+  const icon = commerceMenuIcon(item);
   const isOpen = openItem === item.id;
   const submenuId = `${idPrefix}-${item.id}`;
 
   return <li
-    className={`dipe-header__primary-item ${(item.classes || []).includes('menu-cta') ? 'dipe-header__primary-item--cta' : ''} ${hasChildren ? 'has-children' : ''} ${isOpen ? 'is-open' : ''}`}
+    className={`dipe-header__primary-item ${!icon && (item.classes || []).includes('menu-cta') ? 'dipe-header__primary-item--cta' : ''} ${icon ? 'dipe-header__primary-item--icon' : ''} ${hasChildren ? 'has-children' : ''} ${isOpen ? 'is-open' : ''}`}
     onPointerEnter={(event) => {
-      if (hasChildren && event.pointerType === 'mouse' && window.matchMedia('(width > 1024px)').matches) {
+      if (hasChildren && event.pointerType === 'mouse' && window.matchMedia('(width > 1290px)').matches) {
         setOpenItem(item.id);
       }
     }}
     onPointerLeave={(event) => {
-      if (!hasChildren || event.pointerType !== 'mouse' || !window.matchMedia('(width > 1024px)').matches) return;
+      if (!hasChildren || event.pointerType !== 'mouse' || !window.matchMedia('(width > 1290px)').matches) return;
       // El panel pertenece al mismo ítem: pasar del padre a sus hijos no lo cierra.
       // Conserva también el submenú mientras contiene el foco del teclado.
       if (event.currentTarget.contains(document.activeElement)) return;
@@ -73,6 +103,7 @@ function PrimaryItem({ item, openItem, setOpenItem, idPrefix = 'dipe-submenu' })
 
 // Gestiona la navegación de escritorio y el menú móvil con su foco y animación.
 export function Header() {
+  const cart = useShopCart();
   const headerRef = useRef(null);
   const headerContentRef = useRef(null);
   const menuToggleRef = useRef(null);
@@ -85,8 +116,9 @@ export function Header() {
   const [openItem, setOpenItem] = useState(null);
   const utility = siteConfig.navigation?.utility || [];
   const primary = siteConfig.navigation?.primary || [];
-  const primaryCtas = primary.filter((item) => (item.classes || []).includes('menu-cta'));
-  const primaryLinks = primary.filter((item) => !(item.classes || []).includes('menu-cta'));
+  const primaryIcons = primary.filter((item) => commerceMenuIcon(item));
+  const primaryCtas = primary.filter((item) => !commerceMenuIcon(item) && (item.classes || []).includes('menu-cta'));
+  const primaryLinks = primary.filter((item) => !commerceMenuIcon(item) && !(item.classes || []).includes('menu-cta'));
   const logo = siteConfig.logo || {};
   const closeMenu = useCallback((afterClose) => {
     if (dialogClosingRef.current) return;
@@ -132,6 +164,11 @@ export function Header() {
       if (dialogAnimationRef.current === animation) finish();
     };
   }, [compactMenu]);
+
+  const openHeaderCart = (opener) => {
+    if (mobileOpen) closeMenu(() => cart.openCart(compactMenu ? menuToggleRef.current : opener));
+    else { setOpenItem(null); cart.openCart(opener); }
+  };
 
   const closeAfterNavigation = (event) => {
     const link = event.target.closest('a');
@@ -208,7 +245,7 @@ export function Header() {
   }, [mobileOpen, openItem]);
 
   useEffect(() => {
-    const media = window.matchMedia('(max-width: 1024px)');
+    const media = window.matchMedia('(max-width: 1290px)');
     const compactMedia = window.matchMedia('(width < 440px)');
     const resetMenu = () => {
       setMobileOpen(false);
@@ -274,6 +311,9 @@ export function Header() {
             {logo.url ? <img src={logo.url} alt={logo.alt || 'Dipe Agency'} /> : <span>{logo.alt || 'Dipe Agency'}</span>}
           </a>
           <div className="dipe-header__mobile-actions">
+            {primaryIcons.length > 0 && <div className="dipe-header__commerce-actions" onClick={closeAfterNavigation}>
+              {primaryIcons.map((item) => <MenuLink item={item} key={item.id} onCartOpen={openHeaderCart} />)}
+            </div>}
             {primaryCtas.length > 0 && <div className="dipe-header__mobile-cta" onClick={closeAfterNavigation}>
               {primaryCtas.map((item) => <MenuLink item={item} key={item.id} />)}
             </div>}
@@ -294,8 +334,14 @@ export function Header() {
             </button>
           </div>
           <nav className={`dipe-header__primary-nav ${mobileOpen ? 'is-open' : ''}`} id="dipe-primary-navigation" aria-label="Navegación principal" onClick={closeAfterNavigation}>
-            <ul className="dipe-header__primary-list">
-              {primary.map((item) => <PrimaryItem item={item} key={item.id} openItem={openItem} setOpenItem={setOpenItem} />)}
+            <ul className={`dipe-header__primary-list${primaryIcons.length ? ' dipe-header__primary-list--commerce' : ''}`}>
+              {primaryLinks.map((item) => <PrimaryItem item={item} key={item.id} openItem={openItem} setOpenItem={setOpenItem} />)}
+              {primaryIcons.length > 0 && <li className="dipe-header__primary-item dipe-header__primary-item--icon">
+                <div className="dipe-header__commerce-actions dipe-header__commerce-actions--desktop">
+                  {primaryIcons.map((item) => <MenuLink item={item} key={item.id} onCartOpen={openHeaderCart} />)}
+                </div>
+              </li>}
+              {primaryCtas.map((item) => <PrimaryItem item={item} key={item.id} openItem={openItem} setOpenItem={setOpenItem} />)}
             </ul>
           </nav>
         </div>
@@ -331,6 +377,9 @@ export function Header() {
             {primaryLinks.map((item) => <PrimaryItem item={item} key={`primary-${item.id}`} openItem={openItem} setOpenItem={setOpenItem} idPrefix="dipe-dialog-submenu" />)}
           </ul>
         </nav>
+        {primaryIcons.length > 0 && <div className="dipe-header__commerce-actions dipe-header__dialog-commerce" onClick={closeAfterNavigation}>
+          {primaryIcons.map((item) => <MenuLink item={item} key={item.id} onCartOpen={openHeaderCart} />)}
+        </div>}
         {primaryCtas.length > 0 && <div className="dipe-header__dialog-cta" onClick={closeAfterNavigation}>
           {primaryCtas.map((item) => <MenuLink item={item} key={item.id} />)}
         </div>}

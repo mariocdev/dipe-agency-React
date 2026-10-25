@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { preserveScrollHeight, scrollToContent } from '../lib/scroll';
 
 // Gestiona el loader y el scroll al actualizar los resultados de un archivo.
 export function useArchiveGridFeedback({ content, loading, error, enabled = true, scrollTargetRef }) {
@@ -7,22 +8,34 @@ export function useArchiveGridFeedback({ content, loading, error, enabled = true
   const loaderStartedAt = useRef(0);
   const [showLoader, setShowLoader] = useState(false);
 
-  useEffect(() => {
-    if (!enabled || loading || error) return undefined;
+  const scrollCleanup = useRef(() => {});
+  const heightCleanup = useRef(() => {});
+
+  useLayoutEffect(() => {
+    if (!enabled || error) {
+      scrollCleanup.current();
+      heightCleanup.current();
+      return;
+    }
+    if (loading) {
+      scrollCleanup.current();
+      heightCleanup.current();
+      if (previousContent.current !== null) heightCleanup.current = preserveScrollHeight(resultsRef.current);
+      return;
+    }
     const previous = previousContent.current;
     previousContent.current = content;
-    // The initial response should never pull the visitor away from the hero.
-    if (previous === null || previous === content) return undefined;
-
-    const frame = requestAnimationFrame(() => {
-      const target = scrollTargetRef?.current || resultsRef.current;
-      if (!target) return;
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      target.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' });
+    // La primera respuesta conserva la posición del visitante junto al hero.
+    if (previous === null || previous === content) { heightCleanup.current(); return; }
+    scrollCleanup.current = scrollToContent(scrollTargetRef?.current || resultsRef.current, {
+      onFinish: () => heightCleanup.current(),
     });
-
-    return () => cancelAnimationFrame(frame);
   }, [content, loading, error, enabled, scrollTargetRef]);
+
+  useEffect(() => () => {
+    scrollCleanup.current();
+    heightCleanup.current();
+  }, []);
 
   useEffect(() => {
     if (enabled && loading && previousContent.current !== null) {

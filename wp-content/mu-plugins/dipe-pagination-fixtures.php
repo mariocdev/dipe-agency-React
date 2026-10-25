@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Dipe — contenido de prueba para paginación
- * Description: Crea 40 copias de una entrada y un proyecto, y elimina solo esas copias desde Herramientas.
- * Version: 1.0.0
+ * Description: Herramienta de paginación retirada; no registra menú ni acciones de creación o borrado.
+ * Version: 1.0.1
  * Requires PHP: 8.2
  */
 
@@ -241,9 +241,6 @@ final class Dipe_Pagination_Fixtures {
 		} finally {
 			delete_option( self::LOCK );
 		}
-		if ( ( $done || $error_message ) && function_exists( 'rocket_clean_domain' ) ) {
-			rocket_clean_domain();
-		}
 		$data = array( 'done' => $done, 'state' => self::state(), 'message' => $error_message );
 		if ( $error_message ) {
 			wp_send_json_error( $data, 500 );
@@ -319,7 +316,7 @@ final class Dipe_Pagination_Fixtures {
 						if (!response.ok || !result.success) throw new Error(result.data?.message || 'No se ha completado el lote. Recarga esta pantalla y vuelve a intentarlo.');
 						done = result.data.done;
 					}
-					progress.textContent = operation === 'create' ? 'Creación terminada: 40 proyectos y 40 entradas de prueba. Se ha solicitado la limpieza de WP Rocket si está activo.' : 'Borrado terminado. Se ha solicitado la limpieza de WP Rocket si está activo.';
+					progress.textContent = operation === 'create' ? 'Creación terminada: 40 proyectos y 40 entradas de prueba.' : 'Borrado terminado.';
 				} catch (error) {
 					progress.textContent = `${error.message} El progreso anterior queda guardado; puedes reanudar o borrar las copias desde aquí.`;
 				} finally {
@@ -333,5 +330,4 @@ final class Dipe_Pagination_Fixtures {
 	}
 }
 
-add_action( 'admin_menu', array( Dipe_Pagination_Fixtures::class, 'menu' ) );
-add_action( 'wp_ajax_dipe_pagination_fixtures', array( Dipe_Pagination_Fixtures::class, 'ajax' ) );
+// Herramienta retirada: sin menú administrativo ni endpoint AJAX.
