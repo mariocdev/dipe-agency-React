@@ -1,5 +1,11 @@
 # Tienda: catálogo, producto, carrito y pantallas de WooCommerce
 
+## Refactor de la base (26-10-2026)
+
+La entrada importa solo la plantilla que corresponde a WordPress y espera sus estilos antes de montar React. `ShopPages.jsx` carga catálogo, ficha, cuenta o checkout por separado; cuenta/reseñas no importan `CheckoutLayout`. El contenedor original de formularios/reseñas se conserva en `NativeCommerceSlot.jsx`, con mejoras opcionales ya cargadas. `lib/commerce.js` mantiene todos sus exports y extrae configuración, filtros, Store API/carrito, catálogo, formato y variaciones a `lib/commerce/`; nonce y cola siguen compartidos en una sola instancia. Los textos legales dejan de entrar en el JavaScript de todas las páginas. El tema incorpora `inc/assets.php` para el manifiesto y CSS estático compartido. Reglas comerciales, campos, nodos nativos y declaraciones CSS conservados; el responsive global se importa después de los estilos de la vista.
+
+Respaldo `6df843e` en GitHub y segundo commit con el refactor, en `codex/refactor-tienda-2026-10-25`, sin modificar `main`. [Archivos exactos, alcance y revisión pendiente](refactor-2026-10-26.md). FTP incremental: `inc/assets.php` primero, assets completos/manifiesto tras compilación del usuario y `functions.php` al final, bajo el tema. Sin PHP adicional de core. Sin build, pruebas ni revisión en servidor ejecutados por Codex; el tamaño nuevo del JavaScript queda pendiente de la compilación del usuario.
+
 ## Rango de precio y controles de relacionados (25-10-2026)
 
 El precio se elige con una barra de dos tiradores nativos (mínimo y máximo), importes visibles formateados y soporte de teclado. Los límites proceden de products/collection-data para el catálogo/categoría/etiqueta actual y usan la precisión monetaria entregada por Woo. Se mantienen las URL, Limpiar y Aplicar precio; arrastrar no envía peticiones hasta aplicar. Si no hay rango real disponible, se informa y deshabilita su aplicación, sin límites inventados.

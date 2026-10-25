@@ -71,11 +71,13 @@ Hay implementaciones documentadas tanto en grandes plataformas como en comercios
 
 Referencias consultadas el **19-10-2026**. Se incluyen proyectos de alcance internacional y negocios especializados; no se atribuyen categorías de tamaño empresarial sin datos que las acrediten. Sus infraestructuras y formas de renderizar no son idénticas a las de Dipe.
 
-### Cómo encaja WooCommerce en una evolución futura
+### Tienda con WooCommerce
 
 Una tienda puede conservar WooCommerce para catálogo y operación y desarrollar un escaparate propio. Su [Store API oficial](https://developer.woocommerce.com/docs/apis/store-api/) ofrece funciones orientadas a productos, carrito y checkout.
 
-**Este repositorio no implementa una tienda ni un checkout WooCommerce.** Incorporarlos sería otra fase: hay que diseñar sesiones, pagos, envíos, impuestos, cuentas y compatibilidad de extensiones. Para una tienda sencilla, una solución convencional puede reducir trabajo; el desacoplamiento se justifica cuando la experiencia o las integraciones necesitan ese control adicional.
+**El repositorio incorpora catálogo, ficha, filtros, favoritos y carrito en React, con compra, cuenta y reseñas nativas de WooCommerce.** Las sesiones usan cookies del mismo origen y Store API; el checkout mantiene los formularios y scripts nativos para las integraciones comerciales. Hay variantes de checkout normal y por pasos. La configuración comercial y la compatibilidad efectiva de pagos/envíos requieren revisión en servidor. [Implementación y alcance](docs/tienda-frontend.md).
+
+La [refactorización del 26-10-2026](docs/refactor-2026-10-26.md) separa la carga por páginas y los módulos de comercio, conservando WordPress como autoridad de rutas, datos y reglas comerciales. La compilación y la revisión de esta entrega en servidor corresponden al usuario.
 
 ## Resultados recogidos en la presentación
 

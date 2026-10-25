@@ -2,7 +2,7 @@ import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { EditorialContent } from '../../components/content/EditorialContent';
 import { plainText } from '../../lib/api';
 import { attributeKey } from '../../lib/commerce';
-import { NativeCommerceSlot } from './NativeCommerce';
+import { NativeCommerceSlot } from './NativeCommerceSlot';
 import { ProductQuestions } from './ProductQuestions';
 
 export function ProductTabs({ product, active, onChange, questionCount, onQuestionCountChange, containerRef }) {

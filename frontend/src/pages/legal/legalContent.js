@@ -1,6 +1,8 @@
+import { legalPageSlugs } from './legalRoutes';
+
 // Textos aportados por el usuario; solo se normalizan marcado y encabezados.
 export const legalPages = {
-  'aviso-legal': {
+  [legalPageSlugs.notice]: {
     title: 'Aviso legal',
     html: `
 <h2>Condiciones generales de acceso y uso del sitio web: <span class="dipe-legal__domain">dipe.agency</span></h2>
@@ -35,7 +37,7 @@ export const legalPages = {
 <p>En caso de que cualquier cláusula del presente documento fuera declarada nula, las demás cláusulas seguirán vigentes y se interpretarán teniendo en cuenta la voluntad de las partes y la finalidad misma de las presentes condiciones. el Propietario podrá no ejercitar alguno de los derechos y facultades conferidos en este documento lo que no implicará en ningún caso la renuncia a los mismos, salvo reconocimiento expreso por parte de el Propietario.</p>
 `,
   },
-  'politica-de-privacidad': {
+  [legalPageSlugs.privacy]: {
     title: 'Política de privacidad',
     html: `
 <h2>Tratamientos de datos de carácter personal</h2>
@@ -73,7 +75,7 @@ export const legalPages = {
 <p>Puedes consultar la información adicional y detallada sobre Protección de Datos y nuestra Política de privacidad en esta misma página.</p>
 `,
   },
-  'politica-de-cookies': {
+  [legalPageSlugs.cookies]: {
     title: 'Política de cookies',
     html: `
 <h2>¿Qué son las cookies?</h2>

@@ -3,6 +3,7 @@ defined('ABSPATH') || exit;
 
 const DIPE_REACT_THEME_VERSION = '0.4.1';
 
+require_once __DIR__ . '/inc/assets.php';
 require_once __DIR__ . '/inc/commerce.php';
 
 // Registra las funciones del tema y sus ubicaciones de menú.
@@ -360,47 +361,6 @@ function dipe_react_footer_logo_data()
 		'alt' => wp_strip_all_tags($alt, true),
 	);
 }
-
-// Lee una sola vez por petición el manifiesto de assets de Vite.
-function dipe_react_manifest()
-{
-	static $manifest = null;
-
-	if (null !== $manifest) {
-		return $manifest;
-	}
-
-	$path = get_theme_file_path('assets/.vite/manifest.json');
-	if (! is_readable($path)) {
-		$manifest = array();
-		return $manifest;
-	}
-
-	$decoded = json_decode(file_get_contents($path), true); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-	$manifest = is_array($decoded) ? $decoded : array();
-	return $manifest;
-}
-
-// Carga el JavaScript y el CSS indicados por el manifiesto del tema.
-function dipe_react_enqueue_assets()
-{
-	$manifest = dipe_react_manifest();
-	$entry    = $manifest['src/main.jsx'] ?? null;
-
-	if (! $entry || empty($entry['file'])) {
-		return;
-	}
-
-	$script = get_theme_file_uri('assets/' . $entry['file']);
-	wp_enqueue_script('dipe-react-app', $script, array(), null, true);
-
-	if (! empty($entry['css']) && is_array($entry['css'])) {
-		foreach ($entry['css'] as $index => $css) {
-			wp_enqueue_style('dipe-react-' . $index, get_theme_file_uri('assets/' . $css), array(), null);
-		}
-	}
-}
-add_action('wp_enqueue_scripts', 'dipe_react_enqueue_assets');
 
 // Entrega a React la configuración pública, los logos y los menús del sitio.
 function dipe_react_print_client_config()

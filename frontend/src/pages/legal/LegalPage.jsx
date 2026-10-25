@@ -1,9 +1,11 @@
 import { EditorialContent } from '../../components/content/EditorialContent';
 import { FitText } from '../../components/content/FitText';
 import { legalMedia } from './legalMedia';
+import { legalPages } from './legalContent';
 import './LegalPage.css';
 
-export function LegalPage({ page }) {
+export function LegalPage({ slug }) {
+  const page = legalPages[slug];
   return <div className="dipe-legal">
     <header className="dipe-legal__hero" style={legalMedia.heroImage ? { backgroundImage: `url("${legalMedia.heroImage}")` } : undefined}>
       <div className="dipe-legal__container">

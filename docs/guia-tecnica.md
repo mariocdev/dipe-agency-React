@@ -41,6 +41,7 @@ frontend/
   src/pages/         páginas y plantillas por dominio
   src/components/    secciones y elementos compartidos
   src/lib/           REST, rutas, configuración y navegación
+  src/lib/commerce/  configuración, filtros, Store API/carrito, catálogo, formato y variaciones
   src/hooks/         comportamiento compartido
   src/styles/        identidad, estilos globales y responsive
 wp-content/
@@ -76,6 +77,8 @@ Si se parte de una aplicación React nueva, reproducir estas decisiones:
 - Activar el manifiesto de Vite y configurar la salida en `wp-content/themes/dipe-react/assets/`.
 - Hacer que el tema lea `assets/.vite/manifest.json` para cargar los nombres generados de JS y CSS.
 
+La entrada resuelve e importa la plantilla de la URL/contexto WordPress antes de montar React; después carga el responsive compartido para conservar su prioridad. El tema implementa la lectura del manifiesto en `inc/assets.php`, incluyendo el CSS de sus imports estáticos. Catálogo, ficha, cuenta y checkout se cargan por separado. [Refactor, archivos y despliegue del 26-10-2026](refactor-2026-10-26.md).
+
 La implementación está en [vite.config.js](../frontend/vite.config.js). La compilación se realiza fuera del hosting; producción recibe archivos estáticos. No hace falta Node en el servidor WordPress. Se mantiene el procedimiento de compilación ya acordado con el propietario, sin repetir sus comandos en esta entrega.
 
 ### 3. Crear e instalar el tema
@@ -103,7 +106,7 @@ Copiar `wp-content/plugins/dipe-core/` al destino y activarlo. Los grupos de cam
 | WebP Express | Entrega de imágenes optimizadas | Configurar conversión y entrega para el servidor; comprobar también imágenes creadas por React |
 | CookieYes | Gestión del consentimiento | Completar inventario de servicios, bloqueo previo cuando corresponda y acceso a preferencias |
 
-Yoast y WebP Express constan en la continuidad del proyecto; su configuración efectiva en servidor no se deduce de este checkout. CookieYes es el gestor elegido y su revisión final sigue pendiente. Los paquetes externos y sus licencias se obtienen por separado. La integración anterior de caché se ha retirado; no se necesita un plugin sustituto para iniciar la tienda. El usuario confirma WooCommerce instalado el 25-10-2026; su configuración e integración React siguen el [plan de tienda](plan-tienda-headless.md).
+Yoast y WebP Express constan en la continuidad del proyecto; su configuración efectiva en servidor no se deduce de este checkout. CookieYes es el gestor elegido y su revisión final sigue pendiente. Los paquetes externos y sus licencias se obtienen por separado. La integración anterior de caché se ha retirado; no se necesita un plugin sustituto para iniciar la tienda. El usuario confirma WooCommerce instalado el 25-10-2026; el catálogo, la ficha y el carrito React y la compra/cuenta nativas están implementados según la [guía de tienda](tienda-frontend.md), con configuración y revisión comercial pendientes en servidor.
 
 Los formularios usan `wp_mail()` y PHPMailer de WordPress mediante código propio. No requieren Elementor ni un plugin SMTP adicional. No se añade por defecto un plugin de seguridad; los controles del hosting y el mantenimiento forman parte de la operación.
 

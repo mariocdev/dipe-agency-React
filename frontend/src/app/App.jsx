@@ -5,21 +5,10 @@ import { IntroAnimation } from '../components/layout/IntroAnimation';
 import { PageContent } from '../components/layout/PageContent';
 import { siteConfig } from '../lib/site';
 import { formThankYouPages } from '../lib/formThankYou';
-import { BlogArchive, BlogPost } from '../pages/blog/BlogPages';
-import { Home } from '../pages/home/Home';
-import { ProjectDetail } from '../pages/projects/ProjectDetail';
-import { ProjectCategoryArchive, ProjectsArchive } from '../pages/projects/ProjectsArchive';
-import { WebDevelopment } from '../pages/web-development/WebDevelopment';
-import { DigitalTransformation } from '../pages/digital-transformation/DigitalTransformation';
-import { ShopPages } from '../pages/shop/ShopPages';
 import { CartProvider } from '../components/commerce/CartProvider';
 import { FloatingCart } from '../components/commerce/FloatingCart';
-import { Agency } from '../pages/agency/Agency';
-import { Contact } from '../pages/contact/Contact';
-import { LegalPage } from '../pages/legal/LegalPage';
-import { legalPages } from '../pages/legal/legalContent';
+import { legalPageSlugs } from '../pages/legal/legalRoutes';
 import { NotFoundPage, ThankYouPage } from '../pages/system/SystemPages';
-import { ServiceDevelopment } from '../pages/web-development/ServiceDevelopment';
 import { developmentServiceRoutes } from '../pages/web-development/developmentServiceRoutes';
 
 const introSessionKey = 'dipe-intro-shown-v1';
@@ -44,17 +33,14 @@ function Shell({ children, effectsEnabled }) {
   </>;
 }
 
-function Failure({ error }) {
-  return <div className="alert alert-danger" role="alert">No se ha podido cargar el contenido. {error.message}</div>;
+// Cada navegación carga un documento WordPress: importar solo su plantilla antes de montar.
+async function pageFrom(load, name, props) {
+  const module = await load();
+  const Page = module[name];
+  return <Page {...props} />;
 }
 
-// Selecciona la página según la URL y coordina la intro de entrada.
-export function App() {
-  const [showIntro, setShowIntro] = useState(shouldShowIntro);
-  const finishIntro = useCallback(() => {
-    try { window.sessionStorage.setItem(introSessionKey, '1'); } catch { /* La navegación continúa si el almacenamiento está desactivado. */ }
-    setShowIntro(false);
-  }, []);
+export async function loadAppPage() {
   const currentPath = window.location.pathname;
   const searchTerm = new URLSearchParams(window.location.search).get('s');
   const basePath = (siteConfig.basePath || '/').replace(/\/$/, '');
@@ -64,25 +50,37 @@ export function App() {
   const postMatch = path.match(/^\/blog\/([^/]+)$/);
   const categoryMatch = path.match(/^\/categoria\/(.+)$/);
   const serviceId = Object.keys(developmentServiceRoutes).find((key) => developmentServiceRoutes[key].replace(/\/$/, '') === path);
-  const legalPage = Object.hasOwn(legalPages, path.slice(1)) ? legalPages[path.slice(1)] : null;
+  const legalSlug = Object.values(legalPageSlugs).find((slug) => slug === path.slice(1));
   const thankYouPage = Object.values(formThankYouPages).find((page) => page.path.replace(/\/$/, '') === path);
-  let page = <NotFoundPage />;
-  if (siteConfig.commerce?.enabled && siteConfig.commerce.context) page = <ShopPages context={siteConfig.commerce.context} onNotFound={NotFoundPage} />;
-  else if (path === '/' && searchTerm !== null) page = <BlogArchive searchTerm={searchTerm} />;
-  else if (path === '/') page = <Home />;
-  else if (path === '/desarrollo-web') page = <WebDevelopment />;
-  else if (path === '/transformacion-digital') page = <DigitalTransformation />;
-  else if (path === '/agencia-desarrollo-web') page = <Agency />;
-  else if (path === '/contacto') page = <Contact />;
-  else if (thankYouPage) page = <ThankYouPage title={thankYouPage.title} />;
-  else if (legalPage) page = <LegalPage page={legalPage} />;
-  else if (serviceId) page = <ServiceDevelopment serviceId={serviceId} />;
-  else if (path === '/proyectos') page = <ProjectsArchive />;
-  else if (projectCategoryMatch) page = <ProjectCategoryArchive slug={decodeURIComponent(projectCategoryMatch[1])} onNotFound={NotFoundPage} />;
-  else if (projectMatch) page = <ProjectDetail slug={decodeURIComponent(projectMatch[1])} onNotFound={NotFoundPage} />;
-  else if (path === '/blog') page = <BlogArchive />;
-  else if (postMatch) page = <BlogPost slug={decodeURIComponent(postMatch[1])} onNotFound={NotFoundPage} />;
-  else if (categoryMatch) page = <BlogArchive categorySlug={decodeURIComponent(categoryMatch[1].split('/').at(-1))} onNotFound={NotFoundPage} />;
+  if (siteConfig.commerce?.enabled && siteConfig.commerce.context) {
+    const { loadShopPage } = await import('../pages/shop/ShopPages');
+    return loadShopPage(siteConfig.commerce.context, NotFoundPage);
+  }
+  if (path === '/' && searchTerm !== null) return pageFrom(() => import('../pages/blog/BlogArchive'), 'BlogArchive', { searchTerm });
+  if (path === '/') return pageFrom(() => import('../pages/home/Home'), 'Home');
+  if (path === '/desarrollo-web') return pageFrom(() => import('../pages/web-development/WebDevelopment'), 'WebDevelopment');
+  if (path === '/transformacion-digital') return pageFrom(() => import('../pages/digital-transformation/DigitalTransformation'), 'DigitalTransformation');
+  if (path === '/agencia-desarrollo-web') return pageFrom(() => import('../pages/agency/Agency'), 'Agency');
+  if (path === '/contacto') return pageFrom(() => import('../pages/contact/Contact'), 'Contact');
+  if (thankYouPage) return <ThankYouPage title={thankYouPage.title} />;
+  if (legalSlug) return pageFrom(() => import('../pages/legal/LegalPage'), 'LegalPage', { slug: legalSlug });
+  if (serviceId) return pageFrom(() => import('../pages/web-development/ServiceDevelopment'), 'ServiceDevelopment', { serviceId });
+  if (path === '/proyectos') return pageFrom(() => import('../pages/projects/ProjectsArchive'), 'ProjectsArchive');
+  if (projectCategoryMatch) return pageFrom(() => import('../pages/projects/ProjectsArchive'), 'ProjectCategoryArchive', { slug: decodeURIComponent(projectCategoryMatch[1]), onNotFound: NotFoundPage });
+  if (projectMatch) return pageFrom(() => import('../pages/projects/ProjectDetail'), 'ProjectDetail', { slug: decodeURIComponent(projectMatch[1]), onNotFound: NotFoundPage });
+  if (path === '/blog') return pageFrom(() => import('../pages/blog/BlogArchive'), 'BlogArchive');
+  if (postMatch) return pageFrom(() => import('../pages/blog/BlogPost'), 'BlogPost', { slug: decodeURIComponent(postMatch[1]), onNotFound: NotFoundPage });
+  if (categoryMatch) return pageFrom(() => import('../pages/blog/BlogArchive'), 'BlogArchive', { categorySlug: decodeURIComponent(categoryMatch[1].split('/').at(-1)), onNotFound: NotFoundPage });
+  return <NotFoundPage />;
+}
+
+// Mantiene una sola instancia del shell, del carrito y de los formularios nativos.
+export function App({ page }) {
+  const [showIntro, setShowIntro] = useState(shouldShowIntro);
+  const finishIntro = useCallback(() => {
+    try { window.sessionStorage.setItem(introSessionKey, '1'); } catch { /* La navegación continúa si el almacenamiento está desactivado. */ }
+    setShowIntro(false);
+  }, []);
   return <CartProvider>
     <div inert={showIntro ? true : undefined} aria-busy={showIntro}>
       <Shell effectsEnabled={!showIntro}>{page}</Shell>
