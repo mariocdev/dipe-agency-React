@@ -121,7 +121,7 @@ export function ProductDetail({ context, onNotFound: NotFound }) {
     );
     return () => controller.abort();
   }, [context.id, context.slug, revision]);
-  if (state.loading) return <><ShopHero title="La colección Dipe" compact heading={false} description="" /><div className="dipe-shop__container dipe-product__loading" role="status">Cargando producto…</div></>;
+  if (state.loading) return <div className="dipe-page-loading"><span className="visually-hidden" role="status">Cargando producto…</span></div>;
   if (state.error) return <div className="dipe-shop__container"><ShopMessage title="No hemos podido cargar este producto" retry={() => setRevision((value) => value + 1)}><p>Vuelve a intentarlo en unos instantes.</p></ShopMessage></div>;
   if (!state.product) return <NotFound />;
   return <LoadedProduct key={state.product.id} product={state.product} />;

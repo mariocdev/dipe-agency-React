@@ -78,11 +78,11 @@ export function ReviewsSection() {
   }, []);
 
   useEffect(() => {
-    if (isPaused || prefersReducedMotion || reviews.length < 2) return undefined;
+    if (isPaused || isDragging || prefersReducedMotion || reviews.length < 2) return undefined;
 
     const interval = window.setInterval(showNextReview, 6000);
     return () => window.clearInterval(interval);
-  }, [activeIndex, isPaused, prefersReducedMotion]);
+  }, [activeIndex, isPaused, isDragging, prefersReducedMotion]);
 
   const handlePointerDown = (event) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;

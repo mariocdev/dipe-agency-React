@@ -448,8 +448,39 @@ function dipe_core_get_project_card_image_for_rest( $project ) {
 	);
 }
 
+// Sirve la captura original en la Home nueva para evitar el escalado de imágenes altas.
+function dipe_core_get_project_original_image_for_rest( $project, $field, $request ) {
+	if ( '1' !== $request->get_param( 'dipe_original_project_image' ) ) {
+		return null;
+	}
+
+	$image_id = absint( get_post_meta( $project['id'], 'dipe_project_modern_home_image', true ) );
+	if ( ! $image_id ) {
+		$image_id = absint( get_post_meta( $project['id'], 'dipe_project_home_card_image', true ) );
+	}
+	$image_url = $image_id ? wp_get_original_image_url( $image_id ) : false;
+
+	return $image_url ? array(
+		'url' => $image_url,
+		'alt' => get_post_meta( $image_id, '_wp_attachment_image_alt', true ),
+	) : null;
+}
+
 // Añade al proyecto los campos REST que necesita el frontend.
 function dipe_core_register_project_rest_fields() {
+	register_rest_field(
+		'dipe_proyecto',
+		'dipe_project_original_image',
+		array(
+			'get_callback' => 'dipe_core_get_project_original_image_for_rest',
+			'schema'       => array(
+				'description' => __( 'Imagen original del proyecto para la nueva Home.', 'dipe-core' ),
+				'type'        => array( 'object', 'null' ),
+				'context'     => array( 'view', 'edit' ),
+				'readonly'    => true,
+			),
+		)
+	);
 	register_rest_field(
 		'dipe_proyecto',
 		'dipe_project_card_image',

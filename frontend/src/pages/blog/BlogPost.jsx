@@ -49,7 +49,7 @@ export function BlogPost({ slug, onNotFound }) {
     return () => { active = false; };
   }, [slug]);
 
-  if (state.loading) return <section className="dipe-post__container dipe-post__status"><p role="status">Cargando entrada…</p></section>;
+  if (state.loading) return <div className="dipe-page-loading"><span className="visually-hidden" role="status">Cargando entrada…</span></div>;
   if (state.error) return <section className="dipe-post__container dipe-post__status"><p role="alert">No se ha podido cargar la entrada.</p></section>;
   if (!state.post) return onNotFound ? onNotFound() : <section className="dipe-post__container dipe-post__status"><h1>Entrada no encontrada</h1></section>;
 

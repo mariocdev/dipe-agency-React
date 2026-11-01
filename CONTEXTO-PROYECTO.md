@@ -4,9 +4,61 @@
 
 ## Proceso de trabajo compartido (01-11-2026)
 
+- Cargas iniciales: se reserva altura de pantalla y se ocultan visualmente los mensajes de espera de Home alternativa, ficha y categoría de proyectos, entrada y producto; los proyectos destacados de ambas Home también ocultan el mensaje y la Home nueva reserva el espacio del carrusel. Los avisos siguen disponibles para lectores de pantalla. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión del usuario en servidor.
+
 - Los estilos base de la sección se han extraído de Home.css a WorkProcessSection.css y se importan desde el componente compartido, para cargarlos también en las páginas que no cargan Home. Las reglas responsive globales se conservan. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue automático; el usuario confirma que el resultado es correcto.
 
 ## Nueva propuesta de Home (01-11-2026)
+
+- **Aprobación del usuario:** considera perfecto el estado local de esta iteración y autoriza subir todos los cambios a `main` de GitHub. Esta confirmación no identifica una versión desplegada por FTP.
+
+- **Carrusel de reseñas:** sustituida la aparición individual por una pista que desplaza las tarjetas juntas, con dos visibles en escritorio y una en móvil. El retorno del último al primero recorre la pista en sentido inverso. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y táctil del usuario.
+
+- **Proyectos en móvil:** las tarjetas laterales se acercan al centro para que la principal las cubra más. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y táctil del usuario.
+
+- **Transición de reseñas:** las tarjetas aparecen con un desplazamiento corto y desvanecimiento al cambiar; la animación se desactiva con movimiento reducido. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Clic en proyectos laterales:** se cancela la navegación predeterminada antes de centrar la tarjeta; la ficha se abre al pulsar el proyecto que ya está en el centro. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión del usuario.
+
+- **Ajuste del final del giro:** se mantiene una composición estable de las tarjetas y se elimina el desplazamiento adicional de la tarjeta central al pasar el cursor o recibir foco; el giro y la sombra se conservan. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisar si desaparece el cambio al terminar el movimiento.
+
+- **Imagen al centrarse:** cada tarjeta de proyecto conserva el mismo elemento y la misma imagen al pasar de lateral a central, evitando que React los sustituya durante el giro; las laterales siguen siendo seleccionables con ratón, tacto y teclado. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y de interacción del usuario.
+
+- **Contorno al detener el carrusel:** se unifica el recorte redondeado de la imagen con el de la tarjeta y se elimina el contorno salvo al navegar con teclado, donde se muestra un indicador naranja. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario al detenerse el carrusel.
+
+- **Borde de tarjetas de proyectos:** retirada la ampliación horizontal previa tras la aclaración del usuario; se elimina el borde de la tarjeta y se ajusta la imagen para cubrir completamente su área, sin fondo negro en los extremos. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente confirmar el resultado visual en servidor.
+
+- **Flecha de cabecera:** el inicio queda anclado a la última palabra del texto, también cuando este ocupa varias líneas. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Estado inicial de maqueta:** las tres secciones nacen con la clase de maqueta antes del primer renderizado cuando hay animación; la limpieza de efectos ya no la retira durante una reinicialización. Se respeta movimiento reducido y se mantiene la salida de respaldo si falla la animación. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión de cargas y recargas del usuario.
+
+- **Palabras en responsive:** eliminados los cortes forzados de palabras de la Home nueva. Por decisión posterior del usuario, metodología conserva siempre dos columnas y reduce el tamaño del título y el padding horizontal en móviles estrechos para que quepa «Descubrimiento». FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Transición de proyectos:** las tarjetas que entran y salen se desplazan en profundidad detrás del carrusel con desvanecimiento, en escritorio y móvil; se conserva la preferencia de movimiento reducido. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y táctil del usuario.
+
+- **Flecha del banner:** reflejada horizontalmente y situada cerca del final del texto, por petición del usuario. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual.
+
+- **Separaciones responsive:** reducidos a 45 px los huecos del banner, servicios y proyectos, con anotaciones más compactas; se limita también la separación del blog a su padding inferior. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual de espacios y anotaciones por el usuario.
+
+- **Flecha del banner:** se recupera la posición original del texto; solo la flecha se refleja hacia abajo y a la derecha. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Carrusel móvil y flecha del banner:** tarjeta central de proyectos más ancha y superpuesta a las laterales; corregida la pérdida de captura del puntero al iniciar el arrastre táctil. La flecha del banner se refleja hacia el interior. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión táctil y visual del usuario.
+
+- **Carruseles y contacto:** los carruseles automáticos de proyectos y reseñas de la Home nueva se detienen durante el arrastre y reinician la espera tras un cambio manual; el de reseñas de la Home original mantiene la pausa durante todo el arrastre. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión táctil del usuario.
+
+- **Longitud de las flechas:** los trazos parten del texto y son más cortos, orientados hacia el interior sin exigir que alcancen el centro. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Inicio de las flechas:** se acerca el arranque de los trazos al borde de sus anotaciones manteniendo la dirección hacia los bloques. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual del usuario.
+
+- **Carrusel de proyectos en móvil:** muestra tres tarjetas verticales con título, imágenes actuales recortadas y transición con perspectiva; pendientes las imágenes verticales definitivas. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y táctil del usuario.
+
+- **Animación y flechas responsive:** en móvil la animación del banner ocupa el ancho del contenido; las flechas de maqueta se dimensionan respecto a sus bloques y apuntan hacia su zona central en escritorio y responsive. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual por el usuario.
+
+- **Cuadro de metodología:** en móvil y tablet reserva la altura del texto más largo para evitar saltos al cambiar de paso, adaptándose al ancho disponible. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión del usuario.
+
+- **Móvil y tablet:** en la disposición vertical se reserva espacio para las anotaciones del banner, servicios y proyectos; hasta 880 px el desplazamiento entre secciones es libre para evitar el salto al terminar secciones altas. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisión visual y del scroll por el usuario.
+
+- **Nitidez del carrusel:** la Home nueva solicita la captura original de WordPress, evitando la reducción automática de imágenes altas cuando existe el archivo original; mantiene las imágenes previas como respaldo. FTP: `wp-content/plugins/dipe-core/dipe-core.php` y assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue; pendiente revisar nitidez y carga en servidor. La mejora depende de la resolución y calidad del original.
 
 - **Carga selectiva:** la Home alternativa y su CSS se importan al seleccionarla; el estilo del selector permanece en la Home original. Durante la descarga se muestra un estado de carga. Comprobados sintaxis de 40 archivos JS/JSX modificados y casos simulados de filtros, variaciones y cola de carrito; PHP no estaba disponible y no se verificó en ejecución. FTP: assets completos del tema con manifiesto tras compilación del usuario. Pendiente revisión visual y funcional por el usuario.
 
@@ -468,3 +520,13 @@ PHP propio, solo para sincronizar comentarios por FTP si se desea; subir los mó
 - Historia detallada hasta 18-10-2026 (incluidas iteraciones de maquetación y problemas históricos): `docs/historico-contexto-2026-10-18.md`. **No leer automáticamente**.
 
 **Regla de continuidad:** documentar decisiones y pendientes concretos, no copiar conversaciones, diffs ni descripciones exhaustivas de cada componente. El repositorio real siempre manda.
+# Home alternativa: secuencia de maqueta (01-11-2026)
+
+- El hero, servicios y proyectos construyen las guías por etapas: cuadrícula, contornos, marcos y flechas SVG con anotaciones, antes de revelar el diseño. La animación ya no bloquea el desplazamiento; se conserva la navegación entre secciones existente. Movimiento reducido muestra el diseño final directamente.
+- Tras el feedback, se amplía la construcción a 2,1 segundos antes de retirar la maqueta y se excluyen los títulos de servicios y proyectos de la entrada general por scroll, para mantenerlos visibles en su sitio.
+- Corregida la aparición inicial del diseño detrás de los marcos animados: el planeta, las órbitas y las imágenes de proyectos permanecen ocultos durante la maqueta y se revelan al terminarla. Pendiente revisión del usuario tras recargar en servidor.
+- Las flechas separan línea y punta para dibujarlas consecutivamente, sin mostrar la punta antes de tiempo. Pendiente revisión visual del usuario en servidor.
+- Corrección posterior: un único trazo por flecha y dos brazos que parten del final de la línea al mismo tiempo; se elimina el segundo trazo desfasado. Pendiente revisión visual en servidor.
+- Ante los segmentos visibles en las capturas, se sustituye el guion SVG animado por una revelación progresiva de la línea y después de los brazos, evitando depender del escalado del trazo. Pendiente revisión visual del usuario.
+- Cambios locales en `frontend/src/pages/home/ModernHome.jsx` y `ModernHome.css`. Sin compilación ni comprobaciones locales o remotas. Pendiente de compilar, subir los assets completos del tema con su manifiesto y validar visualmente el ritmo, la navegación y el responsive en servidor.
+

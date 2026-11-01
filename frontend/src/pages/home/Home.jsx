@@ -124,7 +124,7 @@ export function Home() {
   };
 
   return <>
-    {modern ? <Suspense fallback={<p role="status">Cargando la nueva Home…</p>}><ModernHome serviceCards={serviceCards} workSteps={workSteps} /></Suspense> : <OriginalHome />}
+    {modern ? <Suspense fallback={<div className="dipe-page-loading"><span className="visually-hidden" role="status">Cargando la nueva Home…</span></div>}><ModernHome serviceCards={serviceCards} workSteps={workSteps} /></Suspense> : <OriginalHome />}
     <button className="dipe-home-version" type="button" onClick={toggleVersion} aria-label={modern ? 'Cambiar a la Home original' : 'Probar la nueva Home'}>
       <span aria-hidden="true">{modern ? '↶' : '✦'}</span>
     </button>

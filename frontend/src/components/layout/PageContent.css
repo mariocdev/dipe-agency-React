@@ -1,3 +1,8 @@
+/* Mantiene el pie fuera de la pantalla mientras se prepara una página. */
+.dipe-page-loading {
+  min-height: 100vh;
+}
+
 /* JavaScript prepara los bloques que aún no han cruzado la línea de aparición. */
 @media (prefers-reduced-motion: no-preference) {
   .dipe-scroll-reveal--pending {

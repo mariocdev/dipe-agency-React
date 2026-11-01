@@ -112,7 +112,7 @@ export function ProjectDetail({ slug, onNotFound }) {
     return () => { active = false; };
   }, [slug]);
 
-  if (state.loading) return <section className="container py-5"><p className="text-secondary" role="status">Cargando proyecto…</p></section>;
+  if (state.loading) return <div className="dipe-page-loading"><span className="visually-hidden" role="status">Cargando proyecto…</span></div>;
   if (state.error) return <section className="container py-5"><p className="alert alert-danger" role="alert">No se ha podido cargar el contenido. {state.error.message}</p></section>;
   if (!state.data) return onNotFound();
 

@@ -70,7 +70,7 @@ export function FeaturedProjectsSection() {
       </header>
 
       <div className="dipe-featured-projects__canvas">
-        {state.loading && <p className="dipe-featured-projects__message" role="status">Cargando proyectos…</p>}
+        {state.loading && <span className="visually-hidden" role="status">Cargando proyectos…</span>}
         {state.error && <p className="dipe-featured-projects__message" role="alert">No se han podido cargar los proyectos destacados.</p>}
         {!state.loading && !state.error && state.data.length === 0 && <p className="dipe-featured-projects__message">Próximamente compartiremos nuevos proyectos.</p>}
         {state.data.length > 0 && <div className="dipe-featured-projects__grid">

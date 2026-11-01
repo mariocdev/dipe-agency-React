@@ -39,12 +39,12 @@
 @media (min-width: 681px) and (max-width: 1240px) { .modern-home__service--brand { display: flex; } }
 .modern-home__projects { overflow: hidden; background: #f6f6f6; }
 .modern-home__carousel { position: relative; height: clamp(280px, 37vw, 540px); perspective: 1100px; }
-.modern-home__project { position: absolute; top: 4%; left: 20%; width: 60%; height: 92%; opacity: 0; visibility: hidden; transition: transform .4s ease, opacity .4s ease; }
-.modern-home__project--active { z-index: 3; opacity: 1; visibility: visible; }
+.modern-home__project { position: absolute; top: 4%; left: 20%; width: 60%; height: 92%; opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(0) translateZ(-240px) scale(.65) rotateY(0); transition: transform .65s cubic-bezier(.22, 1, .36, 1), opacity .65s ease, visibility .65s; will-change: transform, opacity; }
+.modern-home__project--active { z-index: 3; opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(0) translateZ(0) scale(1) rotateY(0); }
 .modern-home__project--previous, .modern-home__project--next { opacity: .55; visibility: visible; }
 .modern-home__project--previous { z-index: 1; transform: translateX(-48%) scale(.82) rotateY(12deg); }
 .modern-home__project--next { z-index: 1; transform: translateX(48%) scale(.82) rotateY(-12deg); }
-.modern-home__project .modern-home__project-card { display: flex; flex-direction: column; height: 100%; overflow: hidden; border: 1px solid #e6e6e6; border-radius: 12px; background: #fff; box-shadow: 0 16px 40px rgb(0 0 0 / 12%); color: #1d1d1d; text-decoration: none; }
+.modern-home__project .modern-home__project-card { display: flex; flex-direction: column; height: 100%; overflow: hidden; border: 0; border-radius: 12px; background: #fff; box-shadow: 0 16px 40px rgb(0 0 0 / 12%); color: #1d1d1d; text-decoration: none; }
 .modern-home__project img { width: 100%; height: auto; object-position: top; }
 .modern-home__project h3 { margin: 0; font-size: 18px; }
 .modern-home__controls { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 25px; font-size: 13px; }
@@ -76,14 +76,17 @@
 .modern-home__controls button { display: grid; place-items: center; transition: background .2s, color .2s; }
 .modern-home__controls button:hover { background: var(--dipe-color-orange); color: #fff; }
 .modern-home__project { top: 5%; left: 23%; width: 54%; height: 90%; }
-.modern-home__project--previous, .modern-home__project--next { opacity: .8; }
-.modern-home__project--previous { transform: translateX(-58%) scale(.83) rotateY(10deg); }
-.modern-home__project--next { transform: translateX(58%) scale(.83) rotateY(-10deg); }
-.modern-home__project .modern-home__project-card { position: relative; display: block; background: #1d1d1d; }
-.modern-home__project--active .modern-home__project-card { transition: transform .25s ease, box-shadow .25s ease; }
-.modern-home__project--active .modern-home__project-card:hover, .modern-home__project--active .modern-home__project-card:focus-visible { transform: translateY(-7px); box-shadow: 0 16px 40px rgb(255 134 0 / 25%); }
+.modern-home__project--previous, .modern-home__project--next { opacity: .8; pointer-events: auto; }
+.modern-home__project--previous { transform: translateX(-58%) translateZ(-90px) scale(.83) rotateY(10deg); }
+.modern-home__project--next { transform: translateX(58%) translateZ(-90px) scale(.83) rotateY(-10deg); }
+.modern-home__project .modern-home__project-card { position: relative; display: block; }
+.modern-home__project .modern-home__project-card:not(:focus-visible) { outline: none; }
+.modern-home__project .modern-home__project-card:focus-visible { outline: 2px solid var(--dipe-color-orange); outline-offset: 3px; }
+.modern-home__project .modern-home__project-card { transition: box-shadow .25s ease; }
+.modern-home__project--active .modern-home__project-card:hover, .modern-home__project--active .modern-home__project-card:focus-visible { box-shadow: 0 16px 40px rgb(255 134 0 / 25%); }
 .modern-home__project img { display: block; width: 100%; height: auto; }
-.modern-home__project-media { position: absolute; inset: 0; overflow: hidden; }
+.modern-home__project-media { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; backface-visibility: hidden; }
+.modern-home__project .modern-home__project-media img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
 .modern-home__project-info { position: absolute; inset: auto 0 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 50px 24px 20px; background: linear-gradient(transparent, rgb(0 0 0 / 85%)); color: #fff; text-align: left; }
 .modern-home__project-info h3 { color: #fff; }
 .modern-home__project-info span { flex: 0 0 auto; color: #fff; font-size: 14px; }
@@ -164,10 +167,9 @@
 .modern-home__carousel:active, .modern-home__reviews-grid:active { cursor: grabbing; }
 .modern-home__project .modern-home__project-card { width: 100%; padding: 0; text-align: left; font: inherit; cursor: pointer; }
 .modern-home .dipe-logo-carousel__track { pointer-events: none; user-select: none; }
-.modern-home__reviews-grid { align-items: stretch; }
-.modern-home__reviews-grid .modern-home__review { grid-row: 1; grid-column: 1; visibility: hidden; pointer-events: none; }
-.modern-home__reviews-grid .modern-home__review.is-current { visibility: visible; pointer-events: auto; }
-.modern-home__reviews-grid .modern-home__review.is-next { grid-column: 2; visibility: visible; pointer-events: auto; }
+.modern-home__reviews-grid { display: block; overflow: hidden; }
+.modern-home__reviews-track { display: flex; gap: 20px; transform: translateX(calc(var(--review-offset) * (50% + 10px))); transition: transform .5s ease-in-out; }
+.modern-home__reviews-grid .modern-home__review { flex: 0 0 calc((100% - 20px) / 2); min-width: 0; }
 @media (max-width: 880px) {
   .modern-home__hero-inner { grid-template-columns: 1fr 0.65fr; }
   .modern-home__services-grid { grid-template-columns: 1fr; }
@@ -188,12 +190,13 @@
   .modern-home__project h3 { font-size: 16px; }
   .modern-home__steps { grid-template-columns: 1fr; }
   .modern-home__reviews-grid { grid-template-columns: 1fr; }
-  .modern-home__reviews-grid .modern-home__review.is-next { grid-column: 1; visibility: hidden; pointer-events: none; }
+  .modern-home__reviews-track { transform: translateX(calc(var(--review-offset) * (100% + 20px))); }
+  .modern-home__reviews-grid .modern-home__review { flex-basis: 100%; }
   .modern-home .dipe-blog__grid { grid-template-columns: 1fr; }
   .modern-home__project { left: 8%; width: 84%; }
   .modern-home__steps::before, .modern-home__steps::after { display: none; }
   .modern-home__step:nth-child(even) { transform: none; }
-  .modern-home__process .modern-home__steps { grid-template-columns: 1fr; gap: 22px; }
+  .modern-home__process .modern-home__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
   .modern-home__process-visual { width: 100%; min-height: 0; }
   .modern-home__process-ring { position: relative; grid-row: 2; width: min(65%, 230px); margin-top: 30px; }
 }
@@ -236,24 +239,26 @@
 
 @media (max-width: 680px) {
   .modern-home__services-grid { grid-template-columns: minmax(0, 1fr); }
-  .modern-home__hero .modern-home__orbit { width: min(70%, 230px); }
+  .modern-home__hero .modern-home__orbit { width: 100%; }
   .modern-home__service { padding: 25px; }
   .modern-home__service h3 { margin-top: 25px; }
   .modern-home__process .modern-home__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
   .modern-home__process .modern-home__step { padding: 0; }
   .modern-home__process-ring { grid-row: 2; }
-  .modern-home__carousel { display: grid; height: auto; perspective: none; }
-  .modern-home__project { display: none; position: relative; inset: auto; width: 100%; height: auto; transform: none; }
-  .modern-home__project--active { display: block; grid-area: 1 / 1; }
-  .modern-home__project .modern-home__project-card { display: block; height: auto; aspect-ratio: 16 / 9; background: #1d1d1d; }
-  .modern-home__project-info { padding: 40px 16px 16px; }
+  .modern-home__carousel { display: block; height: auto; aspect-ratio: 1.3; perspective: 700px; }
+  .modern-home__project { display: block; position: absolute; top: 5%; left: 24%; width: 52%; height: 90%; }
+  .modern-home__project--active { transform: translateX(0) translateZ(0) scale(1) rotateY(0); }
+  .modern-home__project--previous { transform: translateX(-43%) translateZ(-60px) scale(.84) rotateY(22deg); }
+  .modern-home__project--next { transform: translateX(43%) translateZ(-60px) scale(.84) rotateY(-22deg); }
+  .modern-home__project .modern-home__project-card { height: 100%; }
+  .modern-home__project-info { padding: 35px 10px 12px; }
+  .modern-home__project-info h3 { font-size: 14px; line-height: 1.2; }
+  .modern-home__project-info span { display: none; }
   .modern-home__reviews-grid { grid-template-columns: minmax(0, 1fr); }
   .modern-home__review { min-width: 0; padding: 25px; }
-  .modern-home__service h3, .modern-home__step h3, .modern-home__project h3, .modern-home__review blockquote, .modern-home .dipe-blog__card h3 { overflow-wrap: anywhere; }
 }
 
 @media (max-width: 380px) {
-  .modern-home__process .modern-home__steps { grid-template-columns: minmax(0, 1fr); }
   .modern-home__button, .modern-home__projects .modern-home__text-link, .modern-home .dipe-blog__all-link { max-width: 100%; padding-inline: 20px; text-align: center; }
 }
 
@@ -293,15 +298,22 @@
   .modern-home__process .modern-home__step.is-selected { border-color: var(--dipe-color-orange); background: transparent; box-shadow: 0 8px 24px rgb(255 134 0 / 13%); }
   .modern-home__process .modern-home__step:hover, .modern-home__process .modern-home__step:focus-visible { background: transparent; transition-delay: 0s; }
   .modern-home__process .modern-home__step-icon { width: 48px; height: 48px; margin-bottom: 12px; background: transparent; }
-  .modern-home__step-title { margin: 0; overflow-wrap: anywhere; }
+  .modern-home__step-title { margin: 0; }
   .modern-home__step-description { display: none; }
   .modern-home__process-ring { position: absolute; grid-row: auto; width: min(42%, 200px); margin: 0; }
-  .modern-home__process-detail { display: block; margin-top: 20px; padding: 22px; border: 1px solid #454545; border-radius: 12px; background: #242424; }
+  .modern-home__process-detail { display: grid; margin-top: 20px; padding: 22px; border: 1px solid #454545; border-radius: 12px; background: #242424; }
+  .modern-home__process-detail-item { grid-area: 1 / 1; visibility: hidden; }
+  .modern-home__process-detail-item.is-active { visibility: visible; }
   .modern-home__process-detail strong { display: block; color: #ff9b31; font-size: var(--dipe-font-size-h3); }
   .modern-home__process-detail p { margin: 12px 0 0; color: #ddd; font-size: var(--dipe-font-size-body); line-height: 1.6; }
 }
+@media (max-width: 480px) {
+  .modern-home__process .modern-home__step, .modern-home__process .modern-home__step:nth-child(even) { padding-inline: clamp(6px, 2vw, 14px); }
+  .modern-home__process .modern-home__step-title { font-size: clamp(12px, 4vw, 18px); }
+}
 @media (prefers-reduced-motion: reduce) {
   .modern-home__planet, .modern-home__orbit-line, .modern-home__steps::after, .modern-home__process-ring { animation: none; }
+  .modern-home__reviews-track { transition: none; }
   .modern-home__project, .modern-home__project--active .modern-home__project-card, .modern-home__service, .modern-home__review, .modern-home .dipe-blog__card, .modern-home__step-icon, .modern-home__process-ring, .modern-home__process .modern-home__step { transition: none; }
   .modern-home__project--active .modern-home__project-card:hover, .modern-home__project--active .modern-home__project-card:focus-visible, .modern-home__service:hover, .modern-home__service:focus-within, .modern-home__review:hover, .modern-home .dipe-blog__card:hover, .modern-home .dipe-blog__card:focus-within, .modern-home__step:hover .modern-home__step-icon { transform: none; }
   .modern-home__process .modern-home__step:hover, .modern-home__process .modern-home__step:focus-visible { transform: none; }
@@ -312,23 +324,58 @@
 .modern-home__hero.is-blueprint::before, .modern-home__services.is-blueprint::before, .modern-home__projects.is-blueprint::before { opacity: 1; }
 .modern-home__hero > .modern-home__inner, .modern-home__services > .modern-home__inner, .modern-home__projects > .modern-home__inner { position: relative; }
 .modern-home__hero-copy, .modern-home__section-heading { position: relative; }
-.modern-home__sketch-note { position: absolute; z-index: 4; right: 0; bottom: calc(100% + 10px); opacity: 0; color: #55504b; font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive; font-size: 12px; font-style: italic; font-weight: 400; line-height: 1.35; letter-spacing: .01em; pointer-events: none; transition: opacity .6s ease; }
-.modern-home__sketch-note svg { position: absolute; top: 85%; right: calc(100% + 12px); width: clamp(100px, 12vw, 190px); height: clamp(65px, 6vw, 95px); overflow: visible; color: #aaa5a0; }
-.modern-home__sketch-note > span { display: block; max-width: 190px; transform: rotate(-3deg); }
+.modern-home__sketch-note { position: absolute; z-index: 4; inset: 0; opacity: 0; color: #625c56; font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive; font-size: 16px; font-style: italic; font-weight: 600; line-height: 1.35; letter-spacing: .01em; pointer-events: none; transition: opacity .6s ease; }
+.modern-home__sketch-note svg { position: absolute; top: 100%; right: calc(100% - 20px); width: clamp(45px, 6vw, 85px); height: clamp(45px, 5vw, 75px); overflow: visible; color: #aaa5a0; }
+.modern-home__sketch-note > span { position: absolute; right: 0; bottom: calc(100% + 10px); display: block; width: max-content; max-width: 230px; transform: rotate(-3deg); }
+.modern-home__sketch-end { position: relative; display: inline-block; }
+.modern-home__orbit > .modern-home__sketch-note svg { right: 0; }
 .modern-home__services-grid { position: relative; }
-.modern-home__orbit > .modern-home__sketch-note { right: 0; z-index: 4; }
-.modern-home__orbit > .modern-home__sketch-note svg { width: clamp(38px, 5vw, 75px); height: clamp(100px, 14vw, 240px); }
-.modern-home__carousel > .modern-home__sketch-note svg { width: clamp(140px, 16vw, 250px); height: clamp(75px, 7vw, 115px); }
 .is-blueprint .modern-home__sketch-note { opacity: 1; }
 .modern-home__hero h1, .modern-home__section-heading h2 { outline: 1px solid transparent; outline-offset: 12px; transition: outline-color .6s ease; }
 .is-blueprint .modern-home__hero-copy h1, .is-blueprint .modern-home__section-heading h2 { outline-color: rgb(45 45 45 / 28%); }
 .modern-home__hero .modern-home__orbit::after, .modern-home__projects .modern-home__project-media::after { content: ''; position: absolute; z-index: 3; inset: 0; opacity: 0; border: 1px solid rgb(45 45 45 / 45%); background: linear-gradient(135deg, transparent 49.8%, rgb(45 45 45 / 30%) 50%, transparent 50.2%), linear-gradient(45deg, transparent 49.8%, rgb(45 45 45 / 30%) 50%, transparent 50.2%), #f6f6f6; pointer-events: none; transition: opacity .6s ease; }
 .modern-home__hero.is-blueprint .modern-home__orbit::after, .modern-home__projects.is-blueprint .modern-home__project-media::after { opacity: 1; }
+.modern-home__orbit-line, .modern-home__planet, .modern-home__project-media img { transition: opacity .6s ease; }
+.modern-home__hero.is-blueprint .modern-home__orbit-line, .modern-home__hero.is-blueprint .modern-home__planet, .modern-home__projects.is-blueprint .modern-home__project-media img { opacity: 0; }
+.modern-home__projects.is-blueprint .modern-home__project-media { background: #f6f6f6; }
 .modern-home__service ul, .modern-home__service--brand img, .modern-home__service--brand p { transition: opacity .6s ease; }
 .modern-home__services.is-blueprint .modern-home__service { border-color: rgb(45 45 45 / 35%); border-radius: 0; box-shadow: none; transform: none; }
 .modern-home__services.is-blueprint .modern-home__service ul, .modern-home__services.is-blueprint .modern-home__service--brand img, .modern-home__services.is-blueprint .modern-home__service--brand p { opacity: 0; }
 .modern-home__projects.is-blueprint .modern-home__project-info { z-index: 4; background: transparent; color: #1d1d1d; }
 .modern-home__projects.is-blueprint .modern-home__project-info h3, .modern-home__projects.is-blueprint .modern-home__project-info span { color: #1d1d1d; }
-/* La maqueta aparece directamente; solo se anima su retirada. */
+/* La maqueta conserva su estado inicial hasta que la sección entra en pantalla. */
 .modern-home .is-blueprint, .modern-home .is-blueprint *, .modern-home .is-blueprint::before, .modern-home .is-blueprint::after, .modern-home .is-blueprint *::before, .modern-home .is-blueprint *::after { transition: none !important; }
-@media (max-width: 680px) { .modern-home__sketch-note { bottom: calc(100% + 6px); font-size: 11px; } .modern-home__sketch-note svg { right: calc(100% + 8px); width: 65px; height: 55px; } .modern-home__orbit > .modern-home__sketch-note svg { width: 35px; height: clamp(70px, 25vw, 120px); } .modern-home__carousel > .modern-home__sketch-note svg { width: 85px; height: 65px; } .modern-home__sketch-note > span { max-width: 150px; } }
+.modern-home__hero.is-blueprint .modern-home__orbit::after, .modern-home__projects.is-blueprint .modern-home__project-media::after { clip-path: inset(0 100% 0 0); }
+.is-drawing.is-blueprint::before { animation: modern-grid-in .85s ease-out both; }
+.is-drawing.is-blueprint .modern-home__hero-copy h1, .is-drawing.is-blueprint .modern-home__section-heading h2 { animation: modern-guide-in .7s .15s ease-out both; }
+.modern-home__hero.is-drawing.is-blueprint .modern-home__orbit::after, .modern-home__projects.is-drawing.is-blueprint .modern-home__project-media::after { animation: modern-frame-in 1s .2s cubic-bezier(.22, 1, .36, 1) both; }
+.modern-home__services.is-drawing.is-blueprint .modern-home__service { animation: modern-guide-in .7s ease-out both; }
+.modern-home__services.is-drawing.is-blueprint .modern-home__service:nth-of-type(2) { animation-delay: .16s; }
+.modern-home__services.is-drawing.is-blueprint .modern-home__service:nth-of-type(3) { animation-delay: .32s; }
+.modern-home__services.is-drawing.is-blueprint .modern-home__service:nth-of-type(4) { animation-delay: .48s; }
+.is-blueprint .modern-home__sketch-line { clip-path: inset(0 0 100% 0) fill-box; }
+.is-blueprint .modern-home__sketch-tip { clip-path: inset(100% 0 0 0) fill-box; }
+.is-blueprint .modern-home__sketch-note > span { opacity: 0; }
+.is-drawing.is-blueprint .modern-home__sketch-line { animation: modern-reveal-line .75s .85s linear forwards; }
+.is-drawing.is-blueprint .modern-home__sketch-tip { animation: modern-reveal-tip .2s 1.6s linear forwards; }
+.is-drawing.is-blueprint .modern-home__sketch-note > span { animation: modern-note-in .4s .15s ease-out forwards; }
+@keyframes modern-grid-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modern-guide-in { from { border-color: transparent; outline-color: transparent; } }
+@keyframes modern-frame-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+@keyframes modern-reveal-line { to { clip-path: inset(-2px) fill-box; } }
+@keyframes modern-reveal-tip { to { clip-path: inset(-2px) fill-box; } }
+@keyframes modern-note-in { from { opacity: 0; transform: translateY(4px) rotate(-3deg); } to { opacity: 1; transform: translateY(0) rotate(-3deg); } }
+@media (max-width: 680px) { .modern-home__sketch-note { font-size: 14px; } .modern-home__sketch-note > span { bottom: calc(100% + 6px); max-width: 180px; } }
+
+/* En disposición vertical, dejar sitio a las anotaciones sin cubrir el contenido. */
+@media (max-width: 880px) {
+  .modern-home .modern-home__hero-inner { row-gap: 45px; }
+  .modern-home .modern-home__services .modern-home__section-heading,
+  .modern-home .modern-home__projects .modern-home__section-heading { margin-bottom: 45px; }
+  .modern-home__sketch-note { font-size: 12px; line-height: 1.15; }
+  .modern-home__sketch-note > span { bottom: calc(100% + 4px); max-width: 190px; }
+  .modern-home__services-grid > .modern-home__sketch-note > span,
+  .modern-home__carousel > .modern-home__sketch-note > span { bottom: calc(100% + 4px); }
+  .modern-home .dipe-blog__grid { margin-top: min(30px, var(--dipe-content-gap-limit)); }
+  .modern-home .dipe-blog__all-link { margin-top: min(30px, var(--dipe-content-gap-limit)); }
+}

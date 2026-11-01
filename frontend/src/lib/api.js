@@ -173,13 +173,13 @@ export async function getRelatedServiceTerms({ signal } = {}) {
 }
 
 // Selecciona los proyectos destacados de Home.
-export async function getFeaturedProjects(perPage = 6) {
+export async function getFeaturedProjects(perPage = 6, originalImage = false) {
   const terms = await request('wp/v2/dipe-project-tags?slug=destacados&per_page=1');
   const featuredTerm = terms?.[0];
 
   if (!featuredTerm) return [];
 
-  return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&orderby=date&order=desc&dipe_project_tag=${featuredTerm.id}&acf_format=standard`);
+  return request(`wp/v2/dipe-proyectos?status=publish&per_page=${perPage}&orderby=date&order=desc&dipe_project_tag=${featuredTerm.id}&acf_format=standard${originalImage ? '&dipe_original_project_image=1' : ''}`);
 }
 
 // Recupera la ficha publicada de un proyecto y sus datos relacionados.
@@ -300,7 +300,8 @@ export function projectHomeCardImage(item) {
 
 // La Home alternativa admite una captura propia y conserva la imagen anterior como respaldo.
 export function projectModernHomeCardImage(item) {
-  return normalizeProjectImage(item?.acf?.dipe_project_modern_home_image)
+  return normalizeProjectImage(item?.dipe_project_original_image)
+    || normalizeProjectImage(item?.acf?.dipe_project_modern_home_image)
     || projectHomeCardImage(item);
 }
 

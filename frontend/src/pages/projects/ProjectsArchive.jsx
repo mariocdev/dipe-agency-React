@@ -139,7 +139,7 @@ export function ProjectCategoryArchive({ slug, onNotFound }) {
       .catch((error) => setState({ loading: false, data: null, error }));
   }, [slug]);
 
-  if (state.loading) return <section className="container py-5"><p className="text-secondary" role="status">Cargando categoría…</p></section>;
+  if (state.loading) return <div className="dipe-page-loading"><span className="visually-hidden" role="status">Cargando categoría…</span></div>;
   if (state.error) return <section className="container py-5"><div className="alert alert-danger" role="alert">No se ha podido cargar el contenido. {state.error.message}</div></section>;
   if (!state.data) return onNotFound();
 

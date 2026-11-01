@@ -77,7 +77,8 @@ export function PageContent({ children, effectsEnabled }) {
       if (seen.has(element) || motionPreference.matches) return;
       seen.add(element);
       // Evitar entradas anidadas y dejar quietos el texto editorial y los laterales.
-      if (element.closest('aside, .dipe-editorial-content')
+      if (element.closest('aside, .diipe-editorial-content')
+        || (element.matches('h2[id]') && element.closest('.modern-home__services, .modern-home__projects'))
         || element.parentElement?.closest(revealSelector)) return;
 
       const rect = element.getBoundingClientRect();
