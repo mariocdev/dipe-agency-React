@@ -4,6 +4,8 @@
 
 ## Nueva propuesta de Home (01-11-2026)
 
+- **Carga selectiva:** la Home alternativa y su CSS se importan al seleccionarla; el estilo del selector permanece en la Home original. Durante la descarga se muestra un estado de carga. Comprobados sintaxis de 40 archivos JS/JSX modificados y casos simulados de filtros, variaciones y cola de carrito; PHP no estaba disponible y no se verificó en ejecución. FTP: assets completos del tema con manifiesto tras compilación del usuario. Pendiente revisión visual y funcional por el usuario.
+
 - **Flechas ajustadas por sección:** trazo más claro y separado del texto; longitud y altura independientes para banner, servicios y carrusel. La del banner se orienta hacia el centro de la animación y los trazos tienen una curva suave. Fuentes `ModernHome.jsx` y `ModernHome.css`. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales/build/FTP; pendiente revisar dirección y encaje en escritorio y móvil.
 
 - **Flechas de maqueta recolocadas:** los textos quedan fuera de los recuadros de animación, servicios y proyectos; las flechas se alargan y orientan en diagonal hacia el interior, con doble trazo de lápiz. Fuentes `ModernHome.jsx` y `ModernHome.css`. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales/build/FTP; pendiente revisar posición y legibilidad en escritorio y móvil.

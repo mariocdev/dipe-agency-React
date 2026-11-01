@@ -190,4 +190,3 @@ function dipe_core_shop_account_favorites_url( $url, $endpoint ) {
 	return 'dipe-wishlist' === $endpoint ? add_query_arg( 'favoritos', '1', wc_get_page_permalink( 'shop' ) ) : $url;
 }
 add_filter( 'woocommerce_get_endpoint_url', 'dipe_core_shop_account_favorites_url', 10, 2 );
-

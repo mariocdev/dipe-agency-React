@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { BlogSection } from '../../components/blog/BlogSection';
 import { ContactSection } from '../../components/contact/ContactSection';
 import { FloatingImage } from '../../components/content/FloatingImage';
@@ -12,7 +12,8 @@ import { VideoHero } from './sections/VideoHero';
 import { WorkProcessSection } from './sections/WorkProcessSection';
 import { developmentServiceRoutes } from '../web-development/developmentServiceRoutes';
 import './Home.css';
-import { ModernHome } from './ModernHome';
+
+const ModernHome = lazy(() => import('./ModernHome').then((module) => ({ default: module.ModernHome })));
 
 const serviceCards = [
   {
@@ -123,7 +124,7 @@ export function Home() {
   };
 
   return <>
-    {modern ? <ModernHome serviceCards={serviceCards} workSteps={workSteps} /> : <OriginalHome />}
+    {modern ? <Suspense fallback={<p role="status">Cargando la nueva Home…</p>}><ModernHome serviceCards={serviceCards} workSteps={workSteps} /></Suspense> : <OriginalHome />}
     <button className="dipe-home-version" type="button" onClick={toggleVersion} aria-label={modern ? 'Cambiar a la Home original' : 'Probar la nueva Home'}>
       <span aria-hidden="true">{modern ? '↶' : '✦'}</span>
     </button>
