@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BlogSection } from '../../components/blog/BlogSection';
 import { ContactSection } from '../../components/contact/ContactSection';
 import { FloatingImage } from '../../components/content/FloatingImage';
@@ -11,6 +12,7 @@ import { VideoHero } from './sections/VideoHero';
 import { WorkProcessSection } from './sections/WorkProcessSection';
 import { developmentServiceRoutes } from '../web-development/developmentServiceRoutes';
 import './Home.css';
+import { ModernHome } from './ModernHome';
 
 const serviceCards = [
   {
@@ -76,7 +78,7 @@ const workSteps = [
   },
 ];
 
-export function Home() {
+function OriginalHome() {
   return <>
     <VideoHero
       videoSrc={homeMedia('Banner-ppal.mp4')}
@@ -105,5 +107,25 @@ export function Home() {
       <ContactSection />
     </div>
     <LogoCarouselSection />
+  </>;
+}
+
+export function Home() {
+  const [modern, setModern] = useState(() => {
+    try { return window.sessionStorage.getItem('dipe-home-version') === 'modern'; } catch { return false; }
+  });
+
+  const toggleVersion = () => {
+    const next = !modern;
+    setModern(next);
+    try { window.sessionStorage.setItem('dipe-home-version', next ? 'modern' : 'original'); } catch { /* La selección también funciona sin almacenamiento. */ }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  return <>
+    {modern ? <ModernHome serviceCards={serviceCards} workSteps={workSteps} /> : <OriginalHome />}
+    <button className="dipe-home-version" type="button" onClick={toggleVersion} aria-label={modern ? 'Cambiar a la Home original' : 'Probar la nueva Home'}>
+      <span aria-hidden="true">{modern ? '↶' : '✦'}</span>
+    </button>
   </>;
 }

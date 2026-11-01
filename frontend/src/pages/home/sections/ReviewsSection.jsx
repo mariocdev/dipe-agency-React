@@ -5,7 +5,7 @@ import './ReviewsSection.css';
 
 const googleListingUrl = 'https://www.google.com/search?sca_esv=eba2d1872b0abb42&sxsrf=APpeQnt3Y63wy4u-oVBfFPQqNlwYn5g4EA:1792258108036&q=DIPE+Desarrollo+Web+Salamanca&si=APenkKnzv9m99ToiohAuzpadUwbOz34nZJ3j2Ukmo5XOUYWAppOXMYerDfb11eCi1h0P1HG2lcxM_fF8RQut2YLZPvIZtfNotAw6PxrBGMH1DqxE7-oc5UA%3D&uds=AJ5uw19tc558UO76uNE3i9QYuudM-qh4saGTOlJy-RCH_q0ilYgaq9tVB_UrcskXs5oF__ytjJkfcVHgsBsyA8j_8lRQut2YLZPvIZtfNotAw6PxrBGMH1DqxE7-oc5UA%3D&sa=X&ved=2ahUKEwjaz__eycGXAxWGnCsGHWVbEIcQ3PALegQIOBAF&biw=1875&bih=925&dpr=1';
 
-const reviews = [
+export const reviews = [
   {
     id: 'santiago-valle',
     sourceReviewId: 'santiago-valle',

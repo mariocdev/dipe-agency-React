@@ -20,12 +20,15 @@ los grupos “Tarjeta de inicio” y “Detalle del proyecto”.
 | Contenido | Editor nativo de WordPress | No | Cuerpo del detalle del proyecto |
 | Imagen principal | Imagen destacada nativa de WordPress | Sí | Imagen de la tarjeta en los archivos de proyectos |
 | Imagen de tarjeta de inicio | ACF (`dipe_project_home_card_image`) | Sí | Imagen de la tarjeta en la Home y detalle temporal |
+| Captura para la nueva Home | ACF (`dipe_project_modern_home_image`) | No | Captura completa de la Home del proyecto para el carrusel de la Home alternativa; si falta se usa la imagen de tarjeta de inicio |
 | Imagen de banner principal | ACF (`dipe_project_banner_image`) | No | Imagen del banner de la página interna; es el primer campo de “Detalle del proyecto” |
 | Fecha de desarrollo | ACF (`dipe_project_development_date`) | No | Fecha real de desarrollo, independiente de la publicación; se guarda como `YYYY-MM-DD` |
 | Vídeo de YouTube | ACF (`dipe_project_youtube_url`) | No | URL pública del vídeo que precede a la galería |
 | Página web lanzada | ACF (`dipe_project_live_url`) | No | URL pública de la web una vez lanzada |
 | Galería multimedia | ACF (`dipe_project_gallery`) | No | Elementos ordenables con un archivo de imagen, GIF o vídeo por fila |
 | Proyectos destacados | ACF (`dipe_project_featured_projects`) | No | Proyectos relacionados y ordenados para la sección final del detalle |
+
+La captura para la nueva Home puede ser una captura completa de la web a 1920 px de ancho, por ejemplo con FireShot. Se añade en el grupo «Tarjeta de inicio» de cada proyecto y el carrusel muestra la parte superior conservando todo su ancho y proporciones; el resto queda recortado por abajo. El título y «Ver proyecto» aparecen sobre la imagen. No sustituye la imagen de la Home original ni la imagen destacada del archivo.
 
 La galería se configura con un repetidor y no con el campo Galería de ACF, ya
 que ese campo solo admite imágenes. Cada archivo admite JPG, PNG, GIF, WebP,

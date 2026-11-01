@@ -7,7 +7,8 @@
 .dipe-related__slide { min-width: 0; scroll-snap-align: start; }
 .dipe-related__slide > .dipe-shop-card { height: 100%; }
 .dipe-related__arrows { display: flex; align-items: center; justify-self: end; gap: 10px; }
-.dipe-related__viewport.is-dragging { scroll-snap-type: none; user-select: none; cursor: grabbing; }
+.dipe-related__viewport.is-dragging, .dipe-related__viewport.is-settling { scroll-snap-type: none; }
+.dipe-related__viewport.is-dragging { user-select: none; cursor: grabbing; }
 .dipe-related__viewport.is-dragging * { cursor: grabbing; }
 @media (hover: hover) and (pointer: fine) { .dipe-related__viewport { cursor: grab; } }
 .dipe-related__arrow { display: grid; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; place-items: center; border: 1px solid var(--dipe-color-ink); border-radius: 50%; background: var(--dipe-color-white); cursor: pointer; transition: background-color .2s, border-color .2s, transform .2s, opacity .2s; }

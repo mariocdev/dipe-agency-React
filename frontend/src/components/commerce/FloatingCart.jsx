@@ -74,7 +74,7 @@ export function FloatingCart() {
   const provisional = cart?.needs_shipping && !cart.has_calculated_shipping;
   return <dialog ref={dialogRef} id="dipe-floating-cart" className="dipe-floating-cart" aria-labelledby="dipe-floating-cart-title" onCancel={(event) => { event.preventDefault(); closeCart(); }} onClose={(event) => { if (!event.currentTarget.open) closeCart(); }} onClick={(event) => { if (event.target === event.currentTarget) { const bounds = event.currentTarget.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeCart(); } }}>
     <div className="dipe-floating-cart__panel">
-      <header className="dipe-floating-cart__header"><h2 id="dipe-floating-cart-title">Tu carrito{hasItems && <span> ({cart.items_count})</span>}</h2><button className="dipe-floating-cart__close" type="button" aria-label="Cerrar carrito" onClick={closeCart} autoFocus><CartIcon name="close" /></button></header>
+      <header className="dipe-floating-cart__header"><p id="dipe-floating-cart-title" className="dipe-floating-cart__title">Tu carrito{hasItems && <span> ({cart.items_count})</span>}</p><button className="dipe-floating-cart__close" type="button" aria-label="Cerrar carrito" onClick={closeCart} autoFocus><CartIcon name="close" /></button></header>
       <div className="dipe-floating-cart__body" aria-busy={loading || pending}>
         <p className="visually-hidden" role="status">{loading ? 'Consultando carrito…' : pending ? 'Actualizando carrito…' : cart ? `${cart.items_count} unidades en el carrito.` : ''}</p>
         {loading && !cart && <p role="status">Cargando tu carrito…</p>}

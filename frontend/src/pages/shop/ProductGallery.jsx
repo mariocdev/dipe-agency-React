@@ -57,9 +57,13 @@ export function ProductGallery({ product, variation }) {
     if (!viewerOpen || !dialog) return undefined;
     const root = document.documentElement;
     const previousOverflow = root.style.overflow;
+    const preventSelection = (event) => event.preventDefault();
+    window.getSelection()?.removeAllRanges();
+    dialog.addEventListener('selectstart', preventSelection);
     dialog.showModal();
     root.style.overflow = 'hidden';
     return () => {
+      dialog.removeEventListener('selectstart', preventSelection);
       if (dialog.open) dialog.close();
       root.style.overflow = previousOverflow;
       triggerRef.current?.focus({ preventScroll: true });
@@ -120,7 +124,9 @@ export function ProductGallery({ product, variation }) {
 
     <dialog className="dipe-product-lightbox" id={dialogId} ref={dialogRef} aria-label={`Imágenes de ${title}`}
       onCancel={(event) => { event.preventDefault(); setViewerOpen(false); }} onClose={() => setViewerOpen(false)}
-      onClick={(event) => { if (event.target === event.currentTarget) setViewerOpen(false); }}
+      onPointerDown={(event) => event.stopPropagation()}
+      onDragStart={(event) => event.preventDefault()}
+      onClick={(event) => { event.stopPropagation(); if (event.target === event.currentTarget) setViewerOpen(false); }}
       onKeyDown={(event) => {
         if (!viewerOpen || images.length < 2 || event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); navigate(event.key === 'ArrowLeft' ? -1 : 1); }

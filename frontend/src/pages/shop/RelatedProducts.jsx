@@ -8,6 +8,7 @@ export function RelatedProducts({ products }) {
   const viewportRef = useRef(null);
   const pagesRef = useRef([0]);
   const dragRef = useRef(null);
+  const settleCleanupRef = useRef(() => {});
   const suppressClickUntil = useRef(0);
   const [navigation, setNavigation] = useState({ page: 0, pages: 1, previous: false, next: false });
 
@@ -30,23 +31,56 @@ export function RelatedProducts({ products }) {
     function schedule() {
       if (!frame) frame = window.requestAnimationFrame(() => { frame = 0; update(); });
     }
-    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null;
+    function resized() { settleCleanupRef.current(); schedule(); }
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resized) : null;
     observer?.observe(viewport);
     viewport.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
+    window.addEventListener('resize', resized);
     update();
     return () => {
       observer?.disconnect();
       viewport.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
+      window.removeEventListener('resize', resized);
       window.cancelAnimationFrame(frame);
+      settleCleanupRef.current();
       dragRef.current = null;
       viewport.classList.remove('is-dragging');
     };
   }, [products]);
 
   function scrollToPosition(position) {
+    settleCleanupRef.current();
     viewportRef.current?.scrollTo({ left: position, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
+
+  function settleToPosition(position) {
+    settleCleanupRef.current();
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const start = viewport.scrollLeft;
+    const distance = position - start;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = 360 + Math.min(200, Math.abs(distance) * .4);
+    let frame = 0;
+    let startedAt = null;
+    // Evita que el snap nativo adelante la llegada a la tarjeta.
+    viewport.classList.add('is-settling');
+    function stop() {
+      window.cancelAnimationFrame(frame);
+      viewport.classList.remove('is-settling');
+      if (settleCleanupRef.current === stop) settleCleanupRef.current = () => {};
+    }
+    function tick(now) {
+      if (!viewport.isConnected) { stop(); return; }
+      startedAt ??= now;
+      const progress = reducedMotion || Math.abs(distance) < 1 ? 1 : Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - (1 - progress) ** 3;
+      viewport.scrollTo({ left: start + distance * eased, behavior: 'instant' });
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+      else stop();
+    }
+    settleCleanupRef.current = stop;
+    frame = window.requestAnimationFrame(tick);
   }
 
   function goTo(page) {
@@ -72,6 +106,7 @@ export function RelatedProducts({ products }) {
   }
 
   function startDrag(event) {
+    settleCleanupRef.current();
     const viewport = viewportRef.current;
     if (event.pointerType !== 'mouse' || event.button !== 0 || !viewport
       || event.target.closest('button, input, select, textarea')
@@ -107,9 +142,9 @@ export function RelatedProducts({ products }) {
     const maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
     const positions = slides.map((slide) => Math.min(maximum, slide.offsetLeft - slides[0].offsetLeft));
     const nearest = positions.reduce((best, position) => Math.abs(viewport.scrollLeft - position) < Math.abs(viewport.scrollLeft - best) ? position : best, positions[0] || 0);
+    settleToPosition(nearest);
     viewport.classList.remove('is-dragging');
     if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
-    scrollToPosition(nearest);
   }
 
   function suppressDragClick(event) {
@@ -128,7 +163,7 @@ export function RelatedProducts({ products }) {
           <button type="button" className="dipe-related__arrow dipe-related__next" disabled={!navigation.next} onClick={() => move(1)} aria-label="Productos siguientes" aria-controls={id + '-viewport'}><img src={chevronIcon} alt="" /></button>
         </nav>}
       </div>
-      <div id={id + '-viewport'} className="dipe-related__viewport" ref={viewportRef} tabIndex={0} role="group" aria-label="Productos recomendados. Usa las flechas para navegar." onKeyDown={onKeyDown} onPointerDown={startDrag} onPointerMove={drag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={() => { if (dragRef.current && !dragRef.current.active) dragRef.current = null; }} onDragStart={(event) => event.preventDefault()} onClickCapture={suppressDragClick}>
+      <div id={id + '-viewport'} className="dipe-related__viewport" ref={viewportRef} tabIndex={0} role="group" aria-label="Productos recomendados. Usa las flechas para navegar." onKeyDown={onKeyDown} onPointerDown={startDrag} onPointerMove={drag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag} onPointerLeave={() => { if (dragRef.current && !dragRef.current.active) dragRef.current = null; }} onWheel={() => settleCleanupRef.current()} onDragStart={(event) => event.preventDefault()} onClickCapture={suppressDragClick}>
         {products.map((product, index) => <div key={product.id} className="dipe-related__slide" role="group" aria-roledescription="diapositiva" aria-label={(index + 1) + ' de ' + products.length}><ShopProductCard product={product} /></div>)}
       </div>
       {navigation.pages > 1 && <nav className="dipe-related__dots" aria-label="Grupos de productos recomendados">{Array.from({ length: navigation.pages }, (_, page) => <button type="button" key={page} onClick={() => goTo(page)} aria-label={'Ver grupo ' + (page + 1) + ' de ' + navigation.pages} aria-current={navigation.page === page ? 'true' : undefined} aria-controls={id + '-viewport'}><span /></button>)}</nav>}

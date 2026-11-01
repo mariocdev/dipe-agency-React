@@ -21,7 +21,7 @@ export function LogoCarouselSection() {
             aria-hidden={index >= logos.length}
             key={`${index}-${logo.id}`}
           >
-            <img src={logo.src} alt="" loading="lazy" decoding="async" />
+            <img src={logo.src} alt="" loading="lazy" decoding="async" draggable="false" />
           </div>)}
         </div>
       </div>

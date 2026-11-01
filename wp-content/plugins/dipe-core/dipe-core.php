@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Dipe Core
  * Description: Modelo de contenido y datos estructurados de Dipe Agency.
- * Version: 0.4.32
+ * Version: 0.4.34
  * Requires at least: 6.4
  * Requires PHP: 8.2
  * Author: Dipe Agency
@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const DIPE_CORE_VERSION = '0.4.32';
+const DIPE_CORE_VERSION = '0.4.34';
 const DIPE_CORE_REWRITE_VERSION = '0.4.4';
 
 require_once __DIR__ . '/includes/mail-settings.php';
@@ -296,6 +296,17 @@ function dipe_core_register_project_fields() {
 					'type'          => 'image',
 					'instructions'  => __( 'Imagen horizontal para la tarjeta del proyecto en la página de inicio.', 'dipe-core' ),
 					'required'      => 1,
+					'return_format' => 'array',
+					'preview_size'  => 'medium',
+					'library'       => 'all',
+				),
+				array(
+					'key'           => 'field_dipe_project_modern_home_image',
+					'label'         => __( 'Captura para la nueva Home', 'dipe-core' ),
+					'name'          => 'dipe_project_modern_home_image',
+					'type'          => 'image',
+					'instructions'  => __( 'Captura completa de la página de inicio del proyecto, preferiblemente tomada a 1920 px de ancho. El carrusel de la nueva Home mostrará la parte superior a todo el ancho. Si se deja vacía, se usa la imagen de tarjeta de inicio.', 'dipe-core' ),
+					'required'      => 0,
 					'return_format' => 'array',
 					'preview_size'  => 'medium',
 					'library'       => 'all',

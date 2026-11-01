@@ -57,6 +57,19 @@
 .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"]:not([data-dipe-checkout-step="review"]) :is(.dipe-checkout-order-card, .dipe-checkout-coupon) { display: none; }
 .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"]:not([data-dipe-checkout-step="payment"]) .dipe-checkout-payment-card { display: none; }
 .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] .dipe-checkout-shipping[hidden] { display: none; }
+/* El paso de datos usa todo el ancho; se conserva el orden nativo de los campos. */
+.dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) { display: grid; grid-template-columns: minmax(0, 1fr); align-items: end; gap: 14px 16px; margin-bottom: 14px; }
+.dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper)::before,
+.dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper)::after { display: none; }
+.dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) > .form-row { grid-column: 1 / -1; float: none; clear: none; min-width: 0; width: 100%; margin: 0; }
+@media (min-width: 681px) {
+  .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) > :is([id$="_first_name_field"], [id$="_last_name_field"], [id$="_country_field"], [id$="_address_1_field"], [id$="_address_2_field"], [id$="_postcode_field"], [id$="_city_field"], [id$="_state_field"], [id$="_phone_field"], [id$="_email_field"]) { grid-column: auto; }
+}
+@media (min-width: 1101px) {
+  .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dipe-shop-native .woocommerce form.checkout[data-dipe-checkout-mode="pasos"] :is(.woocommerce-billing-fields__field-wrapper, .woocommerce-shipping-fields__field-wrapper) > [id$="_address_1_field"] { grid-column: span 2; }
+}
 @media (max-width: 680px) {
   .dipe-shop-native .dipe-checkout-experience h2 { font-size: 24px; }
   .dipe-checkout-experience__choices, .dipe-checkout-experience__review { grid-template-columns: 1fr; gap: 16px; }

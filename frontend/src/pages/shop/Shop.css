@@ -112,7 +112,7 @@
 .dipe-shop__active-filters button:not(.dipe-shop__text-button) { display: inline-flex; align-items: center; gap: 10px; padding: 7px 12px; border: 1px solid var(--shop-line); background: #f7f7f7; color: var(--dipe-color-ink); font-size: 13px; }
 .dipe-shop__active-filters svg { width: 14px; height: 14px; }
 .dipe-shop__results { position: relative; min-height: 240px; }
-.dipe-shop__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 25px; }
+.dipe-shop__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 25px; }
 .dipe-shop-card { min-width: 0; background: #fff; box-shadow: 0 0 0 transparent; transition: transform 180ms ease, box-shadow 180ms ease; }
 .dipe-shop-card:hover, .dipe-shop-card:focus-within { transform: translateY(-2px); box-shadow: 0 0 6px color-mix(in srgb, var(--dipe-color-orange) 18%, transparent); }
 .dipe-shop-card__media { position: relative; }
@@ -164,7 +164,7 @@
 
 @media (max-width: 1260px) {
   .dipe-shop__catalog-layout { grid-template-columns: 220px minmax(0, 1fr); gap: 35px; }
-  .dipe-shop__grid { gap: 35px 20px; }
+  .dipe-shop__grid { gap: 20px; }
 }
 @media (max-width: 1100px) {
   .dipe-shop__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -198,7 +198,7 @@
   .dipe-shop__toolbar { flex-wrap: wrap; }
   .dipe-shop__search { flex-basis: 100%; }
   .dipe-shop__result-heading { margin-top: 25px; }
-  .dipe-shop__grid { gap: 30px 16px; }
+  .dipe-shop__grid { gap: 16px; }
   .dipe-shop-card__image img { padding: 12px; }
   .dipe-shop-card__content { padding-top: 15px; }
   .dipe-shop-card__title { font-size: 18px; }

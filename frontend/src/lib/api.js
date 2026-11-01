@@ -298,6 +298,12 @@ export function projectHomeCardImage(item) {
     || normalizeProjectImage(item?.dipe_project_card_image);
 }
 
+// La Home alternativa admite una captura propia y conserva la imagen anterior como respaldo.
+export function projectModernHomeCardImage(item) {
+  return normalizeProjectImage(item?.acf?.dipe_project_modern_home_image)
+    || projectHomeCardImage(item);
+}
+
 // Usa la imagen destacada para las tarjetas del archivo de proyectos.
 export function projectArchiveCardImage(item) {
   const image = item?._embedded?.['wp:featuredmedia']?.[0];

@@ -1,5 +1,11 @@
 # Checkout normal y por pasos
 
+## Datos en menos filas (26-10-2026)
+
+Solo el checkout por pasos aprovecha el ancho completo con cuadrículas de facturación y dirección de envío alternativa: tres columnas desde 1101 px, dos de 681 a 1100 px y una hasta 680 px. En escritorio la dirección principal ocupa dos columnas. Se alinean los controles por abajo para el complemento sin etiqueta visible y se retiran floats, márgenes de fila y pseudo-elementos de limpieza dentro de estas cuadrículas. Campos adicionales conservan el ancho completo. No se cambia el orden del DOM/teclado, los campos, la validación ni el checkout normal.
+
+Código: `frontend/src/pages/shop/CheckoutExperience.css`. FTP exclusivo: assets completos de `wp-content/themes/dipe-react/assets/` con `.vite/manifest.json`, tras compilación del usuario. Sin PHP, reconversión ni cambios de core. Sin comprobaciones locales, build, API, FTP ni operaciones Git de escritura. Pendiente revisión del usuario en servidor en escritorio/tablet/móvil, con dirección alternativa y tras recálculos.
+
 ## Scroll antes del cambio y envío gratuito (25-10-2026)
 
 Esta iteración sustituye el orden anterior: conserva la sección actual mientras sube suavemente al encabezado y, cuando termina, cambia el paso y ejecuta su entrada animada. También se aplica al cambiar de formato. No oculta la sección larga dejando un hueco durante la subida. Las interrupciones del usuario cancelan el destino pendiente; los errores del mismo paso desplazan/focalizan el campo correspondiente. Movimiento reducido mantiene el cambio directo.
