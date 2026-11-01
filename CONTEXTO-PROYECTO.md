@@ -2,6 +2,10 @@
 
 **Actualizado: 26-10-2026.** Estado resumido para continuidad entre Codex Cloud, GitHub y desarrollo local. **Antes de cualquier tarea, seguir `AGENTS.md` y consultar `PLAN_PARA_TERRA.md`; el código y Git actuales prevalecen sobre cualquier documentación.** Consultar solo las secciones o archivos necesarios. Versión anterior íntegra: [docs/historico-contexto-2026-10-18.md](docs/historico-contexto-2026-10-18.md) (histórico; no leer por defecto).
 
+## Proceso de trabajo compartido (01-11-2026)
+
+- Los estilos base de la sección se han extraído de Home.css a WorkProcessSection.css y se importan desde el componente compartido, para cargarlos también en las páginas que no cargan Home. Las reglas responsive globales se conservan. FTP: assets completos del tema con manifiesto tras compilación del usuario. Sin comprobaciones locales ni despliegue automático; el usuario confirma que el resultado es correcto.
+
 ## Nueva propuesta de Home (01-11-2026)
 
 - **Carga selectiva:** la Home alternativa y su CSS se importan al seleccionarla; el estilo del selector permanece en la Home original. Durante la descarga se muestra un estado de carga. Comprobados sintaxis de 40 archivos JS/JSX modificados y casos simulados de filtros, variaciones y cola de carrito; PHP no estaba disponible y no se verificó en ejecución. FTP: assets completos del tema con manifiesto tras compilación del usuario. Pendiente revisión visual y funcional por el usuario.

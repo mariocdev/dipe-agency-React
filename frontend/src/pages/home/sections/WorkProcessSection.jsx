@@ -1,6 +1,7 @@
 import { useEqualizedBlockSize } from '../../../hooks/useEqualizedBlockSize';
 import { ResponsiveTitle } from '../../../components/content/ResponsiveTitle';
 import { useDeferredMedia } from '../../../hooks/useDeferredMedia';
+import './WorkProcessSection.css';
 
 function WorkProcessCard({ step }) {
   return <article className="dipe-work-process__card">
